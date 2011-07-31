@@ -11,11 +11,13 @@
 #include "handler.hpp"
 
 int main(int argc, char *argv[]) {
-    std::string filename, dsn;
+    std::string filename, dsn, prefix = "hist_";
     bool debug = false;
 
     static struct option long_options[] = {
         {"debug",               no_argument, 0, 'd'},
+        {"dsn",                 required_argument, 0, 'D'},
+        {"prefix",              required_argument, 0, 'P'},
         {0, 0, 0, 0}
     };
 
@@ -28,6 +30,12 @@ int main(int argc, char *argv[]) {
             case 'd':
                 debug = true;
                 break;
+            case 'D':
+                dsn = optarg;
+                break;
+            case 'P':
+                prefix = optarg;
+                break;
         }
     }
 
@@ -36,18 +44,18 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    if(argc - optind >= 1) {
-        filename = argv[optind];
-    }
-
-    if(argc - optind >= 2) {
-        dsn = argv[optind+1];
-    }
+    filename = argv[optind];
 
     Osmium::init(debug);
     Osmium::OSMFile infile(filename);
 
-    ImportHandler handler(dsn);
+    ImportHandler handler;
+    if(dsn.size()) {
+        handler.dsn(dsn);
+    }
+    if(prefix.size()) {
+        handler.prefix(prefix);
+    }
     infile.read(handler);
 
     return 0;
