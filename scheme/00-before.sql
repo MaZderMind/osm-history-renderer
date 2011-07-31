@@ -36,6 +36,7 @@ CREATE TABLE hist_lines (
     -- id BIGINT,
     id int,
     version smallint,
+    minor smallint,
     valid_from timestamp without time zone,
     valid_to timestamp without time zone,
     tags hstore
@@ -64,6 +65,7 @@ CREATE TABLE hist_areas (
     -- id BIGINT,
     id int,
     version smallint,
+    minor smallint,
     valid_from timestamp without time zone,
     valid_to timestamp without time zone,
     tags hstore
