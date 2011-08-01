@@ -1,6 +1,7 @@
 #ifndef IMPORTER_HANDLER_HPP
 #define IMPORTER_HANDLER_HPP
 
+#include <fstream>
 #include <postgresql/libpq-fe.h>
 #include <osmium.hpp>
 #include <osmium/handler/progress.hpp>
@@ -11,11 +12,11 @@ class ImportHandler : public Osmium::Handler::Base {
 private:
     Osmium::Handler::Progress m_progress;
     SortingChecker m_check;
-    PGconn *m_points, *m_lines, *m_areas;
+    PGconn *m_general, *m_points, *m_lines, *m_areas;
 
     std::string m_dsn, m_prefix;
 
-    PGconn *opencopy(const std::string& dsn, const std::string& table) {
+    PGconn *open(const std::string& dsn) {
         PGconn *conn = PQconnectdb(dsn.c_str());
 
         if(PQstatus(conn) != CONNECTION_OK)
@@ -25,20 +26,59 @@ private:
             throw std::runtime_error("connection to database failed");
         }
 
-        std::stringstream cmd;
-        cmd << "COPY " << m_prefix << table << " FROM STDIN;";
-
-        PQexec(conn, cmd.str().c_str());
         return conn;
     }
 
-    void closecopy(PGconn *conn) {
-        PQputCopyEnd(conn, NULL);
+    PGconn *opencopy(const std::string& dsn, const std::string& table) {
+        PGconn *conn = open(dsn);
+
+        std::stringstream cmd;
+        cmd << "COPY " << m_prefix << table << " FROM STDIN;";
+
+        PGresult *res = PQexec(conn, cmd.str().c_str());
+        if(PQresultStatus(res) != PGRES_COPY_IN)
+        {
+            std::cerr << PQerrorMessage(conn) << std::endl;
+            PQfinish(conn);
+            throw std::runtime_error("COPY FROM STDIN command failed");
+        }
+
+        return conn;
+    }
+
+    void close(PGconn *conn) {
         PQfinish(conn);
     }
 
+    void closecopy(PGconn *conn) {
+        int res = PQputCopyEnd(conn, NULL);
+        if(res == -1)
+        {
+            std::cerr << PQerrorMessage(conn) << std::endl;
+            PQfinish(conn);
+            throw std::runtime_error("COPY FROM STDIN finilization failed");
+        }
+
+        close(conn);
+    }
+
     void copy(PGconn *conn, const std::string& data) {
-        PQputCopyData(conn, data.c_str(), data.size());
+        int res = PQputCopyData(conn, data.c_str(), data.size());
+
+        std::cerr << "copy result: " << res << std::endl;
+        if(-1 == res) {
+            std::cerr << PQerrorMessage(conn) << std::endl;
+            PQfinish(conn);
+            throw std::runtime_error("COPY data-transfer failed");
+        }
+    }
+
+    void execfile(PGconn *conn, const std::string& file) {
+        std::ifstream f(file.c_str());
+        std::string cmd((std::istreambuf_iterator<char>(f)),
+                         std::istreambuf_iterator<char>());
+
+        PQexec(conn, cmd.c_str());
     }
 
     std::string format_hstore(const Osmium::OSM::TagList& /*tags*/) {
@@ -65,6 +105,7 @@ public:
     }
 
     std::string format_hstore() {
+        // FIXME tags formatting
         return "\n";
     }
 
@@ -72,6 +113,12 @@ public:
         if(Osmium::debug()) {
             std::cerr << "connecting to database using dsn: " << m_dsn << std::endl;
         }
+
+        m_general = open(m_dsn);
+        if(Osmium::debug()) {
+            std::cerr << "running scheme/00-before.sql" << std::endl;
+        }
+        execfile(m_general, "scheme/00-before.sql");
 
         m_points = opencopy(m_dsn, "points");
         m_lines = opencopy(m_dsn, "lines");
@@ -81,15 +128,21 @@ public:
     }
 
     void final() {
-        if(Osmium::debug()) {
-            std::cerr << "disconnecting from database" << std::endl;
-        }
+        m_progress.final();
 
         closecopy(m_points);
         closecopy(m_lines);
         closecopy(m_areas);
 
-        m_progress.final();
+        if(Osmium::debug()) {
+            std::cerr << "running scheme/99-after.sql" << std::endl;
+        }
+        execfile(m_general, "scheme/99-after.sql");
+
+        if(Osmium::debug()) {
+            std::cerr << "disconnecting from database" << std::endl;
+        }
+        close(m_general);
     }
 
 
@@ -105,6 +158,8 @@ public:
             node->timestamp_as_string() << '\t' <<
             /* last timestamp */"\\N" << '\t' <<
             format_hstore(node->tags()) << '\t' <<
+
+            // FIXME: projection
             "SRID=900913;POINT(" << node->get_lat() << " " << node->get_lon() << ")" <<
             "\n";
         copy(m_points, line.str());
