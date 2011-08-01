@@ -40,7 +40,7 @@ int main(int argc, char *argv[]) {
     }
 
     if(argc - optind < 1) {
-        std::cerr << "Usage: " << argv[0] << "[OPTIONS] OSMFILE [DSN]" << std::endl;
+        std::cerr << "Usage: " << argv[0] << " [OPTIONS] OSMFILE" << std::endl;
         return 1;
     }
 
