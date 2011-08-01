@@ -2,7 +2,10 @@
 #define IMPORTER_HANDLER_HPP
 
 #include <fstream>
+
 #include <postgresql/libpq-fe.h>
+#include <proj_api.h>
+
 #include <osmium.hpp>
 #include <osmium/handler/progress.hpp>
 
@@ -13,6 +16,8 @@ private:
     Osmium::Handler::Progress m_progress;
     SortingChecker m_check;
     PGconn *m_general, *m_points, *m_lines, *m_areas;
+
+    projPJ pj_900913, pj_4326;
 
     std::string m_dsn, m_prefix;
 
@@ -65,7 +70,6 @@ private:
     void copy(PGconn *conn, const std::string& data) {
         int res = PQputCopyData(conn, data.c_str(), data.size());
 
-        std::cerr << "copy result: " << res << std::endl;
         if(-1 == res) {
             std::cerr << PQerrorMessage(conn) << std::endl;
             PQfinish(conn);
@@ -86,7 +90,20 @@ private:
     }
 
 public:
-    ImportHandler() : m_progress(), m_prefix("hist_") {}
+    ImportHandler() : m_progress(), m_prefix("hist_") {
+        //if(!(pj_900913 = pj_init_plus("+init=epsg:900913"))) {
+        if(!(pj_900913 = pj_init_plus("+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +no_defs"))) {
+            throw std::runtime_error("can't initialize proj4 with 900913");
+        }
+        if(!(pj_4326 = pj_init_plus("+init=epsg:4326"))) {
+            throw std::runtime_error("can't initialize proj4 with 4326");
+        }
+    }
+
+    ~ImportHandler() {
+        pj_free(pj_900913);
+        pj_free(pj_4326);
+    }
 
     std::string dsn() {
         return m_dsn;
@@ -151,6 +168,15 @@ public:
         m_check.enforce(node->get_type(), node->id(), node->version());
         m_progress.node(node);
 
+        double lat = node->get_lat() * DEG_TO_RAD;
+        double lon = node->get_lon() * DEG_TO_RAD;
+        int r = pj_transform(pj_4326, pj_900913, 1, 1, &lon, &lat, NULL);
+        if(r != 0) {
+            std::stringstream msg;
+            msg << "error transforming POINT(" << lat << " " << lon << ") from 4326 to 900913)";
+            throw std::runtime_error(msg.str().c_str());
+        }
+
         std::stringstream line;
         line << std::setprecision(8) <<
             node->id() << '\t' <<
@@ -158,9 +184,7 @@ public:
             node->timestamp_as_string() << '\t' <<
             /* last timestamp */"\\N" << '\t' <<
             format_hstore(node->tags()) << '\t' <<
-
-            // FIXME: projection
-            "SRID=900913;POINT(" << node->get_lat() << " " << node->get_lon() << ")" <<
+            "SRID=900913;POINT(" << lon << " " << lat << ")" <<
             "\n";
         copy(m_points, line.str());
     }
