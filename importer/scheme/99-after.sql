@@ -6,5 +6,3 @@ CREATE INDEX hist_lines_geom_and_time_index ON hist_points USING GIST (geom, val
 
 ALTER TABLE hist_areas ADD PRIMARY KEY (id, version, minor);
 CREATE INDEX hist_areas_geom_and_time_index ON hist_points USING GIST (geom, valid_from, valid_to);
-
-COMMIT;

@@ -1,7 +1,5 @@
 -- requires hstore_new, postgis, gist_btree
 
-START TRANSACTION;
-
 DROP TABLE IF EXISTS hist_points;
 CREATE TABLE hist_points (
     -- optional 64bit support
