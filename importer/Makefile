@@ -34,7 +34,7 @@ LDFLAGS += -lgeos
 
 all: osm-history-importer
 
-osm-history-importer: importer.cpp handler.hpp sorting_checker.hpp
+osm-history-importer: importer.cpp handler.hpp last_entity_tracker.hpp
 	$(CXX) $(CXXFLAGS) -o $@ $< $(LDFLAGS)
 
 install:

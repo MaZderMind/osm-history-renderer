@@ -9,12 +9,12 @@
 #include <osmium.hpp>
 #include <osmium/handler/progress.hpp>
 
-#include "sorting_checker.hpp"
+#include "last_entity_tracker.hpp"
 
 class ImportHandler : public Osmium::Handler::Base {
 private:
     Osmium::Handler::Progress m_progress;
-    SortingChecker m_check;
+    LastEntityTracker m_tracker;
     PGconn *m_general, *m_points, *m_lines, *m_areas;
 
     projPJ pj_900913, pj_4326;
@@ -43,7 +43,7 @@ private:
         PGresult *res = PQexec(conn, cmd.str().c_str());
         if(PQresultStatus(res) != PGRES_COPY_IN)
         {
-            std::cerr << PQerrorMessage(conn) << std::endl;
+            std::cerr << PQresultErrorMessage(res) << std::endl;
             PQfinish(conn);
             throw std::runtime_error("COPY FROM STDIN command failed");
         }
@@ -57,7 +57,7 @@ private:
 
     void closecopy(PGconn *conn) {
         int res = PQputCopyEnd(conn, NULL);
-        if(res == -1)
+        if(-1 == res)
         {
             std::cerr << PQerrorMessage(conn) << std::endl;
             PQfinish(conn);
@@ -82,7 +82,14 @@ private:
         std::string cmd((std::istreambuf_iterator<char>(f)),
                          std::istreambuf_iterator<char>());
 
-        PQexec(conn, cmd.c_str());
+        PGresult *res = PQexec(conn, cmd.c_str());
+        ExecStatusType status = PQresultStatus(res);
+        if(status != PGRES_COMMAND_OK && status != PGRES_TUPLES_OK)
+        {
+            std::cerr << PQresultErrorMessage(res) << std::endl;
+            PQfinish(conn);
+            throw std::runtime_error("command failed");
+        }
     }
 
     std::string format_hstore(const Osmium::OSM::TagList& /*tags*/) {
@@ -165,8 +172,17 @@ public:
 
 
     void node(Osmium::OSM::Node* node) {
-        m_check.enforce(node->get_type(), node->id(), node->version());
-        m_progress.node(node);
+        std::string timestamp(node->timestamp_as_string()), last_timestamp("\\N");
+
+        m_tracker.feed(node->get_type(), node->id(), node->version(), timestamp);
+        m_tracker.enforce_sorting();
+
+        // FIXME to make this work the tracker needs to be off by one (maybe refactor code to be more readable)
+        if(!m_tracker.is_new_entity()) {
+            last_timestamp = m_tracker.get_last_timestamp();
+        }
+
+        m_tracker.swap();
 
         double lat = node->get_lat() * DEG_TO_RAD;
         double lon = node->get_lon() * DEG_TO_RAD;
@@ -177,25 +193,35 @@ public:
             throw std::runtime_error(msg.str().c_str());
         }
 
+        // FIXME need visible flag here
         std::stringstream line;
         line << std::setprecision(8) <<
             node->id() << '\t' <<
             node->version() << '\t' <<
-            node->timestamp_as_string() << '\t' <<
-            /* last timestamp */"\\N" << '\t' <<
+            timestamp << '\t' <<
+            last_timestamp << '\t' <<
             format_hstore(node->tags()) << '\t' <<
             "SRID=900913;POINT(" << lon << " " << lat << ")" <<
             "\n";
+
+        std::cerr << "line=" << line.str();
         copy(m_points, line.str());
+        m_progress.node(node);
     }
 
     void way(Osmium::OSM::Way* way) {
-        m_check.enforce(way->get_type(), way->id(), way->version());
+        m_tracker.feed(way->get_type(), way->id(), way->version());
+        m_tracker.enforce_sorting();
+        m_tracker.swap();
+
         m_progress.way(way);
     }
 
     void relation(Osmium::OSM::Relation* relation) {
-        m_check.enforce(relation->get_type(), relation->id(), relation->version());
+        m_tracker.feed(relation->get_type(), relation->id(), relation->version());
+        m_tracker.enforce_sorting();
+        m_tracker.swap();
+
         m_progress.relation(relation);
     }
 };
