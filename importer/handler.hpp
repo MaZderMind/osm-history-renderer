@@ -14,7 +14,7 @@
 class ImportHandler : public Osmium::Handler::Base {
 private:
     Osmium::Handler::Progress m_progress;
-    LastEntityTracker m_tracker;
+    LastEntityTracker<Osmium::OSM::Node> m_node_tracker;
     PGconn *m_general, *m_points, *m_lines, *m_areas;
 
     projPJ pj_900913, pj_4326;
@@ -97,7 +97,7 @@ private:
     }
 
 public:
-    ImportHandler() : m_progress(), m_prefix("hist_") {
+    ImportHandler() : m_progress(), m_node_tracker(), m_prefix("hist_") {
         //if(!(pj_900913 = pj_init_plus("+init=epsg:900913"))) {
         if(!(pj_900913 = pj_init_plus("+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +no_defs"))) {
             throw std::runtime_error("can't initialize proj4 with 900913");
@@ -132,6 +132,8 @@ public:
         // FIXME tags formatting
         return "\n";
     }
+
+
 
     void init(Osmium::OSM::Meta& meta) {
         if(Osmium::debug()) {
@@ -172,20 +174,41 @@ public:
 
 
     void node(Osmium::OSM::Node* node) {
-        std::string timestamp(node->timestamp_as_string()), last_timestamp("\\N");
+        m_node_tracker.feed(*node);
 
-        m_tracker.feed(node->get_type(), node->id(), node->version(), timestamp);
-        m_tracker.enforce_sorting();
-
-        // FIXME to make this work the tracker needs to be off by one (maybe refactor code to be more readable)
-        if(!m_tracker.is_new_entity()) {
-            last_timestamp = m_tracker.get_last_timestamp();
+        // we're always writing the one-off node
+        if(m_node_tracker.has_prev()) {
+            write_node();
         }
 
-        m_tracker.swap();
+        m_node_tracker.swap();
+        m_progress.node(node);
+    }
 
-        double lat = node->get_lat() * DEG_TO_RAD;
-        double lon = node->get_lon() * DEG_TO_RAD;
+    void after_nodes() {
+        if(m_node_tracker.has_prev()) {
+            write_node();
+        }
+
+        m_node_tracker.swap();
+    }
+
+    void write_node() {
+        std::string valid_from(m_node_tracker.prev().timestamp_as_string());
+        std::string valid_to("\\N");
+
+        // if this is another version of the same entity, the end-timestamp of the previous entity is the timestamp of the current one
+        if(m_node_tracker.cur_is_same_entity()) {
+            valid_to = m_node_tracker.cur().timestamp_as_string();
+        }
+
+        // if the prev version is deleted, it's end-timestamp is the same as its creation-timestamp
+        else if(!m_node_tracker.prev().visible()) {
+            valid_to = valid_from;
+        }
+
+        double lat = m_node_tracker.prev().get_lat() * DEG_TO_RAD;
+        double lon = m_node_tracker.prev().get_lon() * DEG_TO_RAD;
         int r = pj_transform(pj_4326, pj_900913, 1, 1, &lon, &lat, NULL);
         if(r != 0) {
             std::stringstream msg;
@@ -193,35 +216,25 @@ public:
             throw std::runtime_error(msg.str().c_str());
         }
 
-        // FIXME need visible flag here
         std::stringstream line;
         line << std::setprecision(8) <<
-            node->id() << '\t' <<
-            node->version() << '\t' <<
-            timestamp << '\t' <<
-            last_timestamp << '\t' <<
-            format_hstore(node->tags()) << '\t' <<
+            m_node_tracker.prev().id() << '\t' <<
+            m_node_tracker.prev().version() << '\t' <<
+            (m_node_tracker.prev().visible() ? 't' : 'f') << '\t' <<
+            valid_from << '\t' <<
+            valid_to << '\t' <<
+            format_hstore(m_node_tracker.prev().tags()) << '\t' <<
             "SRID=900913;POINT(" << lon << " " << lat << ")" <<
             "\n";
 
-        std::cerr << "line=" << line.str();
         copy(m_points, line.str());
-        m_progress.node(node);
     }
 
     void way(Osmium::OSM::Way* way) {
-        m_tracker.feed(way->get_type(), way->id(), way->version());
-        m_tracker.enforce_sorting();
-        m_tracker.swap();
-
         m_progress.way(way);
     }
 
     void relation(Osmium::OSM::Relation* relation) {
-        m_tracker.feed(relation->get_type(), relation->id(), relation->version());
-        m_tracker.enforce_sorting();
-        m_tracker.swap();
-
         m_progress.relation(relation);
     }
 };

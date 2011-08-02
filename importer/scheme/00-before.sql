@@ -6,6 +6,7 @@ CREATE TABLE hist_points (
     -- id BIGINT,
     id int,
     version smallint,
+    visible boolean,
     valid_from timestamp without time zone,
     valid_to timestamp without time zone,
     tags hstore
