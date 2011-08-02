@@ -29,7 +29,7 @@ public:
     }
 
     bool cur_is_same_entity() {
-        return (m_prev.get_type() == m_cur.get_type() && m_prev.id() == m_cur.id());
+        return m_prev.id() == m_cur.id();
     }
 
     void swap() {
