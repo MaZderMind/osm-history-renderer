@@ -216,6 +216,8 @@ public:
             throw std::runtime_error(msg.str().c_str());
         }
 
+        // SPEED: sum up 64k of data, before sending them to the database
+        // SPEED: instead of stringstream, which does dynamic allocation, use a fixed buffer and snprintf
         std::stringstream line;
         line << std::setprecision(8) <<
             m_node_tracker.prev().id() << '\t' <<

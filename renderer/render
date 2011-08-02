@@ -5,6 +5,7 @@
 
 from optparse import OptionParser
 import sys, os
+import datetime, dateutil.relativedelta
 
 try:
     import mapnik2 as mapnik
@@ -25,6 +26,11 @@ def main():
     width = 800
     height = 600
     bbox = (-180, -85, 180, 85)
+    animation = False
+    fps = 30
+    anistart = None
+    aniend = datetime.now()
+    anistep = relativedelta(months=+1)
     
     parser = OptionParser()
     parser.add_option("-s", "--style", action="store", type="string", dest="style", 
@@ -44,9 +50,24 @@ def main():
     
     parser.add_option("-z", "--zoom", action="store", type="int", dest="zoom", 
                       help="the zoom level to render. this overrules the default size but it can't be used together with an explicit --size option")
-
+    
     parser.add_option("-d", "--date", action="store", type="string", dest="date", 
                       help="date to render the image for (historic database related), format 'YYYY-MM-DD HH:II:SS'")
+    
+    parser.add_option("-a", "--animation", action="store_true", dest="animation", 
+                      help="render an animation, either --date or --animation is required")
+    
+    parser.add_option("-A", "--animation-start-date", action="store", type="string" dest="anistart", 
+                      help="start-date of the animation, defaults to the first date of a node in the requested bbox")
+    
+    parser.add_option("-Z", "--animation-end-date", action="store", type="string" dest="aniend", 
+                      help="end-date of the animation, defaults to now")
+    
+    parser.add_option("-S", "--animation-step", action="store", type="string" dest="anistep", 
+                      help="stepping of the animation, defaults one image per to 1 month")
+    
+    parser.add_option("-F", "--animation-fps", action="store", type="string" dest="fps", 
+                      help="stepping of the animation, defaults one image per to 1 month")
     
     (options, args) = parser.parse_args()
     if options.style:
@@ -55,7 +76,10 @@ def main():
     if options.file:
         file = options.file
     
-    if options.type:
+    animation = options.animation
+    if animation:
+        type = "png"
+    elif options.type:
         type = options.type
     
     if options.size and options.zoom:
@@ -87,13 +111,14 @@ def main():
     if options.zoom:
         (width, height) = zoom2size(bbox, options.zoom);
     
-    if not options.date:
-        print "--date is required for historic database"
+    if not options.date and not options.animation:
+        print "either --date or --animation is required for historic databases"
         print
         parser.print_help()
         sys.exit(1)
     
-    print "rendering bbox %s at date %s in style %s to file %s which is of type %s in size %ux%u\n" % (bbox, options.date, style, file, type, width, height)
+    
+    print "rendering bbox %s at date %s in style %s to file %s which is of type %s in size %ux%u\n" % (bbox, options.date, style, file, ("mp4" if animation else type), width, height)
     
     # create map
     m = mapnik.Map(width, height)
@@ -213,6 +238,8 @@ def zoom2size(bbox, zoom):
     
     return (wp, hp)
 
+# FIXME: switch vom &date; to, eg. {DATE} and process using an xml parser or xmllint before replacing the text
+#   otherwise it is not possible to use the date-marker in include-files
 def preprocess(style, date):
     f = open(style)
     s = f.read()

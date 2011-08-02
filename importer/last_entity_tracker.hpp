@@ -5,6 +5,7 @@ template <class TObject>
 class LastEntityTracker {
 
 private:
+    // SPEED: use pointers instead of class values, allowing swap() to just shift pointers around instead of copying data
     TObject m_prev;
     TObject m_cur;
 
