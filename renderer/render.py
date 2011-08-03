@@ -5,7 +5,6 @@
 
 from optparse import OptionParser
 import sys, os
-import datetime, dateutil.relativedelta
 
 try:
     import mapnik2 as mapnik
@@ -20,77 +19,33 @@ except ImportError:
     cairo_exists = False
 
 def main():
-    style = "/usr/share/osm-mapnik/osm.xml"
-    file = "map"
-    type = "png"
-    width = 800
-    height = 600
-    bbox = (-180, -85, 180, 85)
-    animation = False
-    fps = 30
-    anistart = None
-    aniend = datetime.now()
-    anistep = relativedelta(months=+1)
-    
     parser = OptionParser()
-    parser.add_option("-s", "--style", action="store", type="string", dest="style", 
-                      help="path to the mapnik stylesheet xml, defaults to the openstreetmap default style: "+style)
+    parser.add_option("-s", "--style", action="store", type="string", dest="style", default="/usr/share/osm-mapnik/osm.xml", 
+                      help="path to the mapnik stylesheet xml [default: %default]")
     
-    parser.add_option("-f", "--file", action="store", type="string", dest="file", 
-                      help="path to the destination file without the file extension, defaults to "+file)
+    parser.add_option("-f", "--file", action="store", type="string", dest="file", default="map", 
+                      help="path to the destination file without the file extension [default: %default]")
     
-    parser.add_option("-t", "--type", action="store", type="string", dest="type", 
-                      help="file type to render, defaults to "+type)
+    parser.add_option("-t", "--type", action="store", type="string", dest="type", default="png", 
+                      help="file type to render [default: %default]")
     
-    parser.add_option("-x", "--size", action="store", type="string", dest="size", 
-                      help="requested sizeof the resulting image in pixels, format is <width>x<height>, defaults to "+str(width)+"x"+str(height))
+    parser.add_option("-x", "--size", action="store", type="string", dest="size", default="800x600", 
+                      help="requested sizeof the resulting image in pixels, format is <width>x<height> [default: %default]")
     
-    parser.add_option("-b", "--bbox", action="store", type="string", dest="bbox", 
-                      help="the bounding box to render in the format l,b,r,t, defaults to "+str(bbox))
+    parser.add_option("-b", "--bbox", action="store", type="string", dest="bbox", default="-180,-85,180,85", 
+                      help="the bounding box to render in the format l,b,r,t [default: %default]")
     
     parser.add_option("-z", "--zoom", action="store", type="int", dest="zoom", 
-                      help="the zoom level to render. this overrules the default size but it can't be used together with an explicit --size option")
+                      help="the zoom level to render. this overrules --size")
     
     parser.add_option("-d", "--date", action="store", type="string", dest="date", 
                       help="date to render the image for (historic database related), format 'YYYY-MM-DD HH:II:SS'")
     
-    parser.add_option("-a", "--animation", action="store_true", dest="animation", 
-                      help="render an animation, either --date or --animation is required")
-    
-    parser.add_option("-A", "--animation-start-date", action="store", type="string" dest="anistart", 
-                      help="start-date of the animation, defaults to the first date of a node in the requested bbox")
-    
-    parser.add_option("-Z", "--animation-end-date", action="store", type="string" dest="aniend", 
-                      help="end-date of the animation, defaults to now")
-    
-    parser.add_option("-S", "--animation-step", action="store", type="string" dest="anistep", 
-                      help="stepping of the animation, defaults one image per to 1 month")
-    
-    parser.add_option("-F", "--animation-fps", action="store", type="string" dest="fps", 
-                      help="stepping of the animation, defaults one image per to 1 month")
-    
     (options, args) = parser.parse_args()
-    if options.style:
-        style = options.style
-    
-    if options.file:
-        file = options.file
-    
-    animation = options.animation
-    if animation:
-        type = "png"
-    elif options.type:
-        type = options.type
-    
-    if options.size and options.zoom:
-        print "can't combine --size and --zoom"
-        print
-        parser.print_help()
-        sys.exit(1)
     
     if options.size:
         try:
-            (width, height) = map(int, options.size.split("x"))
+            options.size = map(int, options.size.split("x"))
         except ValueError, err:
             print "invalid syntax in size argument"
             print
@@ -99,8 +54,8 @@ def main():
     
     if options.bbox:
         try:
-            bbox = map(float, options.bbox.split(","))
-            if len(bbox) < 4:
+            options.bbox = map(float, options.bbox.split(","))
+            if len(options.bbox) < 4:
                 raise ValueError
         except ValueError, err:
             print "invalid syntax in bbox argument"
@@ -109,22 +64,23 @@ def main():
             sys.exit(1)
     
     if options.zoom:
-        (width, height) = zoom2size(bbox, options.zoom);
+        options.size = zoom2size(bbox, options.zoom);
     
-    if not options.date and not options.animation:
-        print "either --date or --animation is required for historic databases"
+    if not options.date:
+        print "--date is required for historic databases"
         print
         parser.print_help()
         sys.exit(1)
     
-    
-    print "rendering bbox %s at date %s in style %s to file %s which is of type %s in size %ux%u\n" % (bbox, options.date, style, file, ("mp4" if animation else type), width, height)
-    
+    print "rendering bbox %s at date %s in style %s to file %s which is of type %s in size %ux%u\n" % (options.bbox, options.date, options.style, options.file, options.type, options.size[0], options.size[1])
+    render(options)
+
+def render(options):
     # create map
-    m = mapnik.Map(width, height)
+    m = mapnik.Map(options.size[0], options.size[1])
     
     # preprocess style with xmllint to include date information
-    processed_style = preprocess(style, options.date);
+    processed_style = preprocess(options.style, options.date);
     
     # load style
     mapnik.load_map_from_string(m, processed_style, True, ".")
@@ -137,23 +93,23 @@ def main():
     #e = Box2d(c0.x,c0.y,c1.x,c1.y)
     
     # project bounds to map projection
-    e = mapnik.forward_(mapnik.Box2d(*bbox), prj)
+    e = mapnik.forward_(mapnik.Box2d(*options.bbox), prj)
     
     # zoom map to bounding box
     m.zoom_to_box(e)
     
-    file = file + "." + type
-    if(type in ("png", "jpeg")):
-        s = mapnik.Image(width, height)
+    options.file = options.file + "." + options.type
+    if(options.type in ("png", "jpeg")):
+        s = mapnik.Image(options.size[0], options.size[1])
     
     elif cairo_exists and type == "svg":
-        s = cairo.SVGSurface(file, width, height)
+        s = cairo.SVGSurface(options.file, options.size[0], options.size[1])
     
     elif cairo_exists and type == "pdf":
-        s = cairo.PDFSurface(file, width, height)
+        s = cairo.PDFSurface(options.file, options.size[0], options.size[1])
     
     elif cairo_exists and type == "ps":
-        s = cairo.PSSurface(file, width, height)
+        s = cairo.PSSurface(options.file, options.size[0], options.size[1])
     
     else:
         print "invalid image type"
@@ -164,8 +120,8 @@ def main():
     mapnik.render(m, s)
     
     if isinstance(s, mapnik.Image):
-        view = s.view(0, 0, width, height)
-        view.save(file, type)
+        view = s.view(0, 0, options.size[0], options.size[1])
+        view.save(options.file, options.type)
     
     elif isinstance(s, cairo.Surface):
         s.finish()
@@ -244,8 +200,8 @@ def preprocess(style, date):
     f = open(style)
     s = f.read()
     f.close()
-    s = s.replace('&date;', date);
-    return s;
+    s = s.replace('&date;', date)
+    return s
 
 if __name__ == "__main__":
-  main()
+    main()
