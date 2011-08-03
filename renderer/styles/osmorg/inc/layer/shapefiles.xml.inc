@@ -1,11 +1,3 @@
-<Style name="world">
-	<Rule>
-		&maxscale_zoom0;
-		&minscale_zoom9;
-		
-		<PolygonSymbolizer fill="&cLand;" />
-	</Rule>
-</Style>
 <Layer name="world" status="on" srs="&srs900913;">
 	<StyleName>world</StyleName>
 	
@@ -14,18 +6,19 @@
 		<Parameter name="file">&world_boundaries;/shoreline_300</Parameter>
 	</Datasource>
 </Layer>
-
-
-
-
-
-<Style name="coast-poly">
+<Style name="world">
 	<Rule>
-		&maxscale_zoom10;
+		&maxscale_zoom0;
+		&minscale_zoom9;
 		
 		<PolygonSymbolizer fill="&cLand;" />
 	</Rule>
 </Style>
+
+
+
+
+
 <Layer name="coast-poly" status="on" srs="&srs900913;">
 	<StyleName>coast-poly</StyleName>
 	
@@ -34,19 +27,18 @@
 		<Parameter name="file">&world_boundaries;/processed_p</Parameter>
 	</Datasource>
 </Layer>
-
-
-
-
-
-<Style name="necountries">
+<Style name="coast-poly">
 	<Rule>
-		&maxscale_zoom1;
-		&minscale_zoom3;
+		&maxscale_zoom10;
 		
-		<LineSymbolizer stroke="&cNeCountriesLine;" stroke-width="0.5" />
+		<PolygonSymbolizer fill="&cLand;" />
 	</Rule>
 </Style>
+
+
+
+
+
 <Layer name="necountries" status="on" srs="&srs4326;">
 	<StyleName>necountries</StyleName>
 	
@@ -55,20 +47,19 @@
 		<Parameter name="file">&world_boundaries;/110m_admin_0_boundary_lines_land.shp</Parameter>
 	</Datasource>
 </Layer>
-
-
-
-
-
-<Style name="nepopulated">
+<Style name="necountries">
 	<Rule>
-		&maxscale_zoom3;
-		&minscale_zoom4;
-		<Filter>[SCALERANK]=1</Filter>
+		&maxscale_zoom1;
+		&minscale_zoom3;
 		
-		<TextSymbolizer name="[NAMEASCII]" fontset-name="book-fonts" size="8" dy="2" fill="&cNePopulatedText;" halo-radius="1" />
+		<LineSymbolizer stroke="&cNeCountriesLine;" stroke-width="0.5" />
 	</Rule>
 </Style>
+
+
+
+
+
 <Layer name="nepopulated" status="on" srs="&srs4326;">
 	<StyleName>nepopulated</StyleName>
 	
@@ -78,19 +69,20 @@
 		<Parameter name="encoding">latin1</Parameter>
 	</Datasource>
 </Layer>
-
-
-
-
-
-<Style name="builtup">
+<Style name="nepopulated">
 	<Rule>
-		&maxscale_zoom8;
-		&minscale_zoom10;
+		&maxscale_zoom3;
+		&minscale_zoom4;
+		<Filter>[SCALERANK]=1</Filter>
 		
-		<PolygonSymbolizer fill="&cBuiltup;" />
+		<TextSymbolizer name="[NAMEASCII]" fontset-name="book-fonts" size="8" dy="2" fill="&cNePopulatedName;" halo-radius="1" />
 	</Rule>
 </Style>
+
+
+
+
+
 <Layer name="builtup" status="on" srs="&srsmercator;">
 	<StyleName>builtup</StyleName>
 	
@@ -99,3 +91,11 @@
 		<Parameter name="file">&world_boundaries;/builtup_area</Parameter>
 	</Datasource>
 </Layer>
+<Style name="builtup">
+	<Rule>
+		&maxscale_zoom8;
+		&minscale_zoom10;
+		
+		<PolygonSymbolizer fill="&cBuiltup;" />
+	</Rule>
+</Style>
