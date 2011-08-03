@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE Map [
+    <!ENTITY % inc SYSTEM "inc/inc.xml.inc">
+    %inc;
+]>
+
+<Map bgcolor="#b5d0d0" srs="&srs900913;" minimum_version="0.7.1">
+    &fontset-settings;
+
+    &layer-shapefiles;
+    <!--&layer-water;-->
+    <!--&layer-admin;-->
+    
+    <!--&layer-residential;-->
+    <!--&layer-road;-->
+    <!--&layer-tertiary;-->
+    <!--&layer-secondary;-->
+    <!--&layer-primary;-->
+    <!--&layer-trunk;-->
+    <!--&layer-motorway;-->
+    
+    &layer-placenames;
+    &layer-pois;
+    <!--&layer-secondary-names;-->
+    <!--&layer-primary-names;-->
+    <!--&layer-motorway-names-->
+</Map>
