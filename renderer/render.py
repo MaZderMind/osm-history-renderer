@@ -83,7 +83,7 @@ def render(options):
     processed_style = preprocess(options.style, options.date);
     
     # load style
-    mapnik.load_map_from_string(m, processed_style, True, ".")
+    mapnik.load_map_from_string(m, processed_style, True, options.style)
     
     # create projection object
     prj = mapnik.Projection("+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +no_defs +over")
