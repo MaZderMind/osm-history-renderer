@@ -16,7 +16,7 @@ SELECT AddGeometryColumn(
     'hist_point',
 
     -- column name
-    'geom',
+    'way',
 
     -- SRID (900913 = Spherical Mercator)
     900913,
@@ -45,7 +45,7 @@ SELECT AddGeometryColumn(
     'hist_line',
 
     -- column name
-    'geom',
+    'way',
 
     -- SRID (900913 = Spherical Mercator)
     900913,
@@ -74,7 +74,7 @@ SELECT AddGeometryColumn(
     'hist_polygon',
 
     -- column name
-    'geom',
+    'way',
 
     -- SRID (900913 = Spherical Mercator)
     900913,
