@@ -92,8 +92,49 @@ private:
         }
     }
 
-    std::string format_hstore(const Osmium::OSM::TagList& /*tags*/) {
-        return "\\N";
+    std::string escape_hstore(const char* str) {
+        // SPEED: instead of stringstream, which does dynamic allocation, use a fixed buffer
+        std::stringstream escaped;
+        for(int i = 0; ; i++) {
+            char c = str[i];
+            switch(c) {
+                case '\\':
+                    escaped << "\\\\\\\\";
+                    break;
+                case '"':
+                    escaped << "\\\\\"";
+                    break;
+                case '\t':
+                    escaped << "\\\t";
+                    break;
+                case '\r':
+                    escaped << "\\\r";
+                    break;
+                case '\n':
+                    escaped << "\\\n";
+                    break;
+                case '\0':
+                    return escaped.str();
+                default:
+                    escaped << c;
+                    break;
+            }
+        }
+    }
+
+    std::string format_hstore(const Osmium::OSM::TagList& tags) {
+        // SPEED: instead of stringstream, which does dynamic allocation, use a fixed buffer
+        std::stringstream hstore;
+        for (Osmium::OSM::TagList::const_iterator it = tags.begin(); it != tags.end(); ++it) {
+            std::string k = escape_hstore(it->key());
+            std::string v = escape_hstore(it->value());
+            
+            hstore << '"' << k << "\"=>\"" << v << '"';
+            if(it+1 != tags.end()) {
+                hstore << ',';
+            }
+        }
+        return hstore.str();
     }
 
 public:
