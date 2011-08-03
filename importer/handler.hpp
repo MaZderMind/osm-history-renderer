@@ -15,7 +15,7 @@ class ImportHandler : public Osmium::Handler::Base {
 private:
     Osmium::Handler::Progress m_progress;
     LastEntityTracker<Osmium::OSM::Node> m_node_tracker;
-    PGconn *m_general, *m_points, *m_lines, *m_areas;
+    PGconn *m_general, *m_point, *m_line, *m_polygon;
 
     projPJ pj_900913, pj_4326;
 
@@ -187,9 +187,9 @@ public:
         }
         execfile(m_general, "scheme/00-before.sql");
 
-        m_points = opencopy(m_dsn, "points");
-        m_lines = opencopy(m_dsn, "lines");
-        m_areas = opencopy(m_dsn, "areas");
+        m_point = opencopy(m_dsn, "point");
+        m_line = opencopy(m_dsn, "line");
+        m_polygon = opencopy(m_dsn, "polygon");
 
         m_progress.init(meta);
     }
@@ -197,9 +197,9 @@ public:
     void final() {
         m_progress.final();
 
-        closecopy(m_points);
-        closecopy(m_lines);
-        closecopy(m_areas);
+        closecopy(m_point);
+        closecopy(m_line);
+        closecopy(m_polygon);
 
         if(Osmium::debug()) {
             std::cerr << "running scheme/99-after.sql" << std::endl;
@@ -270,7 +270,7 @@ public:
             "SRID=900913;POINT(" << lon << " " << lat << ")" <<
             "\n";
 
-        copy(m_points, line.str());
+        copy(m_point, line.str());
     }
 
     void way(Osmium::OSM::Way* way) {

@@ -1,7 +1,7 @@
 -- requires hstore_new, postgis, gist_btree
 
-DROP TABLE IF EXISTS hist_points;
-CREATE TABLE hist_points (
+DROP TABLE IF EXISTS hist_point;
+CREATE TABLE hist_point (
     -- optional 64bit support
     -- id BIGINT,
     id int,
@@ -13,7 +13,7 @@ CREATE TABLE hist_points (
 );
 SELECT AddGeometryColumn(
     -- table name
-    'hist_points',
+    'hist_point',
 
     -- column name
     'geom',
@@ -29,8 +29,8 @@ SELECT AddGeometryColumn(
 );
 
 
-DROP TABLE IF EXISTS hist_lines;
-CREATE TABLE hist_lines (
+DROP TABLE IF EXISTS hist_line;
+CREATE TABLE hist_line (
     -- optional 64bit support
     -- id BIGINT,
     id int,
@@ -42,7 +42,7 @@ CREATE TABLE hist_lines (
 );
 SELECT AddGeometryColumn(
     -- table name
-    'hist_lines',
+    'hist_line',
 
     -- column name
     'geom',
@@ -58,8 +58,8 @@ SELECT AddGeometryColumn(
 );
 
 
-DROP TABLE IF EXISTS hist_areas;
-CREATE TABLE hist_areas (
+DROP TABLE IF EXISTS hist_polygon;
+CREATE TABLE hist_polygon (
     -- optional 64bit support
     -- id BIGINT,
     id int,
@@ -71,7 +71,7 @@ CREATE TABLE hist_areas (
 );
 SELECT AddGeometryColumn(
     -- table name
-    'hist_areas',
+    'hist_polygon',
 
     -- column name
     'geom',
@@ -87,7 +87,7 @@ SELECT AddGeometryColumn(
 );
 SELECT AddGeometryColumn(
     -- table name
-    'hist_areas',
+    'hist_polygon',
 
     -- column name
     'center',
