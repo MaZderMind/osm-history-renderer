@@ -4,7 +4,8 @@
 #
 
 from optparse import OptionParser
-import sys, os
+import sys, os, subprocess
+import cStringIO
 
 try:
     import mapnik2 as mapnik
@@ -194,14 +195,26 @@ def zoom2size(bbox, zoom):
     
     return (wp, hp)
 
-# FIXME: switch vom &date; to, eg. {DATE} and process using an xml parser or xmllint before replacing the text
-#   otherwise it is not possible to use the date-marker in include-files
+
 def preprocess(style, date):
-    f = open(style)
-    s = f.read()
-    f.close()
-    s = s.replace('&date;', date)
-    return s
+    style = subprocess.check_output(["xmllint", "--noent", style])
+    return style.replace('{DATE}', date)
+
+# this does not work with python 2.7 because of http://bugs.python.org/issue902037
+#def preprocess(style, date):
+#    io = cStringIO.StringIO()
+#    reader = sax.make_parser()
+#    writer = saxutils.XMLGenerator(io)
+#    filter = DateRaplaceFilter(reader, writer, date)
+#    
+#    reader.parse(style)
+#    return io.getvalue()
+#
+#class DateRaplaceFilter(saxutils.XMLFilterBase):
+#    def __init__(self, upstream, downstream, date):
+#        saxutils.XMLFilterBase.__init__(self, upstream)
+#        self.downstream = downstream
+#        self.date = date
 
 if __name__ == "__main__":
     main()

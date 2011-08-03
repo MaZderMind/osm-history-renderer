@@ -113,13 +113,19 @@ def main():
         
         options.date = date.strftime("%Y-%m-%d %H:%M:%S")
         options.type = "png"
-        options.file = "%s/%010d" % (tempdir, i)
+        if anitype == "png":
+            options.file = "%s-%010d" % (anifile, i)
+        else:
+            options.file = "%s/%010d" % (tempdir, i)
         
         print date
         render.render(options)
         
         date = date + options.anistep
         i += 1
+    
+    if anitype == "png":
+        return
     
     print "assemmbling animation"
     opts = ["-r "+options.fps, "-i", tempdir+"/%010d.png"]
@@ -141,7 +147,7 @@ def infer_anistart(dsn, prefix, bbox):
     import psycopg2
     con = psycopg2.connect(dsn)
     
-    sql = "SELECT MIN(valid_from) FROM hist_points WHERE geom && ST_Transform(ST_SetSRID(ST_MakeBox2D(ST_Point(%f, %f), ST_Point(%f, %f)), 4326),900913)" % (bbox[0], bbox[1], bbox[2], bbox[3])
+    sql = "SELECT MIN(valid_from) FROM hist_point WHERE way && ST_Transform(ST_SetSRID(ST_MakeBox2D(ST_Point(%f, %f), ST_Point(%f, %f)), 4326), 900913)" % (bbox[0], bbox[1], bbox[2], bbox[3])
     
     cur = con.cursor()
     cur.execute(sql)
