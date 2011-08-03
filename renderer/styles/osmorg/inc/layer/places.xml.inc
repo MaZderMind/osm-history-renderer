@@ -83,9 +83,9 @@
 		<Parameter name="table">
 		(
 		
-			SELECT geom, tags->'place' AS place, tags->'name' AS name
+			SELECT way, tags->'place' AS place, tags->'name' AS name
 			  FROM &prefix;_point
-			 WHERE tags->'place' IN ('city', 'metropolis', 'town') AND capital = 'yes'
+			 WHERE tags->'place' IN ('city', 'metropolis', 'town') AND tags->'capital' = 'yes'
 			   AND &date;
 		
 		) AS subq</Parameter>
@@ -132,9 +132,9 @@
 		<Parameter name="table">
 		(
 		
-			SELECT geom, tasgs->'place' AS place, tags->'name' AS name
+			SELECT way, tags->'place' AS place, tags->'name' AS name
 			  FROM &prefix;_point
-			 WHERE place I ('city', 'metropolis', 'town', 'large_town', 'small_town')
+			 WHERE tags->'place' IN ('city', 'metropolis', 'town', 'large_town', 'small_town')
 			   AND (NOT tags ? 'capital' OR tags->'capital' != 'yes')
 			   AND &date;
 		
@@ -212,6 +212,7 @@
 			SELECT way, tags->'place' AS place, tags->'name' AS name
 			  FROM &prefix;_point
 			 WHERE tags->'place' IN ('suburb', 'village', 'large_village', 'hamlet', 'locality', 'isolated_dwelling', 'farm')
+			   AND &date;
 		
 		) as subq
 		</Parameter>
