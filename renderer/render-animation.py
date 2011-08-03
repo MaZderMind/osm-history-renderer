@@ -4,7 +4,7 @@
 #
 
 from optparse import OptionParser
-import sys, os
+import sys, os, tempfile, shutil
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 import render
@@ -45,8 +45,13 @@ def main():
     parser.add_option("-S", "--anistep", action="store", type="string", dest="anistep", default="months=+1", 
                       help="stepping of the animation [default: %default]")
     
-    parser.add_option("-F", "--fps", action="store", type="string", dest="fps", default="5", 
+    parser.add_option("-F", "--fps", action="store", type="string", dest="fps", default="2", 
                       help="desired number od frames per second [default: %default]")
+    
+    parser.add_option("-K", "--keep", action="store_true", dest="keep", 
+                      help="keep the generated PNGs after assembling the animation")
+    
+    
     
     
     parser.add_option("-D", "--db", action="store", type="string", dest="dsn", default="", 
@@ -101,14 +106,34 @@ def main():
     anitype = options.type
     anifile = options.file
     date = options.anistart
+    
+    tempdir = tempfile.mkdtemp()
+    i = 0
     while date < options.aniend:
-        print date
         
         options.date = date.strftime("%Y-%m-%d %H:%M:%S")
         options.type = "png"
-        options.file = options.date
+        options.file = "%s/%010d" % (tempdir, i)
+        
+        print date
         render.render(options)
+        
         date = date + options.anistep
+        i += 1
+    
+    print "assemmbling animation"
+    opts = ["-r "+options.fps, "-i", tempdir+"/%010d.png"]
+    if anitype == "gif":
+        opts.extend(["-pix_fmt", "rgb24"])
+    
+    opts.append("%s.%s" % (anifile, anitype))
+    
+    os.spawnvp(os.P_WAIT, "ffmpeg", opts)
+    
+    if options.keep:
+        print "PNGs are kept in", tempdir
+    else:
+        shutil.rmtree(tempdir)
 
 
 
