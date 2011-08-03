@@ -4,7 +4,7 @@
     %inc;
 ]>
 
-<Map bgcolor="#b5d0d0" srs="&srs900913;" minimum_version="0.7.1">
+<Map background-color="&cWater;" srs="&srs900913;">
     &fontset-settings;
 
     &layer-shapefiles;
