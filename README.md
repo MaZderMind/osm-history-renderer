@@ -11,9 +11,11 @@ More about importing and rendering your city will follow as soon as I have a bin
 
 ## Speeeeed
 Yep, the import is slow. I know and I haven't done much optimizing in the code. The Route I'm going is
-1. No Tool
-2. A Tool
-3. A fast Tool
+
+ 1. No Tool
+ 2. A Tool
+ 3. A fast Tool
+
 And I'm currently working on 2. Some lines in the code have been annotated with `// SPEED`, which means that I know a speed improvement is possible here, but I haven't implemented it yet because I want to have a) running code as soon as possible and b) code, that makes it easy to change things around. Both is impossible with highly optimized code.
 
 Is the rendering slow? Who knows - I don't. I don't know how a combined spatial + date-time btree index performs on a huge dataset, if a simple geom index will be more efficient or if another database scheme is suited better, but as with the imorter there's no other way to learn about this other then trying.
