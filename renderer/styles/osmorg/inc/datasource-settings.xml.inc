@@ -17,3 +17,5 @@ Note: feel free to leave password, host, port, or use blank
 <!-- manually provided extent in epsg 900913 for whole globe -->
 <!-- providing this speeds up Mapnik database queries -->
 <Parameter name="extent">-20037508,-19929239,20037508,19929239</Parameter>
+
+<Parameter name="geometry_field">way</Parameter>
