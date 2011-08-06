@@ -10,6 +10,13 @@
     &layer-shapefiles;
     <!--&layer-water;-->
     <!--&layer-admin;-->
+    <!--&layer-landuse;-->
+    
+    <!--&layer-track;-->
+    <!--&layer-footway;-->
+    <!--&layer-airway;-->
+    
+    <!--&layer-rail;-->
     
     <!--&layer-residential;-->
     <!--&layer-road;-->
@@ -18,6 +25,10 @@
     <!--&layer-primary;-->
     <!--&layer-trunk;-->
     <!--&layer-motorway;-->
+    
+    <!--&layer-turningcircle;-->
+    <!--&layer-junctions;-->
+    <!--&layer-access;-->
     
     &layer-places;
     &layer-pois;

@@ -1,0 +1,16 @@
+&layer-pois-accommodation;
+&layer-pois-amenity;
+&layer-pois-barrier;
+&layer-pois-education;
+&layer-pois-food;
+&layer-pois-health;
+&layer-pois-landuse;
+&layer-pois-money;
+&layer-pois-place_of_worship;
+&layer-pois-poi;
+&layer-pois-power;
+&layer-pois-shopping;
+&layer-pois-sport;
+&layer-pois-tourist;
+&layer-pois-transport;
+&layer-pois-water;
