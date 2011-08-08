@@ -2,46 +2,46 @@
 	<Rule>
 		&maxscale_zoom13;
 		<Filter>[tourism]='alpine_hut'</Filter>
-		<PointSymbolizer file="&symbols;/color/accomodation/alpinehut.p.svg" width="16" />
+		<PointSymbolizer file="&symbols;/png/16/accomodation/alpinehut.p.png" />
 	</Rule>
 	<Rule>
 		&maxscale_zoom17;
 		<Filter>[tourism]='bed_and_breakfast'</Filter>
-		<PointSymbolizer file="&symbols;/color/accomodation/bed_and_breakfast.p.svg" width="20" />
+		<PointSymbolizer file="&symbols;/png/20/accomodation/bed_and_breakfast.p.png" />
 	</Rule>
 	<Rule>
 		&maxscale_zoom16;
 		<Filter>[tourism]='camp_site'</Filter>
-		<PointSymbolizer file="&symbols;/color/accomodation/camping.n.svg" width="16" />
+		<PointSymbolizer file="&symbols;/png/16/accomodation/camping.n.png" />
 	</Rule>
 	<Rule>
 		&maxscale_zoom16;
 		<Filter>[tourism]='caravan_site'</Filter>
-		<PointSymbolizer file="&symbols;/color/accomodation/caravan_park.p.svg" width="24" />
+		<PointSymbolizer file="&symbols;/png/24/accomodation/caravan_park.p.png" />
 	</Rule>
 	<Rule>
 		&maxscale_zoom17;
 		<Filter>[tourism]='chalet'</Filter>
-		<PointSymbolizer file="&symbols;/color/accomodation/chalet.p.svg" width="16" />
+		<PointSymbolizer file="&symbols;/png/16/accomodation/chalet.p.png" />
 	</Rule>
 	<Rule>
 		&maxscale_zoom17;
 		<Filter>[tourism]='hostel' or [tourism]='youth_hostel'</Filter>
-		<PointSymbolizer file="&symbols;/color/accomodation/hostel.p.svg" width="20" />
+		<PointSymbolizer file="&symbols;/png/20/accomodation/hostel.p.png" />
 	</Rule>
 	<Rule>
 		&maxscale_zoom17;
 		<Filter>[tourism]='hotel'</Filter>
-		<PointSymbolizer file="&symbols;/color/accomodation/hotel2.p.svg" width="20" />
+		<PointSymbolizer file="&symbols;/png/20/accomodation/hotel2.p.png" />
 	</Rule>
 	<Rule>
 		&maxscale_zoom17;
 		<Filter>[tourism]='motel'</Filter>
-		<PointSymbolizer file="&symbols;/color/accomodation/motel.p.svg" width="20" />
+		<PointSymbolizer file="&symbols;/png/20/accomodation/motel.p.png" />
 	</Rule>
 	<Rule>
 		&maxscale_zoom16;
 		<Filter>[amenity]='shelter'</Filter>
-		<PointSymbolizer file="&symbols;/color/accomodation/shelter2.p.svg" width="16" />
+		<PointSymbolizer file="&symbols;/png/16/accomodation/shelter2.p.png" />
 	</Rule>
 </Style>
