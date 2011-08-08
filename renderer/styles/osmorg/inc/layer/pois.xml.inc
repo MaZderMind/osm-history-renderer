@@ -17,8 +17,8 @@
 
 <Layer name="pois-points" status="on" srs="&dbProjection;">
 	<StyleName>pois-accommodation</StyleName>
-	<!--StyleName>amenity</StyleName>
-	<StyleName>barrier</StyleName>
+	<StyleName>pois-amenity</StyleName>
+	<!--StyleName>barrier</StyleName>
 	<StyleName>education</StyleName>
 	<StyleName>food</StyleName>
 	<StyleName>health</StyleName>
