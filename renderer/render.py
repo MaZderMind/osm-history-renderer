@@ -65,7 +65,7 @@ def main():
             sys.exit(1)
     
     if options.zoom:
-        options.size = zoom2size(bbox, options.zoom);
+        options.size = zoom2size(options.bbox, options.zoom);
     
     if not options.date:
         print "--date is required for historic databases"
