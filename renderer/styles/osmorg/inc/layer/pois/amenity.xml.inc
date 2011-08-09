@@ -29,12 +29,12 @@
 	<Rule>
 		&maxscale_zoom17;
 		<Filter>[amenity]='library'</Filter>
-		<PointSymbolizer file="&symbols;/png/20/amenity/library.p.png" />
+		<PointSymbolizer file="&symbols;/png/16/amenity/library.p.png" />
 	</Rule>
 	<Rule>
 		&maxscale_zoom17;
 		<Filter>[leisure]='playground'</Filter>
-		<PointSymbolizer file="&symbols;/png/20/amenity/playground.p.png" />
+		<PointSymbolizer file="&symbols;/png/16/amenity/playground.p.png" />
 	</Rule>
 	<Rule>
 		&maxscale_zoom17;
@@ -49,7 +49,7 @@
 	<Rule> 
 		&maxscale_zoom16; 
 		<Filter>[amenity]='prison'</Filter> 
-		<PointSymbolizer file="&symbols;/png/20/amenity/prison.p.png" /> 
+		<PointSymbolizer file="&symbols;/png/16/amenity/prison.p.png" /> 
 	</Rule> 
 	<Rule>
 		<!-- need to differenciate more -->
@@ -65,6 +65,6 @@
 	<Rule>
 		&maxscale_zoom17;
 		<Filter>[amenity]='toilets'</Filter>
-		<PointSymbolizer file="&symbols;/png/20/amenity/toilets.p.png" />
+		<PointSymbolizer file="&symbols;/png/16/amenity/toilets.p.png" />
 	</Rule>
 </Style>
