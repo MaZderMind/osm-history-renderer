@@ -1,31 +1,13 @@
-&layer-pois-accommodation;
-&layer-pois-amenity;
-&layer-pois-barrier;
-&layer-pois-education;
-&layer-pois-food;
-&layer-pois-health;
-&layer-pois-landuse;
-&layer-pois-money;
-&layer-pois-place_of_worship;
-&layer-pois-poi;
-&layer-pois-power;
-&layer-pois-shopping;
-&layer-pois-sport;
-&layer-pois-tourist;
-&layer-pois-transport;
-&layer-pois-water;
-
 <Layer name="pois-points" status="on" srs="&dbProjection;">
 	<StyleName>pois-accommodation</StyleName>
 	<StyleName>pois-amenity</StyleName>
 	<StyleName>pois-barrier</StyleName>
 	<StyleName>pois-education</StyleName>
 	<StyleName>pois-food</StyleName>
-	<!--StyleName>health</StyleName>
-	<StyleName>landuse</StyleName>
-	<StyleName>money</StyleName>
-	<StyleName>place_of_worship</StyleName>
-	<StyleName>poi</StyleName>
+	<StyleName>pois-health</StyleName>
+	<StyleName>pois-money</StyleName>
+	<StyleName>pois-place_of_worship</StyleName>
+	<!--StyleName>poi</StyleName>
 	<StyleName>power</StyleName>
 	<StyleName>shopping</StyleName>
 	<StyleName>sport</StyleName>
@@ -43,7 +25,7 @@
 				tags->'historic' AS historic, tags->'leisure' AS leisure, tags->'barrier' AS barrier, 
 				tags->'cuisine' AS cuisine
 			  FROM &prefix;_point
-			 WHERE tags ?| ARRAY['amenity', 'shop', 'tourism', 'highway', 'man_made', 'access', 'religion', 'waterway', 'lock', 'historic', 'leisure', 'barrier', 'cuisine']
+			 WHERE tags ?| ARRAY['amenity', 'shop', 'tourism', 'highway', 'man_made', 'access', 'waterway', 'lock', 'historic', 'leisure', 'barrier']
 			   AND &date;
 			
 		) as subq
@@ -59,11 +41,10 @@
 	<StyleName>pois-barrier</StyleName>
 	<StyleName>pois-education</StyleName>
 	<StyleName>pois-food</StyleName>
-	<!--StyleName>health</StyleName>
-	<StyleName>landuse</StyleName>
-	<StyleName>money</StyleName>
-	<StyleName>place_of_worship</StyleName>
-	<StyleName>poi</StyleName>
+	<StyleName>pois-health</StyleName>
+	<StyleName>pois-money</StyleName>
+	<StyleName>pois-place_of_worship</StyleName>
+	<!--StyleName>poi</StyleName>
 	<StyleName>power</StyleName>
 	<StyleName>shopping</StyleName>
 	<StyleName>sport</StyleName>
@@ -81,7 +62,7 @@
 				tags->'historic' AS historic, tags->'leisure' AS leisure, tags->'barrier' AS barrier, 
 				tags->'cuisine' AS cuisine
 			  FROM &prefix;_polygon
-			 WHERE tags ?| ARRAY['amenity', 'shop', 'tourism', 'highway', 'man_made', 'access', 'religion', 'waterway', 'lock', 'historic', 'leisure', 'barrier', 'cuisine']
+			 WHERE tags ?| ARRAY['amenity', 'shop', 'tourism', 'highway', 'man_made', 'access', 'waterway', 'lock', 'historic', 'leisure', 'barrier']
 			   AND &date;
 			
 		) as subq
@@ -90,3 +71,19 @@
 		&datasource-settings;
 	</Datasource>
 </Layer>
+
+&layer-pois-accommodation;
+&layer-pois-amenity;
+&layer-pois-barrier;
+&layer-pois-education;
+&layer-pois-food;
+&layer-pois-health;
+&layer-pois-money;
+&layer-pois-place_of_worship;
+&layer-pois-poi;
+&layer-pois-power;
+&layer-pois-shopping;
+&layer-pois-sport;
+&layer-pois-tourist;
+&layer-pois-transport;
+&layer-pois-water;

@@ -22,7 +22,7 @@
 		<PointSymbolizer file="&symbols;/png/16/amenity/court.p.png" />
 	</Rule>
 	<Rule>
-		&maxscale_zoom17;
+		&maxscale_zoom18;
 		<Filter>[amenity]='fire_station'</Filter>
 		<PointSymbolizer file="&symbols;/png/16/amenity/firestation.p.png" />
 	</Rule>
@@ -47,13 +47,13 @@
 		<PointSymbolizer file="&symbols;/png/16/amenity/post_office.p.png" />
 	</Rule>
 	<Rule> 
-		&maxscale_zoom16; 
+		&maxscale_zoom17; 
 		<Filter>[amenity]='prison'</Filter> 
 		<PointSymbolizer file="&symbols;/png/16/amenity/prison.p.png" /> 
 	</Rule> 
 	<Rule>
 		<!-- need to differenciate more -->
-		&maxscale_zoom16;
+		&maxscale_zoom17;
 		<Filter>[amenity]='recycling'</Filter>
 		<PointSymbolizer file="&symbols;/png/16/amenity/recycling.p.png" />
 	</Rule>

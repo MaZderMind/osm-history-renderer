@@ -8,7 +8,6 @@
 <!ENTITY layer-pois-education SYSTEM "layer/pois/education.xml.inc">
 <!ENTITY layer-pois-food SYSTEM "layer/pois/food.xml.inc">
 <!ENTITY layer-pois-health SYSTEM "layer/pois/health.xml.inc">
-<!ENTITY layer-pois-landuse SYSTEM "layer/pois/landuse.xml.inc">
 <!ENTITY layer-pois-money SYSTEM "layer/pois/money.xml.inc">
 <!ENTITY layer-pois-place_of_worship SYSTEM "layer/pois/place_of_worship.xml.inc">
 <!ENTITY layer-pois-poi SYSTEM "layer/pois/poi.xml.inc">
