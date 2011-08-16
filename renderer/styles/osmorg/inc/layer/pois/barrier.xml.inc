@@ -2,16 +2,16 @@
 	<Rule>
 		&maxscale_zoom16;
 		<Filter>[barrier]='bollard' or [barrier]='block'</Filter>
-		<PointSymbolizer file="&symbols;/misc/bollard.png" allow-overlap="false" />
+		<PointSymbolizer file="&symbols;/misc/bollard.png" />
 	</Rule>
 	<Rule>
-		&maxscale_zoom15;
+		&maxscale_zoom16;
 		<Filter>[highway]='gate' or [barrier]='gate'</Filter>
-		<PointSymbolizer file="&symbols;/misc/gate.png" allow-overlap="false"/>
+		<PointSymbolizer file="&symbols;/misc/gate.png" />
 	</Rule>
 	<Rule> 
 		&maxscale_zoom16; 
 		<Filter>[barrier]='lift_gate'</Filter> 
-		<PointSymbolizer file="&symbols;/misc/liftgate.png" allow-overlap="false"/> 
+		<PointSymbolizer file="&symbols;/misc/liftgate.png" /> 
 	</Rule> 
 </Style>

@@ -1,6 +1,6 @@
 <Style name="pois-tourist">
 	<Rule>
-		&maxscale_zoom17;
+		&maxscale_zoom16;
 		<Filter>[historic]='archaeological_site'</Filter>
 		<PointSymbolizer file="&symbols;/png/16/tourist/archaeological2.p.png" />
 	</Rule>

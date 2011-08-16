@@ -47,7 +47,7 @@
 		<PointSymbolizer file="&symbols;/png/16/amenity/post_office.p.png" />
 	</Rule>
 	<Rule>
-		&maxscale_zoom17; 
+		&maxscale_zoom17;
 		<Filter>[amenity]='prison'</Filter> 
 		<PointSymbolizer file="&symbols;/png/16/amenity/prison.p.png" /> 
 	</Rule> 

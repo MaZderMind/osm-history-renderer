@@ -1,8 +1,4 @@
 <Style name="pois-education">
-	<!--
-	  unused icons:
-	    (all)
-	-->
 	<Rule>
 		&maxscale_zoom15;
 		<Filter>[amenity]='school'</Filter>
@@ -14,7 +10,7 @@
 		<PointSymbolizer file="&symbols;/png/16/education/college.p.png" />
 	</Rule>
 	<Rule>
-		&maxscale_zoom16;
+		&maxscale_zoom15;
 		<Filter>[amenity]='kindergarten'</Filter>
 		<PointSymbolizer file="&symbols;/png/16/education/nursery3.p.png" />
 	</Rule>

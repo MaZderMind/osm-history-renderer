@@ -15,7 +15,7 @@
 		<PointSymbolizer file="&symbols;/png/16/health/pharmacy.p.png" />
 	</Rule>
 	<Rule>
-		&maxscale_zoom17;
+		&maxscale_zoom16;
 		<Filter>[amenity]='doctors'</Filter>
 		<PointSymbolizer file="&symbols;/png/16/health/doctors2.p.png" />
 	</Rule>
