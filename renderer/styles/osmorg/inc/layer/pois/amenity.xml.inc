@@ -22,7 +22,7 @@
 		<PointSymbolizer file="&symbols;/png/16/amenity/court.p.png" />
 	</Rule>
 	<Rule>
-		&maxscale_zoom18;
+		&maxscale_zoom17;
 		<Filter>[amenity]='fire_station'</Filter>
 		<PointSymbolizer file="&symbols;/png/16/amenity/firestation.p.png" />
 	</Rule>
@@ -66,5 +66,11 @@
 		&maxscale_zoom17;
 		<Filter>[amenity]='toilets'</Filter>
 		<PointSymbolizer file="&symbols;/png/16/amenity/toilets.p.png" />
+	</Rule>
+	
+	
+	<Rule>
+		<AnyFilter />
+		<TextSymbolizer name="[name]" fontset-name="book-fonts" size="9" fill="&cAmenityText;" dy="9" halo-radius="1" wrap-width="0" />
 	</Rule>
 </Style>

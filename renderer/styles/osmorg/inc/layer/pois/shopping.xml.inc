@@ -195,4 +195,10 @@
 		<Filter>[shop]='chemist'</Filter>
 		<PointSymbolizer file="&symbols;/png/16/shopping/chemist.p.png" />
 	</Rule>
+	
+	
+	<Rule>
+		<AnyFilter />
+		<TextSymbolizer name="[name]" fontset-name="book-fonts" size="9" fill="&cShoppingText;" dy="9" halo-radius="1" wrap-width="0" />
+	</Rule>
 </Style>

@@ -48,4 +48,10 @@
 		<Filter>[amenity]='restaurant'</Filter>
 		<PointSymbolizer file="&symbols;/png/16/food/restaurant.p.png" />
 	</Rule>
+	
+	
+	<Rule>
+		<AnyFilter />
+		<TextSymbolizer name="[name]" fontset-name="book-fonts" size="9" fill="&cFoodText;" dy="9" halo-radius="1" wrap-width="0" />
+	</Rule>
 </Style>

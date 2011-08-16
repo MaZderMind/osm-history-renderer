@@ -49,4 +49,10 @@
 		<Filter>[amenity]='place_of_worship'</Filter>
 		<PointSymbolizer file="&symbols;/png/16/place_of_worship/unknown3.p.png" allow-overlap="false"/>
 	</Rule>
+	
+	
+	<Rule>
+		<AnyFilter />
+		<TextSymbolizer name="[name]" fontset-name="book-fonts" size="9" fill="&cPlaceOfWorshipText;" dy="9" halo-radius="1" wrap-width="0" />
+	</Rule>
 </Style>

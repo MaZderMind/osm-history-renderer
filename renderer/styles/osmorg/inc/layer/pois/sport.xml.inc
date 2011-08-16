@@ -115,4 +115,10 @@
 		<Filter>[sport]='surf' or [sport]='windsurfing' or [sport]='surfing'</Filter>
 		<PointSymbolizer file="&symbols;/png/16/sport/windsurfing.p.png" />
 	</Rule>
+	
+	
+	<Rule>
+		<AnyFilter />
+		<TextSymbolizer name="[name]" fontset-name="book-fonts" size="9" fill="&cSportText;" dy="9" halo-radius="1" wrap-width="0" />
+	</Rule>
 </Style>
