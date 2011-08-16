@@ -22,7 +22,7 @@
 	<Rule>
 		&maxscale_zoom17;
 		<Filter>[shop]='butcher'</Filter>
-		<PointSymbolizer file="&symbols;/png/16/shopping/butcher.p.png" />
+		<PointSymbolizer file="&symbols;/png/16/shopping/butcher2.p.png" />
 	</Rule>
 	<Rule>
 		&maxscale_zoom17;

@@ -1,8 +1,4 @@
 <Style name="pois-food">
-	<!--
-	  unused icons:
-	    (all)
-	-->
 	<Rule>
 		&maxscale_zoom17;
 		<Filter>[amenity]='bar'</Filter>
