@@ -1,6 +1,6 @@
 <Style name="pois-education">
 	<Rule>
-		&maxscale_zoom15;
+		&maxscale_zoom16;
 		<Filter>[amenity]='school'</Filter>
 		<PointSymbolizer file="&symbols;/png/16/education/school.p.png" />
 	</Rule>
