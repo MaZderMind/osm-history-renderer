@@ -36,6 +36,7 @@ CREATE TABLE hist_line (
     id int,
     version smallint,
     minor smallint,
+    visible boolean,
     valid_from timestamp without time zone,
     valid_to timestamp without time zone,
     tags hstore
@@ -65,6 +66,7 @@ CREATE TABLE hist_polygon (
     id int,
     version smallint,
     minor smallint,
+    visible boolean,
     valid_from timestamp without time zone,
     valid_to timestamp without time zone,
     tags hstore

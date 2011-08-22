@@ -15,6 +15,8 @@ class ImportHandler : public Osmium::Handler::Base {
 private:
     Osmium::Handler::Progress m_progress;
     LastEntityTracker<Osmium::OSM::Node> m_node_tracker;
+    LastEntityTracker<Osmium::OSM::Way> m_way_tracker;
+
     PGconn *m_general, *m_point, *m_line, *m_polygon;
 
     projPJ pj_900913, pj_4326;
@@ -273,9 +275,60 @@ public:
         copy(m_point, line.str());
     }
 
+
+
     void way(Osmium::OSM::Way* way) {
+        m_way_tracker.feed(*way);
+
+        // we're always writing the one-off way
+        if(m_way_tracker.has_prev()) {
+            write_way();
+        }
+
+        m_way_tracker.swap();
         m_progress.way(way);
     }
+
+    void after_ways() {
+        if(m_way_tracker.has_prev()) {
+            write_way();
+        }
+
+        m_way_tracker.swap();
+    }
+
+    void write_way() {
+        std::string valid_from(m_way_tracker.prev().timestamp_as_string());
+        std::string valid_to("\\N");
+
+        // if this is another version of the same entity, the end-timestamp of the previous entity is the timestamp of the current one
+        if(m_way_tracker.cur_is_same_entity()) {
+            valid_to = m_way_tracker.cur().timestamp_as_string();
+        }
+
+        // if the prev version is deleted, it's end-timestamp is the same as its creation-timestamp
+        else if(!m_way_tracker.prev().visible()) {
+            valid_to = valid_from;
+        }
+
+        // SPEED: sum up 64k of data, before sending them to the database
+        // SPEED: instead of stringstream, which does dynamic allocation, use a fixed buffer and snprintf
+        std::stringstream line;
+        line << std::setprecision(8) <<
+            m_way_tracker.prev().id() << '\t' <<
+            m_way_tracker.prev().version() << '\t' <<
+            0 << '\t' << // minor
+            (m_way_tracker.prev().visible() ? 't' : 'f') << '\t' <<
+            valid_from << '\t' <<
+            valid_to << '\t' <<
+            format_hstore(m_way_tracker.prev().tags()) << '\t' <<
+            "\\N" <<
+            "\n";
+
+        copy(m_line, line.str());
+    }
+
+
 
     void relation(Osmium::OSM::Relation* relation) {
         m_progress.relation(relation);
