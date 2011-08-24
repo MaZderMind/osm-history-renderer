@@ -10,6 +10,7 @@
 #include <osmium/handler/progress.hpp>
 
 #include "last_entity_tracker.hpp"
+#include "nodestore.hpp"
 
 class ImportHandler : public Osmium::Handler::Base {
 private:
@@ -17,9 +18,13 @@ private:
     LastEntityTracker<Osmium::OSM::Node> m_node_tracker;
     LastEntityTracker<Osmium::OSM::Way> m_way_tracker;
 
+    Nodestore m_store;
+
     PGconn *m_general, *m_point, *m_line, *m_polygon;
 
     projPJ pj_900913, pj_4326;
+
+    geos::io::WKBWriter wkb;
 
     std::string m_dsn, m_prefix;
 
@@ -46,10 +51,13 @@ private:
         if(PQresultStatus(res) != PGRES_COPY_IN)
         {
             std::cerr << PQresultErrorMessage(res) << std::endl;
+
+            PQclear(res);
             PQfinish(conn);
             throw std::runtime_error("COPY FROM STDIN command failed");
         }
 
+        PQclear(res);
         return conn;
     }
 
@@ -64,6 +72,27 @@ private:
             std::cerr << PQerrorMessage(conn) << std::endl;
             PQfinish(conn);
             throw std::runtime_error("COPY FROM STDIN finilization failed");
+        }
+
+        PGresult *qres = PQgetResult(conn);
+        while(qres != NULL) {
+            ExecStatusType qstatus = PQresultStatus(qres);
+            switch(qstatus) {
+                case PGRES_FATAL_ERROR:
+                case PGRES_NONFATAL_ERROR:
+                    std::cerr << "error from postgres: " << PQresultErrorMessage(qres) << std::endl;
+                    break;
+                
+                case PGRES_COMMAND_OK:
+                    break;
+                
+                default:
+                    std::cerr << "PQresultStatus=" << qstatus << std::endl;
+                    break;
+            }
+
+            PQclear(qres);
+            break;
         }
 
         close(conn);
@@ -89,9 +118,12 @@ private:
         if(status != PGRES_COMMAND_OK && status != PGRES_TUPLES_OK)
         {
             std::cerr << PQresultErrorMessage(res) << std::endl;
+            PQclear(res);
             PQfinish(conn);
             throw std::runtime_error("command failed");
         }
+
+        PQclear(res);
     }
 
     std::string escape_hstore(const char* str) {
@@ -140,7 +172,7 @@ private:
     }
 
 public:
-    ImportHandler() : m_progress(), m_node_tracker(), m_prefix("hist_") {
+    ImportHandler() : m_progress(), m_node_tracker(), m_store(), wkb(), m_prefix("hist_") {
         //if(!(pj_900913 = pj_init_plus("+init=epsg:900913"))) {
         if(!(pj_900913 = pj_init_plus("+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +no_defs"))) {
             throw std::runtime_error("can't initialize proj4 with 900913");
@@ -171,11 +203,6 @@ public:
         m_prefix = new_prefix;
     }
 
-    std::string format_hstore() {
-        // FIXME tags formatting
-        return "\n";
-    }
-
 
 
     void init(Osmium::OSM::Meta& meta) {
@@ -194,13 +221,20 @@ public:
         m_polygon = opencopy(m_dsn, "polygon");
 
         m_progress.init(meta);
+
+        wkb.setIncludeSRID(true);
     }
 
     void final() {
         m_progress.final();
 
+        std::cerr << "closing point-table..." << std::endl;
         closecopy(m_point);
+
+        std::cerr << "closing line-table..." << std::endl;
         closecopy(m_line);
+
+        std::cerr << "closing polygon-table..." << std::endl;
         closecopy(m_polygon);
 
         if(Osmium::debug()) {
@@ -237,12 +271,15 @@ public:
     }
 
     void write_node() {
-        std::string valid_from(m_node_tracker.prev().timestamp_as_string());
+        Osmium::OSM::Node cur = m_node_tracker.cur();
+        Osmium::OSM::Node prev = m_node_tracker.prev();
+
+        std::string valid_from(prev.timestamp_as_string());
         std::string valid_to("\\N");
 
         // if this is another version of the same entity, the end-timestamp of the previous entity is the timestamp of the current one
         if(m_node_tracker.cur_is_same_entity()) {
-            valid_to = m_node_tracker.cur().timestamp_as_string();
+            valid_to = cur.timestamp_as_string();
         }
 
         // if the prev version is deleted, it's end-timestamp is the same as its creation-timestamp
@@ -250,25 +287,27 @@ public:
             valid_to = valid_from;
         }
 
-        double lat = m_node_tracker.prev().get_lat() * DEG_TO_RAD;
-        double lon = m_node_tracker.prev().get_lon() * DEG_TO_RAD;
+        double lat = prev.get_lat() * DEG_TO_RAD;
+        double lon = prev.get_lon() * DEG_TO_RAD;
         int r = pj_transform(pj_4326, pj_900913, 1, 1, &lon, &lat, NULL);
         if(r != 0) {
             std::stringstream msg;
-            msg << "error transforming POINT(" << lat << " " << lon << ") from 4326 to 900913)";
+            msg << "error transforming POINT(" << prev.get_lat() << " " << prev.get_lon() << ") from 4326 to 900913)";
             throw std::runtime_error(msg.str().c_str());
         }
+
+        m_store.record(prev.id(), prev.version(), prev.timestamp(), lon, lat);
 
         // SPEED: sum up 64k of data, before sending them to the database
         // SPEED: instead of stringstream, which does dynamic allocation, use a fixed buffer and snprintf
         std::stringstream line;
         line << std::setprecision(8) <<
-            m_node_tracker.prev().id() << '\t' <<
-            m_node_tracker.prev().version() << '\t' <<
-            (m_node_tracker.prev().visible() ? 't' : 'f') << '\t' <<
+            prev.id() << '\t' <<
+            prev.version() << '\t' <<
+            (prev.visible() ? 't' : 'f') << '\t' <<
             valid_from << '\t' <<
             valid_to << '\t' <<
-            format_hstore(m_node_tracker.prev().tags()) << '\t' <<
+            format_hstore(prev.tags()) << '\t' <<
             "SRID=900913;POINT(" << lon << " " << lat << ")" <<
             "\n";
 
@@ -298,32 +337,48 @@ public:
     }
 
     void write_way() {
-        std::string valid_from(m_way_tracker.prev().timestamp_as_string());
+        Osmium::OSM::Way cur = m_way_tracker.cur();
+        Osmium::OSM::Way prev = m_way_tracker.prev();
+
+        std::string valid_from(prev.timestamp_as_string());
         std::string valid_to("\\N");
 
         // if this is another version of the same entity, the end-timestamp of the previous entity is the timestamp of the current one
         if(m_way_tracker.cur_is_same_entity()) {
-            valid_to = m_way_tracker.cur().timestamp_as_string();
+            valid_to = cur.timestamp_as_string();
         }
 
         // if the prev version is deleted, it's end-timestamp is the same as its creation-timestamp
-        else if(!m_way_tracker.prev().visible()) {
+        else if(!prev.visible()) {
             valid_to = valid_from;
         }
+
+        if(Osmium::debug()) {
+            std::cerr << std::endl << "forging geometry of way " << prev.id() << " v" << prev.version() << " at tstamp " << prev.timestamp() << std::endl;
+        }
+        geos::geom::Geometry* geom = m_store.mkgeom(prev.nodes(), prev.timestamp(), false /* looksLikePolygon */);
 
         // SPEED: sum up 64k of data, before sending them to the database
         // SPEED: instead of stringstream, which does dynamic allocation, use a fixed buffer and snprintf
         std::stringstream line;
         line << std::setprecision(8) <<
-            m_way_tracker.prev().id() << '\t' <<
-            m_way_tracker.prev().version() << '\t' <<
+            prev.id() << '\t' <<
+            prev.version() << '\t' <<
             0 << '\t' << // minor
-            (m_way_tracker.prev().visible() ? 't' : 'f') << '\t' <<
+            (prev.visible() ? 't' : 'f') << '\t' <<
             valid_from << '\t' <<
             valid_to << '\t' <<
-            format_hstore(m_way_tracker.prev().tags()) << '\t' <<
-            "\\N" <<
-            "\n";
+            format_hstore(prev.tags()) << '\t';
+
+
+        if(geom) {
+            wkb.writeHEX(*geom, line);
+            Osmium::Geometry::geos_geometry_factory()->destroyGeometry(geom);
+        } else {
+            line << "\\N";
+        }
+
+        line << "\n";
 
         copy(m_line, line.str());
     }
