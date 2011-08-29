@@ -3,6 +3,9 @@ I don't like the osm.org style - not bacause of its look but because of the way 
 
 This style tries to stay close to the look of the osm.org style while beeing more logical structured, better maintainable, hstore based and mapnik2 compatible.
 
+Requires a patched mapnik: http://trac.mapnik.org/ticket/820
+
+
 # Why not MapCSS, Cascadenig, Carto, ..
 I'm trying to stay visually close to the osm.org style, which is much easier when using the raw mapnik format.
 

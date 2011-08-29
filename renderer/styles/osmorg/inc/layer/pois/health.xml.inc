@@ -27,7 +27,7 @@
 	
 	
 	<Rule>
-		<AnyFilter />
+		<AlsoFilter />
 		<TextSymbolizer name="[name]" fontset-name="book-fonts" size="9" fill="&cHealthText;" dy="9" halo-radius="1" wrap-width="0" />
 	</Rule>
 </Style>
