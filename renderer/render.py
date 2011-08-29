@@ -197,7 +197,7 @@ def zoom2size(bbox, zoom):
 
 
 def preprocess(style, date):
-    style = output = subprocess.Popen(["xmllint", "--noent", style], stdout=subprocess.PIPE).communicate()[0]
+    style = output = subprocess.Popen(["xmllint", "--noent", "--xinclude", style], stdout=subprocess.PIPE).communicate()[0]
     return style.replace('{DATE}', date)
 
 # this does not work with python 2.7 because of http://bugs.python.org/issue902037

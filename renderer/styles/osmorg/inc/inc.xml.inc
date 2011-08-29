@@ -4,9 +4,6 @@
 <!ENTITY % colors SYSTEM "colors.xml.inc">
 %colors;
 
-<!ENTITY % layers SYSTEM "layers.xml.inc">
-%layers;
-
 <!ENTITY % scales SYSTEM "scales.xml.inc">
 %scales;
 
