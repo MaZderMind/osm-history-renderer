@@ -1,0 +1,285 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE Include [
+    <!ENTITY % inc SYSTEM "../../inc.xml.inc">
+    %inc;
+]>
+
+<Include xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Style name="roads-residential-area-casing" xml:id="area-casing">
+		<Rule>
+			&maxscale_zoom14;
+			
+			<LineSymbolizer stroke="#999" stroke-width="1" />
+		</Rule>
+	</Style>
+	
+	
+	
+	<Style name="roads-residential-area-fill" xml:id="area-fill">
+		<Rule>
+			&maxscale_zoom14;
+			
+			<PolygonSymbolizer fill="#fff" />
+		</Rule>
+	</Style>
+	
+	
+	
+	<Style name="roads-residential-tunnel-casing" xml:id="tunnel-casing">
+		<Rule>
+			&maxscale_zoom13;
+			&minscale_zoom13;
+			<Filter>[highway]='residential' and [tunnel]='yes'</Filter>
+			<LineSymbolizer stroke="#999" stroke-width="3" stroke-dasharray="4,2" />
+		</Rule>
+		<Rule>
+			&maxscale_zoom14;
+			&minscale_zoom14;
+			<Filter>[highway]='residential' and [tunnel]='yes'</Filter>
+			<LineSymbolizer stroke="#999" stroke-width="4.5" stroke-dasharray="4,2" />
+		</Rule>
+		<Rule>
+			&maxscale_zoom15;
+			&minscale_zoom15;
+			<Filter>[highway]='residential' and [tunnel]='yes'</Filter>
+			<LineSymbolizer stroke="#999" stroke-width="8" stroke-dasharray="4,2" />
+		</Rule>
+		<Rule>
+			&maxscale_zoom16;
+			&minscale_zoom16;
+			<Filter>[highway]='residential' and [tunnel]='yes'</Filter>
+			<LineSymbolizer stroke="#999" stroke-width="11" stroke-dasharray="4,2" />
+		</Rule>
+		<Rule>
+			&maxscale_zoom17;
+			<Filter>[highway]='residential' and [tunnel]='yes'</Filter>
+			<LineSymbolizer stroke="#999" stroke-width="16" stroke-dasharray="4,2" />
+		</Rule>
+	</Style>
+	
+	
+	
+	<Style name="roads-residential-tunnel-fill" xml:id="tunnel-fill">
+		<Rule>
+			&maxscale_zoom13;
+			&minscale_zoom13;
+			<Filter>[highway]='residential' and [tunnel]='yes'</Filter>
+			<LineSymbolizer stroke="#fff" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" />
+		</Rule>
+		<Rule>
+			&maxscale_zoom14;
+			&minscale_zoom14;
+			<Filter>[highway]='residential' and [tunnel]='yes'</Filter>
+			<LineSymbolizer stroke="#fff" stroke-width="3" stroke-linejoin="round" stroke-linecap="round" />
+		</Rule>
+		<Rule>
+			&maxscale_zoom15;
+			&minscale_zoom15;
+			<Filter>[highway]='residential' and [tunnel]='yes'</Filter>
+			<LineSymbolizer stroke="#fff" stroke-width="6.5" stroke-linejoin="round" stroke-linecap="round" />
+		</Rule>
+		<Rule>
+			&maxscale_zoom16;
+			&minscale_zoom16;
+			<Filter>[highway]='residential' and [tunnel]='yes'</Filter>
+			<LineSymbolizer stroke="#fff" stroke-width="9.4" stroke-linejoin="round" stroke-linecap="round" />
+		</Rule>
+		<Rule>
+			&maxscale_zoom17;
+			<Filter>[highway]='residential' and [tunnel]='yes'</Filter>
+			<LineSymbolizer stroke="#fff" stroke-width="13" stroke-linejoin="round" stroke-linecap="round" />
+		</Rule>
+	</Style>
+	
+	
+	
+	<Style name="roads-residential-bridge-casing" xml:id="bridge-casing">
+		<Rule>
+			&maxscale_zoom14;
+			&minscale_zoom14;
+			<Filter>[highway]='residential' and [bridge]='yes'</Filter>
+			<LineSymbolizer stroke="#000" stroke-width="4.5" />
+		</Rule>
+		<Rule>
+			&maxscale_zoom15;
+			&minscale_zoom15;
+			<Filter>[highway]='residential' and [bridge]='yes'</Filter>
+			<LineSymbolizer stroke="#000" stroke-width="9" />
+		</Rule>
+		<Rule>
+			&maxscale_zoom16;
+			&minscale_zoom16;
+			<Filter>[highway]='residential' and [bridge]='yes'</Filter>
+			<LineSymbolizer stroke="#000" stroke-width="11" />
+		</Rule>
+		<Rule>
+			&maxscale_zoom17;
+			<Filter>[highway]='residential' and [bridge]='yes'</Filter>
+			<LineSymbolizer stroke="#000" stroke-width="16" />
+		</Rule>
+	</Style>
+	
+	
+	
+	<Style name="roads-residential-bridge-fill" xml:id="bridge-fill">
+		<Rule>
+			&maxscale_zoom14;
+			&minscale_zoom14;
+			<Filter>[highway]='residential' and [bridge]='yes'</Filter>
+			<LineSymbolizer stroke="#fff" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round" />
+		</Rule>
+		<Rule>
+			&maxscale_zoom15;
+			&minscale_zoom15;
+			<Filter>[highway]='residential' and [bridge]='yes'</Filter>
+			<LineSymbolizer stroke="#fff" stroke-width="7.5" stroke-linejoin="round" stroke-linecap="round" />
+		</Rule>
+		<Rule>
+			&maxscale_zoom16;
+			&minscale_zoom16;
+			<Filter>[highway]='residential' and [bridge]='yes'</Filter>
+			<LineSymbolizer stroke="#fff" stroke-width="9.5" stroke-linejoin="round" stroke-linecap="round" />
+		</Rule>
+		<Rule>
+			&maxscale_zoom17;
+			<Filter>[highway]='residential' and [bridge]='yes'</Filter>
+			<LineSymbolizer stroke="#fff" stroke-width="14" stroke-linejoin="round" stroke-linecap="round" />
+		</Rule>
+	</Style>
+	
+	
+	
+	<Style name="roads-residential-casing" xml:id="casing">
+		<Rule>
+			&maxscale_zoom13;
+			&minscale_zoom13;
+			<Filter>[highway]='residential' and not [tunnel]='yes' and not [bridge]='yes'</Filter>
+			<LineSymbolizer stroke="#999" stroke-width="3" stroke-linejoin="round" stroke-linecap="round" />
+		</Rule>
+		<Rule>
+			&maxscale_zoom14;
+			&minscale_zoom14;
+			<Filter>[highway]='residential' and not [tunnel]='yes' and not [bridge]='yes'</Filter>
+			<LineSymbolizer stroke="#999" stroke-width="4.5" stroke-linejoin="round" stroke-linecap="round" />
+		</Rule>
+		<Rule>
+			&maxscale_zoom15;
+			&minscale_zoom15;
+			<Filter>[highway]='residential' and not [tunnel]='yes' and not [bridge]='yes'</Filter>
+			<LineSymbolizer stroke="#bbb" stroke-width="8" stroke-linejoin="round" stroke-linecap="round" />
+		</Rule>
+		<Rule>
+			&maxscale_zoom16;
+			&minscale_zoom16;
+			<Filter>[highway]='residential' and not [tunnel]='yes' and not [bridge]='yes'</Filter>
+			<LineSymbolizer stroke="#bbb" stroke-width="11" stroke-linejoin="round" stroke-linecap="round" />
+		</Rule>
+		<Rule>
+			&maxscale_zoom17;
+			<Filter>[highway]='residential' and not [tunnel]='yes' and not [bridge]='yes'</Filter>
+			<LineSymbolizer stroke="#bbb" stroke-width="16" stroke-linejoin="round" stroke-linecap="round" />
+		</Rule>
+	</Style>
+	
+	
+	
+	<Style name="roads-residential-fill" xml:id="fill">
+		<Rule>
+			&maxscale_zoom10;
+			&minscale_zoom12;
+			<Filter>[highway]='residential' and not [tunnel]='yes' and not [bridge]='yes'</Filter>
+			<LineSymbolizer stroke="#bbb" stroke-width="1" />
+		</Rule>
+		<Rule>
+			&maxscale_zoom13;
+			&minscale_zoom13;
+			<Filter>[highway]='residential' and not [tunnel]='yes' and not [bridge]='yes'</Filter>
+			<LineSymbolizer stroke="#fff" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" />
+		</Rule>
+		<Rule>
+			&maxscale_zoom14;
+			&minscale_zoom14;
+			<Filter>[highway]='residential' and not [tunnel]='yes' and not [bridge]='yes'</Filter>
+			<LineSymbolizer stroke="#fff" stroke-width="3" stroke-linejoin="round" stroke-linecap="round" />
+		</Rule>
+		<Rule>
+			&maxscale_zoom15;
+			&minscale_zoom15;
+			<Filter>[highway]='residential' and not [tunnel]='yes' and not [bridge]='yes'</Filter>
+			<LineSymbolizer stroke="#fff" stroke-width="6.5" stroke-linejoin="round" stroke-linecap="round" />
+		</Rule>
+		<Rule>
+			&maxscale_zoom16;
+			&minscale_zoom16;
+			<Filter>[highway]='residential' and not [tunnel]='yes' and not [bridge]='yes'</Filter>
+			<LineSymbolizer stroke="#fff" stroke-width="9.4" stroke-linejoin="round" stroke-linecap="round" />
+		</Rule>
+		<Rule>
+			&maxscale_zoom17;
+			<Filter>[highway]='residential' and not [tunnel]='yes'</Filter>
+			<LineSymbolizer stroke="#fff" stroke-width="13" stroke-linejoin="round" stroke-linecap="round" />
+		</Rule>
+	</Style>
+	
+	
+	
+	<Style name="roads-residential-construction" xml:id="construction">
+		<Rule>
+			&maxscale_zoom13;
+			&minscale_zoom15;
+			<Filter>([highway]='proposed' or [highway]='construction') and [construction]='residential'</Filter>
+			<LineSymbolizer stroke="#aaa" stroke-width="4" />
+			<LineSymbolizer stroke="#fff" stroke-width="3.5" stroke-dasharray="6,4"/>
+		</Rule>
+		<Rule>
+			&maxscale_zoom16;
+			<Filter>([highway]='proposed' or [highway]='construction') and [construction]='residential'</Filter>
+			<LineSymbolizer stroke="#aaa" stroke-width="8" />
+			<LineSymbolizer stroke="#fff" stroke-width="7" stroke-dasharray="8,6"/>
+		</Rule>
+	</Style>
+	
+	
+	
+	<Style name="roads-residential-access" xml:id="access">
+		<Rule>
+			<Filter>[highway]='residential' and [access]='permissive'</Filter>
+			&maxscale_zoom15;
+			&minscale_zoom16;
+			<LineSymbolizer stroke="#cf9" stroke-width="6" stroke-dasharray="6,8" stroke-opacity="0.5" stroke-linejoin="round" stroke-linecap="round" />
+		</Rule>
+		<Rule>
+			<Filter>[highway]='residential' and [access]='destination'</Filter>
+			&maxscale_zoom15;
+			&minscale_zoom16;
+			<LineSymbolizer stroke="#c2e0ff" stroke-width="6" stroke-dasharray="6,8" stroke-opacity="0.5" stroke-linejoin="round" stroke-linecap="round" />
+		</Rule>
+	</Style>
+	
+	
+	<Style name="roads-residential-text" xml:id="text">
+		<Rule>
+			<Filter>[highway]='residential' and not [bridge]='yes'</Filter>
+			&maxscale_zoom15;
+			<TextSymbolizer name="[ref]" fontset-name="bold-fonts" size="10" fill="#000" halo-radius="1" minimum-distance="18" spacing="750" />
+		</Rule>
+		
+		<Rule>
+			<Filter>[highway] = 'residential'</Filter>
+			&maxscale_zoom15;
+			&minscale_zoom15;
+			<TextSymbolizer name="[name]" fontset-name="book-fonts" size="8" fill="#000" halo-radius="1" spacing="300" placement="line" />
+		</Rule>
+		<Rule>
+			<Filter>[highway] = 'residential'</Filter>
+			&maxscale_zoom16;
+			&minscale_zoom16;
+			<TextSymbolizer name="[name]" fontset-name="book-fonts" size="9" fill="#000" halo-radius="1" spacing="300" placement="line" />
+		</Rule>
+		<Rule>
+			<Filter>[highway] = 'residential'</Filter>
+			&maxscale_zoom17;
+			<TextSymbolizer name="[name]" fontset-name="book-fonts" size="11" fill="#000" halo-radius="1" spacing="400" placement="line" />
+		</Rule>
+    </Style>
+</Include>

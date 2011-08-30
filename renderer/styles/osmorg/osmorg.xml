@@ -18,13 +18,7 @@
     
     <!--&layer-rail;-->
     
-    <!--&layer-residential;-->
-    <!--&layer-road;-->
-    <!--&layer-tertiary;-->
-    <!--&layer-secondary;-->
-    <!--&layer-primary;-->
-    <!--&layer-trunk;-->
-    <!--&layer-motorway;-->
+    <xi:include href="inc/layer/roads-minor.xml" />
     
     <!--&layer-turningcircle;-->
     <!--&layer-junctions;-->
