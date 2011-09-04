@@ -5,7 +5,7 @@
 ]>
 
 <Include xmlns:xi="http://www.w3.org/2001/XInclude">
-	<Style name="pois-place_of_worship">
+	<Style name="pois-place_of_worship" filter-mode="first">
 		<Rule>
 			&maxscale_zoom16;
 			<Filter>[amenity]='place_of_worship' and [religion] = 'bahai'</Filter>
