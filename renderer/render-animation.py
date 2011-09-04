@@ -83,7 +83,7 @@ def main():
             sys.exit(1)
     
     if options.zoom:
-        options.size = render.zoom2size(bbox, options.zoom);
+        options.size = render.zoom2size(options.bbox, options.zoom);
     
     if options.anistart:
         options.anistart = datetime.strptime(options.anistart, "%Y-%m-%d %H:%M:%S")
