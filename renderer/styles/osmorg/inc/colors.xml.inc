@@ -29,3 +29,18 @@
 <!ENTITY cTouristText "#734A08">
 <!ENTITY cTransportText "#0092DA">
 <!ENTITY cWaterText "#0092DA">
+
+
+<!-- roads -->
+<!ENTITY cRoadsText "#000000">
+<!ENTITY cBridgeCasing "#000000">
+
+<!-- access -->
+<!ENTITY cAccessPermissive "#CCFF99">
+<!ENTITY cAccessDestination "#C2E0FF">
+
+<!-- residential -->
+<!ENTITY cResidentialCasing "#999999">
+<!ENTITY cResidentialFill "#FFFFFF">
+<!ENTITY cResidentialConstructionA "#AAAAAA">
+<!ENTITY cResidentialConstructionB "#FFFFFF">
