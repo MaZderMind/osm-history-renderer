@@ -159,7 +159,7 @@ private:
     std::string format_hstore(const Osmium::OSM::TagList& tags) {
         // SPEED: instead of stringstream, which does dynamic allocation, use a fixed buffer
         std::stringstream hstore;
-        for (Osmium::OSM::TagList::const_iterator it = tags.begin(); it != tags.end(); ++it) {
+        for(Osmium::OSM::TagList::const_iterator it = tags.begin(); it != tags.end(); ++it) {
             std::string k = escape_hstore(it->key());
             std::string v = escape_hstore(it->value());
             
@@ -359,9 +359,9 @@ public:
 
         geos::geom::Geometry* geom = m_store.mkgeom(prev.nodes(), prev.timestamp(), false /* looksLikePolygon */);
         if(!geom) {
-			std::cerr << "no valid geometry for way " << prev.id() << " v" << prev.version() << " at tstamp " << prev.timestamp() << std::endl;
-			return;
-		}
+            std::cerr << "no valid geometry for way " << prev.id() << " v" << prev.version() << " at tstamp " << prev.timestamp() << std::endl;
+            return;
+        }
 
         // SPEED: sum up 64k of data, before sending them to the database
         // SPEED: instead of stringstream, which does dynamic allocation, use a fixed buffer and snprintf
