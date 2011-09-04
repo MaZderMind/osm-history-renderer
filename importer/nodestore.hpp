@@ -100,6 +100,11 @@ public:
             c->push_back(geos::geom::Coordinate(info.lat, info.lon, DoubleNotANumber));
         }
 
+        if(c->size() < 2) {
+			std::cerr << "found only " << c->size() << " valid coordinates, skipping way" << std::endl;
+			return NULL;
+		}
+
         geos::geom::Geometry* geom;
 
         try {

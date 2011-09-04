@@ -354,9 +354,14 @@ public:
         }
 
         if(Osmium::debug()) {
-            std::cerr << std::endl << "forging geometry of way " << prev.id() << " v" << prev.version() << " at tstamp " << prev.timestamp() << std::endl;
+            std::cerr << "forging geometry of way " << prev.id() << " v" << prev.version() << " at tstamp " << prev.timestamp() << std::endl;
         }
+
         geos::geom::Geometry* geom = m_store.mkgeom(prev.nodes(), prev.timestamp(), false /* looksLikePolygon */);
+        if(!geom) {
+			std::cerr << "no valid geometry for way " << prev.id() << " v" << prev.version() << " at tstamp " << prev.timestamp() << std::endl;
+			return;
+		}
 
         // SPEED: sum up 64k of data, before sending them to the database
         // SPEED: instead of stringstream, which does dynamic allocation, use a fixed buffer and snprintf
