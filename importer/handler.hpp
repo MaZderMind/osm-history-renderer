@@ -9,14 +9,14 @@
 #include <osmium.hpp>
 #include <osmium/handler/progress.hpp>
 
-#include "last_entity_tracker.hpp"
+#include "entitytracker.hpp"
 #include "nodestore.hpp"
 
 class ImportHandler : public Osmium::Handler::Base {
 private:
     Osmium::Handler::Progress m_progress;
-    LastEntityTracker<Osmium::OSM::Node> m_node_tracker;
-    LastEntityTracker<Osmium::OSM::Way> m_way_tracker;
+    EntityTracker<Osmium::OSM::Node> m_node_tracker;
+    EntityTracker<Osmium::OSM::Way> m_way_tracker;
 
     Nodestore m_store;
 

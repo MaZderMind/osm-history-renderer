@@ -1,8 +1,8 @@
-#ifndef IMPORTER_LASTENTITYTRACKER_HPP
-#define IMPORTER_LASTENTITYTRACKER_HPP
+#ifndef IMPORTER_ENTITYTRACKER_HPP
+#define IMPORTER_ENTITYTRACKER_HPP
 
 template <class TObject>
-class LastEntityTracker {
+class EntityTracker {
 
 private:
     // SPEED: use pointers instead of class values, allowing swap() to just shift pointers around instead of copying data
@@ -10,7 +10,7 @@ private:
     TObject m_cur;
 
 public:
-    LastEntityTracker() : m_prev(), m_cur() {}
+    EntityTracker() : m_prev(), m_cur() {}
 
 
     TObject &prev() {
@@ -48,4 +48,4 @@ public:
     }
 };
 
-#endif // IMPORTER_LASTENTITYTRACKER_HPP
+#endif // IMPORTER_ENTITYTRACKER_HPP

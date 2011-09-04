@@ -49,46 +49,72 @@
 			<Filter>[leisure] = 'swimming_pool'</Filter>
 			&maxscale_zoom14;
 			
-			<PolygonSymbolizer fill=">#b5d0d0" stroke="blue" stroke-width="0.5" />
+			<PolygonSymbolizer fill="&cLeisureSwimmingPool;"  />
+			<LineSymbolizer stroke="&cLeisureSwimmingPoolOutline;" stroke-width="0.5" />
 		</Rule>
 		<Rule>
 			<Filter>[leisure] = 'playground'</Filter>
 			&maxscale_zoom13;
 			
-			<PolygonSymbolizer fill="#ccfff1" stroke="#666" stroke-width="0.3" />
+			<PolygonSymbolizer fill="&cLeisurePlayground;" />
+			<LineSymbolizer stroke="&cLeisurePlaygroundOutline;" stroke-width="0.3" />
 		</Rule>
+		<Rule>
+			&maxscale_zoom10;
+			<Filter>[leisure] = 'park' or [leisure] = 'recreation_ground'</Filter>
+			
+			<PolygonSymbolizer fill="&cLeisurePark;" fill-opacity=">0.6" />
+		</Rule>
+		<Rule>
+			<Filter>[leisure] = 'garden' or [leisure] = 'common'</Filter>
+			&maxscale_zoom10;
+			
+			<PolygonSymbolizer fill="&cLeisureGarden;" />
+		</Rule>
+		<Rule>
+			<Filter>[leisure] = 'golf_course'</Filter>
+			&maxscale_zoom10;
+			
+			<PolygonSymbolizer fill="#b5e3b5" />
+		</Rule>
+		
+		
+		
 		<Rule>
 			<Filter>[tourism] = 'camp_site' or [tourism] = 'caravan_site' or [tourism] = 'picnic_site'</Filter>
 			&maxscale_zoom13;
 			
-			<PolygonSymbolizer fill="#ccff99" fill-opacity="0.5" />
-			<LineSymbolizer stroke="#666" stroke-width="0.3" />
+			<PolygonSymbolizer fill="&cTourismCampSite;" fill-opacity="0.5" />
+			<LineSymbolizer stroke="&cTourismCampSiteOutline;" stroke-width="0.3" />
 		</Rule>
 		<Rule>
 			<Filter>[tourism] = 'attraction'</Filter>
 			&maxscale_zoom10;
 			
-			<PolygonSymbolizer fill="#f2caea" />
+			<PolygonSymbolizer fill="&cTourismAttraction;" />
 		</Rule>
+		<Rule>
+			<Filter>[tourism] = 'zoo'</Filter>
+			&maxscale_zoom10;
+			
+			<PolygonPatternSymbolizer file="&symbols;/pattern/zoo.png" />
+		</Rule>
+		
+		
+		
 		<Rule>
 			<Filter>[landuse] = 'quarry'</Filter>
 			&maxscale_zoom11;
 			
 			<PolygonPatternSymbolizer file="&symbols;/patterns/quarry.png" />
-			<LineSymbolizer stroke="grey" stroke-width="0.5" />
+			<LineSymbolizer stroke="&cLanduseQuarry;" stroke-width="0.5" />
 		</Rule>
 		<Rule>
 			<Filter>[landuse] = 'vineyard'</Filter>
 			&maxscale_zoom10;
 			&minscale_zoom12;
 			
-			<PolygonSymbolizer fill="#abdf96" />
-		</Rule>
-		<Rule>
-			<Filter>[landuse] = 'orchard'</Filter>
-			&maxscale_zoom10;
-			
-			<PolygonPatternSymbolizer file="&symbols;/patterns/orchard.png" />
+			<PolygonSymbolizer fill="&cLanduseVineyard;" />
 		</Rule>
 		<Rule>
 			<Filter>[landuse] = 'vineyard'</Filter>
@@ -97,76 +123,32 @@
 			<PolygonPatternSymbolizer file="&symbols;/patterns/vineyard.png" />
 		</Rule>
 		<Rule>
-			<Filter>[landuse] = 'cemetery' or [landuse] = 'grave_yard' or [amenity]='grave_yard'</Filter>
+			<Filter>[landuse] = 'orchard'</Filter>
+			&maxscale_zoom10;
+			
+			<PolygonPatternSymbolizer file="&symbols;/patterns/orchard.png" />
+		</Rule>
+		<Rule>
+			<Filter>[landuse] = 'cemetery' or [landuse] = 'grave_yard' or [amenity] = 'grave_yard'</Filter>
 			&maxscale_zoom10;
 			&minscale_zoom14;
 			
-			<PolygonSymbolizer fill="#aacbaf" />
+			<PolygonSymbolizer fill="&cLanduseCemetery;" />
 		</Rule>
 		<Rule>
-			<Filter>[landuse] = 'residential'</Filter>
-			&maxscale_zoom10;
-			&minscale_zoom18;
-			
-			<PolygonSymbolizer fill="#ddd" />
-		</Rule>
-		<Rule>
-			<Filter>[landuse] = 'garages'</Filter>
-			&maxscale_zoom12;
-			&minscale_zoom18;
-			
-			<PolygonSymbolizer fill="#996" fill-opacity="0.2" />
-		</Rule>
-		<Rule>
-			<Filter>[military] = 'barracks'</Filter>
-			&maxscale_zoom10;
-			&minscale_zoom18;
-			
-			<PolygonSymbolizer fill="#ff8f8f" />
-		</Rule>
-		<Rule>
-			<Filter>[landuse]='field' or [natural]='field'</Filter>
-			&maxscale_zoom10;
-			&minscale_zoom13;
-			
-			<PolygonSymbolizer fill="#666600" fill-opacity="0.2" />
-		</Rule>
-		<Rule>
-			<Filter>[landuse]='field' or [natural]='field'</Filter>
-			&maxscale_zoom14;
-			&minscale_zoom18;
-			
-			<PolygonSymbolizer fill="#666600" fill-opacity="0.2" />
-			<LineSymbolizer stroke="#660" stroke-opacity="0.4" stroke-width="0.3" />
-		</Rule>
-		<Rule>
-			<Filter>[military] = 'danger_area'</Filter>
-			&maxscale_zoom9;
-			&minscale_zoom10;
-			
-			<PolygonSymbolizer fill="pink" fill-opacity="0.3" />
-		</Rule>
-		<Rule>
-			<Filter>[military] = 'danger_area'</Filter>
-			&maxscale_zoom11;
-			&minscale_zoom18;
-			
-			<PolygonPatternSymbolizer file="&symbols;/pattern/danger.png" />
-		</Rule>
-		<Rule>
-			<Filter>([landuse] = 'cemetery' or [landuse] = 'grave_yard' or [amenity]='grave_yard') and [religion] = 'jewish'</Filter>
+			<Filter>([landuse] = 'cemetery' or [landuse] = 'grave_yard' or [amenity] = 'grave_yard') and [religion] = 'jewish'</Filter>
 			&maxscale_zoom14;
 			
 			<PolygonPatternSymbolizer file="&symbols;/pattern/cemetery_jewish.png" />
 		</Rule>
 		<Rule>
-			<Filter>([landuse] = 'cemetery' or [landuse] = 'grave_yard' or [amenity]='grave_yard') and [religion] = 'christian'</Filter>
+			<Filter>([landuse] = 'cemetery' or [landuse] = 'grave_yard' or [amenity] = 'grave_yard') and [religion] = 'christian'</Filter>
 			&maxscale_zoom14;
 			
 			<PolygonPatternSymbolizer file="&symbols;/pattern/cemetery_christian.png" />
 		</Rule>
 		<Rule>
-			<Filter>([landuse] = 'cemetery' or [landuse] = 'grave_yard' or [amenity]='grave_yard') and [religion] = 'generic'</Filter>
+			<Filter>([landuse] = 'cemetery' or [landuse] = 'grave_yard' or [amenity] = 'grave_yard') and [religion] = 'generic'</Filter>
 			&maxscale_zoom14;
 			
 			<PolygonPatternSymbolizer file="&symbols;/pattern/cemetery_generic.png" />
@@ -175,44 +157,43 @@
 			&maxscale_zoom10;
 			<Filter>[landuse] = 'meadow' or [landuse] = 'grass'</Filter>
 			
-			<PolygonSymbolizer fill="#cfeca8" />
+			<PolygonSymbolizer fill="&cLanduseMeadow;" />
 		</Rule>
 		<Rule>
+			<Filter>[landuse] = 'residential'</Filter>
 			&maxscale_zoom10;
-			<Filter>[leisure] = 'park' or [leisure] = 'recreation_ground'</Filter>
+			&minscale_zoom18;
 			
-			<PolygonSymbolizer fill="#b6fdb6" fill-opacity=">0.6" />
+			<PolygonSymbolizer fill="&cLanduseResidential;" />
 		</Rule>
 		<Rule>
-			<Filter>[tourism] = 'zoo'</Filter>
-			&maxscale_zoom10;
+			<Filter>[landuse] = 'garages'</Filter>
+			&maxscale_zoom12;
+			&minscale_zoom18;
 			
-			<PolygonPatternSymbolizer file="&symbols;/pattern/zoo.png" />
+			<PolygonSymbolizer fill="&cLanduseGarages;" fill-opacity="0.2" />
 		</Rule>
 		<Rule>
-			<Filter>[leisure] = 'common'</Filter>
+			<Filter>[landuse] = 'field' or [natural] = 'field'</Filter>
 			&maxscale_zoom10;
+			&minscale_zoom13;
 			
-			<PolygonSymbolizer fill="#cfeca8" />
+			<PolygonSymbolizer fill="&cLanduseField;" fill-opacity="0.2" />
 		</Rule>
 		<Rule>
-			<Filter>[leisure] = 'garden'</Filter>
-			&maxscale_zoom10;
+			<Filter>[landuse] = 'field' or [natural] = 'field'</Filter>
+			&maxscale_zoom14;
+			&minscale_zoom18;
 			
-			<PolygonSymbolizer fill="#cfeca8" />
-		</Rule>
-		<Rule>
-			<Filter>[leisure] = 'golf_course'</Filter>
-			&maxscale_zoom10;
-			
-			<PolygonSymbolizer fill="#b5e3b5" />
+			<PolygonSymbolizer fill="&cLanduseField;" fill-opacity="0.2" />
+			<LineSymbolizer stroke="&cLanduseField;" stroke-opacity="0.4" stroke-width="0.3" />
 		</Rule>
 		<Rule>
 			<Filter>[landuse] = 'allotments'</Filter>
 			&maxscale_zoom10;
 			&minscale_zoom13;
 			
-			<PolygonSymbolizer fill="#e5c7ab" />
+			<PolygonSymbolizer fill="&cLanduseAllotments;" />
 		</Rule>
 		<Rule>
 			<Filter>[landuse] = 'allotments'</Filter>
@@ -225,7 +206,7 @@
 			&maxscale_zoom8;
 			&minscale_zoom13;
 			
-			<PolygonSymbolizer fill="#8dc56c" />
+			<PolygonSymbolizer fill="&cLanduseForest;" />
 		</Rule>
 		<Rule>
 			<Filter>[landuse] = 'forest'</Filter>
@@ -234,56 +215,101 @@
 			<PolygonPatternSymbolizer file="&symbols;/pattern/forest.png" />
 		</Rule>
 		<Rule>
-			<Filter>[landuse]='farmyard'</Filter>
+			<Filter>[landuse] = 'farmyard'</Filter>
 			&maxscale_zoom9;
 			
-			<PolygonSymbolizer fill="#ddbf92" />
+			<PolygonSymbolizer fill="&cLanduseFarmyard;" />
 		</Rule>
 		<Rule>
-			<Filter>[landuse] = 'farm' or [landuse]='farmland'</Filter>
+			<Filter>[landuse] = 'farm' or [landuse] = 'farmland'</Filter>
 			&maxscale_zoom9;
 			
-			<PolygonSymbolizer fill="#ead8bd" />
+			<PolygonSymbolizer fill="&cLanduseFarm;" />
 		</Rule>
 		<Rule>
 			<Filter>[landuse] = 'recreation_ground' or [landuse] = 'conservation'</Filter>
 			&maxscale_zoom10;
 			
-			<PolygonSymbolizer fill="#cfeca8" />
+			<PolygonSymbolizer fill="&cLanduseRecreationGround;" />
 		</Rule>
 		<Rule>
 			<Filter>[landuse] = 'village_green'</Filter>
 			&maxscale_zoom11;
 			
-			<PolygonSymbolizer fill="#cfeca8" />
+			<PolygonSymbolizer fill="&cLanduseVillageGreen;" />
 		</Rule>
 		<Rule>
 			<Filter>[landuse] = 'retail'</Filter>
 			&maxscale_zoom10;
 			
-			<PolygonSymbolizer fill="#f1dada" />
+			<PolygonSymbolizer fill="&cLanduseRetail;" />
 		</Rule>
 		<Rule>
 			<Filter>[landuse] = 'retail'</Filter>
 			&maxscale_zoom15;
 			
-			<LineSymbolizer stroke=">red" stroke-width="0.3" />
+			<LineSymbolizer stroke="&cLanduseRetailOutline;" stroke-width="0.3" />
 		</Rule>
 		<Rule>
-			<Filter>[landuse] = 'industrial' or [landuse]='railway'</Filter>
+			<Filter>[landuse] = 'industrial' or [landuse] = 'railway'</Filter>
 			&maxscale_zoom10;
 			
-			<PolygonSymbolizer fill="#dfd1d6" />
+			<PolygonSymbolizer fill="&cLanduseIndustrial;" />
 		</Rule>
 		<Rule>
-			<Filter>[power] = 'station' or [power]='generator'</Filter>
+			<Filter>[landuse] = 'commercial'</Filter>
+			&maxscale_zoom10;
+		
+			<PolygonSymbolizer fill="&cLanduseCommercial;" />
+		</Rule>
+		<Rule>
+			<Filter>[landuse] = 'brownfield' or [landuse] = 'landfill' or [landuse] = 'greenfield'</Filter>
+			&maxscale_zoom10;
+			
+			<PolygonSymbolizer fill="&cLanduseBrownfield;" fill-opacity="0.7" />
+		</Rule>
+		<Rule>
+			<Filter>[landuse] = 'construction'</Filter>
+			&maxscale_zoom10;
+			
+			<PolygonSymbolizer fill="&cLanduseConstruction;" fill-opacity="0.7" />
+		</Rule>
+		
+		
+		
+		<Rule>
+			<Filter>[military] = 'barracks'</Filter>
+			&maxscale_zoom10;
+			&minscale_zoom18;
+			
+			<PolygonSymbolizer fill="&cMilitaryBarracks;" />
+		</Rule>
+		<Rule>
+			<Filter>[military] = 'danger_area'</Filter>
+			&maxscale_zoom9;
+			&minscale_zoom10;
+			
+			<PolygonSymbolizer fill="&cMilitaryDangerArea;" fill-opacity="0.3" />
+		</Rule>
+		<Rule>
+			<Filter>[military] = 'danger_area'</Filter>
+			&maxscale_zoom11;
+			&minscale_zoom18;
+			
+			<PolygonPatternSymbolizer file="&symbols;/pattern/danger.png" />
+		</Rule>
+		
+		
+		
+		<Rule>
+			<Filter>[power] = 'station' or [power] = 'generator'</Filter>
 			&maxscale_zoom10;
 			&minscale_zoom11;
 			
 			<PolygonSymbolizer fill="#bbb" />
 		</Rule>
 		<Rule>
-			<Filter>[power] = 'station' or [power]='generator'</Filter>
+			<Filter>[power] = 'station' or [power] = 'generator'</Filter>
 			&maxscale_zoom12;
 			
 			<PolygonSymbolizer fill="#bbb" />
@@ -296,18 +322,9 @@
 			<PolygonSymbolizer fill="#bbb" />
 			<LineSymbolizer stroke="#555" stroke-width="0.4" />
 		</Rule>
-		<Rule>
-			<Filter>[landuse] = 'commercial'</Filter>
-			&maxscale_zoom10;
 		
-			<PolygonSymbolizer fill="#efc8c8" />
-		</Rule>
-		<Rule>
-			<Filter>[landuse] = 'brownfield' or [landuse]='landfill' or [landuse] = 'greenfield' or [landuse]='construction'</Filter>
-			&maxscale_zoom10;
-			
-			<PolygonSymbolizer fill="#9d9d6c" fill-opacity="0.7" />
-		</Rule>
+		
+		
 		<Rule>
 			<Filter>[natural] = 'wood' or [landuse] = 'wood'</Filter>
 			&maxscale_zoom8;
@@ -345,14 +362,17 @@
 			
 			<PolygonPatternSymbolizer file="&symbols;/pattern/scrub.png" />
 		</Rule>
+		
+		
+		
 		<Rule>
-			<Filter>[amenity] = 'university' or [amenity] = 'college' or [amenity] = 'school' or [amenity]='hospital' or [amenity]='kindergarten'</Filter>
+			<Filter>[amenity] = 'university' or [amenity] = 'college' or [amenity] = 'school' or [amenity] = 'hospital' or [amenity] = 'kindergarten'</Filter>
 			&maxscale_zoom10;
 			
 			<PolygonSymbolizer fill="#f0f0d8" />
 		</Rule>
 		<Rule>
-			<Filter>[amenity] = 'university' or [amenity] = 'college' or [amenity] = 'school' or [amenity]='hospital' or [amenity]='kindergarten'</Filter>
+			<Filter>[amenity] = 'university' or [amenity] = 'college' or [amenity] = 'school' or [amenity] = 'hospital' or [amenity] = 'kindergarten'</Filter>
 			&maxscale_zoom12;
 			
 			<LineSymbolizer stroke="brown" stroke-width="0.3" />
@@ -369,6 +389,9 @@
 			
 			<LineSymbolizer stroke="#eeeed1" stroke-width="0.3" />
 		</Rule>
+		
+		
+		
 		<Rule>
 			<Filter>[aeroway] = 'apron'</Filter>
 			&maxscale_zoom12;
@@ -382,12 +405,18 @@
 			<PolygonSymbolizer fill="#ccc" fill-opacity="0.2" />
 			<LineSymbolizer stroke="#555" stroke-width="0.2" />
 		</Rule>
+		
+		
+		
 		<Rule>
 			<Filter>[natural] = 'beach'</Filter>
 			&maxscale_zoom13;
 			
 			<PolygonPatternSymbolizer file="&symbols;/pattern/beach.png" />
 		</Rule>
+		
+		
+		
 		<Rule>
 			<Filter>[highway] = 'services' or [highway] = 'rest_area'</Filter>
 			&maxscale_zoom14;
@@ -469,7 +498,7 @@
 			<PolygonSymbolizer fill="#33cc99" />
 		</Rule>
 		<Rule>
-			<Filter>[leisure]='track'</Filter>
+			<Filter>[leisure] = 'track'</Filter>
 			&maxscale_zoom10;
 			
 			<PolygonSymbolizer fill="#74dcba" />
