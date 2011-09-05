@@ -24,9 +24,9 @@
 					tags->'tourism' AS tourism,
 					tags->'name' AS name,
 					tags->'highway' AS highway,
-					CASE WHEN tags->'religion' IN ('christian', 'jewish') THEN religion else 'generic'::text END AS religion,
+					CASE WHEN tags->'religion' IN ('christian', 'jewish') THEN tags->'religion' ELSE 'generic'::text END AS religion
 				  FROM &prefix;_polygon
-				 WHERE tags ? 'landuse'
+				 WHERE (tags ? 'landuse'
 				    OR tags ? 'leisure'
 				    OR tags->'aeroway' IN ('apron', 'aerodrome')
 				    OR tags->'amenity' IN ('parking', 'university', 'college', 'school', 'hospital', 'kindergarten', 'grave_yard')
@@ -35,8 +35,8 @@
 				    OR tags->'power' IN ('station', 'sub_station', 'generator')
 				    OR tags->'tourism' IN ('attraction', 'camp_site', 'caravan_site', 'picnic_site', 'zoo')
 				    OR tags->'highway' IN ('services', 'rest_area')
-				   AND {DATE}
-				 <!--ORDER BY z_order, way_area DESC-->
+				 ) AND &date;
+				 ORDER BY z_order, way_area DESC
 			
 			) AS subq
 			</Parameter>
@@ -63,7 +63,7 @@
 			&maxscale_zoom10;
 			<Filter>[leisure] = 'park' or [leisure] = 'recreation_ground'</Filter>
 			
-			<PolygonSymbolizer fill="&cLeisurePark;" fill-opacity=">0.6" />
+			<PolygonSymbolizer fill="&cLeisurePark;" fill-opacity="0.6" />
 		</Rule>
 		<Rule>
 			<Filter>[leisure] = 'garden' or [leisure] = 'common'</Filter>
@@ -97,7 +97,7 @@
 			<Filter>[tourism] = 'zoo'</Filter>
 			&maxscale_zoom10;
 			
-			<PolygonPatternSymbolizer file="&symbols;/pattern/zoo.png" />
+			<PolygonPatternSymbolizer file="&symbols;/patterns/zoo.png" />
 		</Rule>
 		
 		
@@ -139,19 +139,19 @@
 			<Filter>([landuse] = 'cemetery' or [landuse] = 'grave_yard' or [amenity] = 'grave_yard') and [religion] = 'jewish'</Filter>
 			&maxscale_zoom14;
 			
-			<PolygonPatternSymbolizer file="&symbols;/pattern/cemetery_jewish.png" />
+			<PolygonPatternSymbolizer file="&symbols;/patterns/cemetery_jewish.png" />
 		</Rule>
 		<Rule>
 			<Filter>([landuse] = 'cemetery' or [landuse] = 'grave_yard' or [amenity] = 'grave_yard') and [religion] = 'christian'</Filter>
 			&maxscale_zoom14;
 			
-			<PolygonPatternSymbolizer file="&symbols;/pattern/cemetery_christian.png" />
+			<PolygonPatternSymbolizer file="&symbols;/patterns/cemetery_christian.png" />
 		</Rule>
 		<Rule>
 			<Filter>([landuse] = 'cemetery' or [landuse] = 'grave_yard' or [amenity] = 'grave_yard') and [religion] = 'generic'</Filter>
 			&maxscale_zoom14;
 			
-			<PolygonPatternSymbolizer file="&symbols;/pattern/cemetery_generic.png" />
+			<PolygonPatternSymbolizer file="&symbols;/patterns/cemetery_generic.png" />
 		</Rule>
 		<Rule>
 			&maxscale_zoom10;
@@ -199,7 +199,7 @@
 			<Filter>[landuse] = 'allotments'</Filter>
 			&maxscale_zoom14;
 			
-			<PolygonPatternSymbolizer file="&symbols;/pattern/allotments.png" />
+			<PolygonPatternSymbolizer file="&symbols;/patterns/allotments.png" />
 		</Rule>
 		<Rule>
 			<Filter>[landuse] = 'forest'</Filter>
@@ -212,7 +212,7 @@
 			<Filter>[landuse] = 'forest'</Filter>
 			&maxscale_zoom14;
 			
-			<PolygonPatternSymbolizer file="&symbols;/pattern/forest.png" />
+			<PolygonPatternSymbolizer file="&symbols;/patterns/forest.png" />
 		</Rule>
 		<Rule>
 			<Filter>[landuse] = 'farmyard'</Filter>
@@ -296,7 +296,7 @@
 			&maxscale_zoom11;
 			&minscale_zoom18;
 			
-			<PolygonPatternSymbolizer file="&symbols;/pattern/danger.png" />
+			<PolygonPatternSymbolizer file="&symbols;/patterns/danger.png" />
 		</Rule>
 		
 		
@@ -360,7 +360,7 @@
 			&maxscale_zoom14;
 			<Filter>[natural] = 'scrub'</Filter>
 			
-			<PolygonPatternSymbolizer file="&symbols;/pattern/scrub.png" />
+			<PolygonPatternSymbolizer file="&symbols;/patterns/scrub.png" />
 		</Rule>
 		
 		
@@ -412,7 +412,7 @@
 			<Filter>[natural] = 'beach'</Filter>
 			&maxscale_zoom13;
 			
-			<PolygonPatternSymbolizer file="&symbols;/pattern/beach.png" />
+			<PolygonPatternSymbolizer file="&symbols;/patterns/beach.png" />
 		</Rule>
 		
 		
@@ -438,8 +438,8 @@
 			
 				SELECT way
 				  FROM &prefix;_line
-				 WHERE man_made='cutline'
-				   AND {DATE}
+				 WHERE tags->'man_made' = 'cutline'
+				   AND &date;
 			
 			) AS subq
 			</Parameter>
@@ -474,15 +474,14 @@
 				SELECT way,
 					tags->'leisure' AS leisure,
 					CASE
-						WHEN leisure='pitch' THEN 2
-						WHEN leisure='track' THEN 1
+						WHEN tags->'leisure' = 'pitch' THEN 2
+						WHEN tags->'leisure' = 'track' THEN 1
 						ELSE 0
 					END AS prio
 				  FROM &prefix;_polygon
-				 WHERE leisure IN ('sports_centre', 'stadium', 'pitch', 'track')
-				   AND {DATE}
-				 <!--ORDER BY z_order, prio, way_area desc-->
-				 ORDER BY prio
+				 WHERE tags->'leisure' IN ('sports_centre', 'stadium', 'pitch', 'track')
+				   AND &date;
+				 ORDER BY z_order, prio, way_area DESC
 			
 			) AS subq
 			</Parameter>

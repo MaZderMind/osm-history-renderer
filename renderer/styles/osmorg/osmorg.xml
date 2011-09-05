@@ -10,7 +10,7 @@
     <xi:include href="inc/layer/shapefiles.xml" />
     <!--&layer-water;-->
     <!--&layer-admin;-->
-    <!--&layer-landuse;-->
+    <xi:include href="inc/layer/landcover.xml" />
     
     <!--&layer-track;-->
     <!--&layer-footway;-->
