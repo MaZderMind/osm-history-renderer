@@ -69,7 +69,9 @@ CREATE TABLE hist_polygon (
     visible boolean,
     valid_from timestamp without time zone,
     valid_to timestamp without time zone,
-    tags hstore
+    tags hstore,
+    z_order integer,
+    way_area real
 );
 SELECT AddGeometryColumn(
     -- table name
@@ -81,8 +83,9 @@ SELECT AddGeometryColumn(
     -- SRID (900913 = Spherical Mercator)
     900913,
 
-    -- type
-    'MULTIPOLYGON',
+    -- type -- needs to be changed to generic GEOMETRY later (maybe)
+    --'MULTIPOLYGON',
+    'POLYGON',
 
     -- dimensions
     2

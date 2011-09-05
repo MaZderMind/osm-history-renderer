@@ -9,6 +9,8 @@
 #include <osmium.hpp>
 #include <osmium/handler/progress.hpp>
 
+#include <geos/algorithm/InteriorPointArea.h>
+
 #include "entitytracker.hpp"
 #include "nodestore.hpp"
 #include "polygonidentifyer.hpp"
@@ -310,8 +312,8 @@ public:
             valid_from << '\t' <<
             valid_to << '\t' <<
             format_hstore(prev.tags()) << '\t' <<
-            "SRID=900913;POINT(" << lon << " " << lat << ")" <<
-            "\n";
+            "SRID=900913;POINT(" << lon << ' ' << lat << ')' <<
+            '\n';
 
         copy(m_point, line.str());
     }
@@ -378,17 +380,43 @@ public:
             valid_to << '\t' <<
             format_hstore(prev.tags()) << '\t';
 
+        if(geom->getGeometryTypeId() == geos::geom::GEOS_POLYGON) {
+            geos::geom::Polygon* poly = (geos::geom::Polygon*)geom;
 
-        if(geom) {
+            // a polygon, polygon-meta to table
+            line << 0 /* z_order */<< '\t';
+            line << poly->getArea() << '\t';
+
+            // write geometry to polygon table
             wkb.writeHEX(*geom, line);
+            line << '\t';
+
+            // calculate interior point
+            try {
+                geos::geom::Coordinate center = NULL;
+                geos::algorithm::InteriorPointArea interior_calculator(geom);
+                interior_calculator.getInteriorPoint(center);
+
+                // write interior point
+                line << "SRID=900913;POINT(" << center.x << ' ' << center.x << ')';
+            } catch(geos::util::GEOSException e) {
+                std::cerr << "error calculating interior point: " << e.what() << std::endl;
+                line << "\\N";
+            }
+
+            line << '\n';
+            copy(m_polygon, line.str());
+
             Osmium::Geometry::geos_geometry_factory()->destroyGeometry(geom);
         } else {
-            line << "\\N";
+            // a linestring, write geometry to line-table
+            wkb.writeHEX(*geom, line);
+
+            line << '\n';
+            copy(m_line, line.str());
+
+            Osmium::Geometry::geos_geometry_factory()->destroyGeometry(geom);
         }
-
-        line << "\n";
-
-        copy(m_line, line.str());
     }
 
 
