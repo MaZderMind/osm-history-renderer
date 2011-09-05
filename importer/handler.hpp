@@ -11,6 +11,7 @@
 
 #include "entitytracker.hpp"
 #include "nodestore.hpp"
+#include "polygonidentifyer.hpp"
 
 class ImportHandler : public Osmium::Handler::Base {
 private:
@@ -19,6 +20,7 @@ private:
     EntityTracker<Osmium::OSM::Way> m_way_tracker;
 
     Nodestore m_store;
+    PolygonIdentifyer m_polygonident;
 
     PGconn *m_general, *m_point, *m_line, *m_polygon;
 
@@ -172,7 +174,7 @@ private:
     }
 
 public:
-    ImportHandler() : m_progress(), m_node_tracker(), m_store(), wkb(), m_prefix("hist_") {
+    ImportHandler() : m_progress(), m_node_tracker(), m_store(), m_polygonident(), wkb(), m_prefix("hist_") {
         //if(!(pj_900913 = pj_init_plus("+init=epsg:900913"))) {
         if(!(pj_900913 = pj_init_plus("+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +no_defs"))) {
             throw std::runtime_error("can't initialize proj4 with 900913");
@@ -357,7 +359,8 @@ public:
             std::cerr << "forging geometry of way " << prev.id() << " v" << prev.version() << " at tstamp " << prev.timestamp() << std::endl;
         }
 
-        geos::geom::Geometry* geom = m_store.mkgeom(prev.nodes(), prev.timestamp(), false /* looksLikePolygon */);
+        bool looksLikePolygon = m_polygonident.looksLikePolygon(prev.tags());
+        geos::geom::Geometry* geom = m_store.mkgeom(prev.nodes(), prev.timestamp(), looksLikePolygon);
         if(!geom) {
             std::cerr << "no valid geometry for way " << prev.id() << " v" << prev.version() << " at tstamp " << prev.timestamp() << std::endl;
             return;

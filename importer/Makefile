@@ -35,7 +35,7 @@ LDFLAGS += -lgeos
 
 all: osm-history-importer
 
-osm-history-importer: importer.cpp handler.hpp entitytracker.hpp nodestore.hpp
+osm-history-importer: importer.cpp handler.hpp entitytracker.hpp nodestore.hpp polygonidentifyer.hpp
 	$(CXX) $(CXXFLAGS) -o $@ $< $(LDFLAGS)
 
 install:
