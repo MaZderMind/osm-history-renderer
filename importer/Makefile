@@ -35,7 +35,7 @@ LDFLAGS += -lgeos
 
 all: osm-history-importer
 
-osm-history-importer: importer.cpp handler.hpp last_entity_tracker.hpp
+osm-history-importer: importer.cpp handler.hpp last_entity_tracker.hpp nodestore.hpp
 	$(CXX) $(CXXFLAGS) -o $@ $< $(LDFLAGS)
 
 install:

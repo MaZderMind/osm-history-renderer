@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE Include [
+    <!ENTITY % inc SYSTEM "../../inc.xml.inc">
+    %inc;
+]>
+
+<Include xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Style name="pois-manmade">
+		<Rule>
+			&maxscale_zoom17;
+			<Filter>[man_made]='mast'</Filter>
+			<PointSymbolizer file="&symbols;/png/16/poi/tower_communications.p.png" />
+		</Rule>
+	</Style>
+</Include>

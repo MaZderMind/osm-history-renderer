@@ -4,10 +4,10 @@
     %inc;
 ]>
 
-<Map background-color="&cWater;" srs="&srs900913;">
+<Map background-color="&cWater;" srs="&srs900913;" xmlns:xi="http://www.w3.org/2001/XInclude">
     &fontset-settings;
 
-    &layer-shapefiles;
+    <xi:include href="inc/layer/shapefiles.xml" />
     <!--&layer-water;-->
     <!--&layer-admin;-->
     <!--&layer-landuse;-->
@@ -18,20 +18,14 @@
     
     <!--&layer-rail;-->
     
-    <!--&layer-residential;-->
-    <!--&layer-road;-->
-    <!--&layer-tertiary;-->
-    <!--&layer-secondary;-->
-    <!--&layer-primary;-->
-    <!--&layer-trunk;-->
-    <!--&layer-motorway;-->
+    <xi:include href="inc/layer/roads-minor.xml" />
     
     <!--&layer-turningcircle;-->
     <!--&layer-junctions;-->
     <!--&layer-access;-->
     
-    &layer-places;
-    &layer-pois;
+    <xi:include href="inc/layer/places.xml" />
+    <xi:include href="inc/layer/pois.xml" />
     <!--&layer-secondary-names;-->
     <!--&layer-primary-names;-->
     <!--&layer-motorway-names-->
