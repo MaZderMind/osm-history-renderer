@@ -384,7 +384,7 @@ public:
             geos::geom::Polygon* poly = (geos::geom::Polygon*)geom;
 
             // a polygon, polygon-meta to table
-            line << 0 /* z_order */<< '\t';
+            line << m_polygonident.calculateZOrder(prev.tags()) << '\t';
             line << poly->getArea() << '\t';
 
             // write geometry to polygon table
