@@ -381,7 +381,7 @@ public:
             format_hstore(prev.tags()) << '\t';
 
         if(geom->getGeometryTypeId() == geos::geom::GEOS_POLYGON) {
-            geos::geom::Polygon* poly = (geos::geom::Polygon*)geom;
+            const geos::geom::Polygon* poly = dynamic_cast<const geos::geom::Polygon*>(geom);
 
             // a polygon, polygon-meta to table
             line << m_polygonident.calculateZOrder(prev.tags()) << '\t';
@@ -393,8 +393,8 @@ public:
 
             // calculate interior point
             try {
-                geos::geom::Coordinate center = NULL;
-                geos::algorithm::InteriorPointArea interior_calculator(geom);
+                geos::geom::Coordinate center;
+                geos::algorithm::InteriorPointArea interior_calculator(poly);
                 interior_calculator.getInteriorPoint(center);
 
                 // write interior point
