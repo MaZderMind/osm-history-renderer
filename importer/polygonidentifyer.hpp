@@ -60,7 +60,7 @@ public:
 
     bool looksLikePolygon(const Osmium::OSM::TagList& tags) {
         for(Osmium::OSM::TagList::const_iterator it = tags.begin(); it != tags.end(); ++it) {
-            for(int i; i < n_polygons; i++) {
+            for(int i = 0; i < n_polygons; i++) {
                 if(0 == strcmp(polygons[i], it->key())) {
                     return true;
                 }
