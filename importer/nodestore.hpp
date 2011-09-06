@@ -102,6 +102,7 @@ public:
 
         if(c->size() < 2) {
             std::cerr << "found only " << c->size() << " valid coordinates, skipping way" << std::endl;
+            delete c;
             return NULL;
         }
 
