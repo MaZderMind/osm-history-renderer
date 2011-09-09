@@ -78,7 +78,7 @@ public:
         return tit->second;
     }
 
-    geos::geom::Geometry* mkgeom(Osmium::OSM::WayNodeList &nodes, time_t t, bool looksLikePolygon) {
+    geos::geom::Geometry* forgeGeometry(Osmium::OSM::WayNodeList &nodes, time_t t, bool looksLikePolygon) {
         // shorthand to the geometry factory
         geos::geom::GeometryFactory *f = Osmium::Geometry::geos_geometry_factory();
 
@@ -126,6 +126,7 @@ public:
             }
         } catch(geos::util::GEOSException e) {
             std::cerr << "error creating polygon: " << e.what() << std::endl;
+            delete c;
             return NULL;
         }
 
