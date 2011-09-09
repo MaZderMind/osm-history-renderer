@@ -8,6 +8,7 @@
 
 #include <osmium.hpp>
 #include <osmium/handler/progress.hpp>
+#include <osmium/osm/types.hpp>
 
 #include <geos/algorithm/InteriorPointArea.h>
 
@@ -357,14 +358,38 @@ public:
             valid_to = valid_from;
         }
 
+        write_way_to_db(
+            prev.id(),
+            prev.version(),
+            0 /*minor*/,
+            prev.visible(),
+            prev.timestamp(),
+            valid_from,
+            valid_to,
+            prev.tags(),
+            prev.nodes()
+        );
+    }
+
+    void write_way_to_db(
+        osm_object_id_t id,
+        osm_version_t version,
+        osm_version_t minor,
+        bool visible,
+        time_t timestamp,
+        std::string &valid_from,
+        std::string &valid_to,
+        Osmium::OSM::TagList &tags,
+        Osmium::OSM::WayNodeList &nodes
+    ) {
         if(Osmium::debug()) {
-            std::cerr << "forging geometry of way " << prev.id() << " v" << prev.version() << " at tstamp " << prev.timestamp() << std::endl;
+            std::cerr << "forging geometry of way " << id << " v" << version << " at tstamp " << timestamp << std::endl;
         }
 
-        bool looksLikePolygon = m_polygonident.looksLikePolygon(prev.tags());
-        geos::geom::Geometry* geom = m_store.mkgeom(prev.nodes(), prev.timestamp(), looksLikePolygon);
+        bool looksLikePolygon = m_polygonident.looksLikePolygon(tags);
+        geos::geom::Geometry* geom = m_store.forgeGeometry(nodes, timestamp, looksLikePolygon);
         if(!geom) {
-            std::cerr << "no valid geometry for way " << prev.id() << " v" << prev.version() << " at tstamp " << prev.timestamp() << std::endl;
+            std::cerr << "no valid geometry for way " << id << " v" << version << " at tstamp " << timestamp << std::endl;
             return;
         }
 
@@ -372,19 +397,19 @@ public:
         // SPEED: instead of stringstream, which does dynamic allocation, use a fixed buffer and snprintf
         std::stringstream line;
         line << std::setprecision(8) <<
-            prev.id() << '\t' <<
-            prev.version() << '\t' <<
-            0 << '\t' << // minor
-            (prev.visible() ? 't' : 'f') << '\t' <<
+            id << '\t' <<
+            version << '\t' <<
+            minor << '\t' << // minor
+            (visible ? 't' : 'f') << '\t' <<
             valid_from << '\t' <<
             valid_to << '\t' <<
-            format_hstore(prev.tags()) << '\t';
+            format_hstore(tags) << '\t';
 
         if(geom->getGeometryTypeId() == geos::geom::GEOS_POLYGON) {
             const geos::geom::Polygon* poly = dynamic_cast<const geos::geom::Polygon*>(geom);
 
             // a polygon, polygon-meta to table
-            line << m_polygonident.calculateZOrder(prev.tags()) << '\t';
+            line << m_polygonident.calculateZOrder(tags) << '\t';
             line << poly->getArea() << '\t';
 
             // write geometry to polygon table
@@ -406,8 +431,6 @@ public:
 
             line << '\n';
             copy(m_polygon, line.str());
-
-            Osmium::Geometry::geos_geometry_factory()->destroyGeometry(geom);
         } else {
             // a linestring, write geometry to line-table
             wkb.writeHEX(*geom, line);
@@ -415,8 +438,8 @@ public:
             line << '\n';
             copy(m_line, line.str());
 
-            Osmium::Geometry::geos_geometry_factory()->destroyGeometry(geom);
         }
+        delete geom;
     }
 
 
