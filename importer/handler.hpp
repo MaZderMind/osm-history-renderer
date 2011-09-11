@@ -358,6 +358,7 @@ public:
             valid_to = valid_from;
         }
 
+        // write the main way version
         write_way_to_db(
             prev.id(),
             prev.version(),
@@ -369,6 +370,25 @@ public:
             prev.tags(),
             prev.nodes()
         );
+
+        // write the minor way version
+        std::vector<time_t> *minor_times;
+        if(m_way_tracker.cur_is_same_entity()) {
+            minor_times = m_store.calculateMinorTimes(prev.nodes(), prev.timestamp(), cur.timestamp());
+        } else {
+            minor_times = m_store.calculateMinorTimes(prev.nodes(), prev.timestamp());
+        }
+
+        if(!minor_times) {
+            std::cerr << "error calculating minor ways for way " << prev.id() << 'v' << prev.version() << std::endl;
+            return;
+        }
+
+        int minor = 1;
+        for(std::vector<time_t>::iterator it = minor_times->begin(); it != minor_times->end(); it++) {
+            std::cout << "minor way w" << prev.id() << 'v' << prev.version() << '.' << (minor++) << " at " << *it << std::endl;
+        }
+        delete minor_times;
     }
 
     void write_way_to_db(

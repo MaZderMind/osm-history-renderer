@@ -133,6 +133,36 @@ public:
         geom->setSRID(900913);
         return geom;
     }
+
+    std::vector<time_t> *calculateMinorTimes(Osmium::OSM::WayNodeList &nodes, time_t from, time_t to) {
+        std::vector<time_t> *minor_times = new std::vector<time_t>();
+
+        for(Osmium::OSM::WayNodeList::const_iterator nodeit = nodes.begin(); nodeit != nodes.end(); nodeit++) {
+            osm_object_id_t id = nodeit->ref();
+
+            nodemap_it nit = m_nodemap.find(id);
+            if(nit == m_nodemap.end()) {
+                std::cerr << "no timemap for node #" << id << ", skipping node" << std::endl;
+                continue;
+            }
+
+            timemap *tmap = nit->second;
+            timemap_cit lower = tmap->lower_bound(from);
+            timemap_cit upper = to == 0 ? tmap->end() : tmap->upper_bound(to);
+            for(timemap_cit it = lower; it != upper; it++) {
+                minor_times->push_back(it->first);
+            }
+        }
+
+        std::sort(minor_times->begin(), minor_times->end());
+        std::unique(minor_times->begin(), minor_times->end());
+
+        return minor_times;
+    }
+
+    std::vector<time_t> *calculateMinorTimes(Osmium::OSM::WayNodeList &nodes, time_t from) {
+        return calculateMinorTimes(nodes, from, 0);
+    }
 };
 
 #endif // IMPORTER_NODESTORE_HPP
