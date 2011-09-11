@@ -4,6 +4,7 @@
 class Nodestore {
 public:
     struct Nodeinfo {
+        // MEMORY: may remove the version, it's not really required
         osm_version_t version;
         double lat;
         double lon;
