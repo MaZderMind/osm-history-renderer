@@ -38,6 +38,7 @@
 <!ENTITY cLeisurePlaygroundOutline "#666666">
 <!ENTITY cLeisurePark "#B6FDB6">
 <!ENTITY cLeisureGarden "#CFECA8">
+<!ENTITY cLeisureGolfCourse "#B5E3B5">
 
 <!ENTITY cTourismCampSite "#CCFF99">
 <!ENTITY cTourismCampSiteOutline "#666666">
@@ -67,6 +68,34 @@
 <!ENTITY cMilitaryBarracks "#FF8F8F">
 <!ENTITY cMilitaryDangerArea "#FFC0CB">
 <!ENTITY cMilitaryBarracks "#FF8F8F">
+
+<!ENTITY cPowerFill "#BBBBBB">
+<!ENTITY cPowerCasing "#555555">
+
+<!ENTITY cNaturalWood "#AED1A0">
+<!ENTITY cNaturalDesert "#E3B57A">
+<!ENTITY cNaturalSand "#FFDF88">
+<!ENTITY cNaturalHeath "#D6D99F">
+<!ENTITY cNaturalScrub "#B5E3B5">
+
+<!ENTITY cAmenitySchoolFill "#F0F0D8">
+<!ENTITY cAmenitySchoolCasing "#A52A2A">
+<!ENTITY cAmenityParkingFill "#F7EFB7">
+<!ENTITY cAmenityParkingCasing "#EEEED1">
+
+<!ENTITY cAerowayApron "#E9D1FF">
+<!ENTITY cAerowayAerodromeFill "#CCCCCC">
+<!ENTITY cAerowayAerodromeCasing "#555555">
+
+<!ENTITY cHighwayServices "#EFC8C8">
+<!ENTITY cManmadeCutline "#F2EFE9">
+
+<!ENTITY cSportsStadium "#33CC99">
+<!ENTITY cSportsTrackFill "#74DCBA">
+<!ENTITY cSportsTrackOutline "#888888">
+<!ENTITY cSportsPitchFill "#8AD3AF">
+<!ENTITY cSportsPitchOutline "#888888">
+
 
 <!-- roads -->
 <!ENTITY cRoadsText "#000000">

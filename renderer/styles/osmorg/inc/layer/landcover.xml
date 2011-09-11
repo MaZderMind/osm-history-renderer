@@ -75,7 +75,7 @@
 			<Filter>[leisure] = 'golf_course'</Filter>
 			&maxscale_zoom10;
 			
-			<PolygonSymbolizer fill="#b5e3b5" />
+			<PolygonSymbolizer fill="&cLeisureGolfCourse;" />
 		</Rule>
 		
 		
@@ -306,21 +306,21 @@
 			&maxscale_zoom10;
 			&minscale_zoom11;
 			
-			<PolygonSymbolizer fill="#bbb" />
+			<PolygonSymbolizer fill="&cPowerFill;" />
 		</Rule>
 		<Rule>
 			<Filter>[power] = 'station' or [power] = 'generator'</Filter>
 			&maxscale_zoom12;
 			
-			<PolygonSymbolizer fill="#bbb" />
-			<LineSymbolizer stroke="#555" stroke-width="0.4" />
+			<PolygonSymbolizer fill="&cPowerFill;" />
+			<LineSymbolizer stroke="&cPowerCasing;" stroke-width="0.4" />
 		</Rule>
 		<Rule>
 			<Filter>[power] = 'sub_station'</Filter>
 			&maxscale_zoom13;
 			
-			<PolygonSymbolizer fill="#bbb" />
-			<LineSymbolizer stroke="#555" stroke-width="0.4" />
+			<PolygonSymbolizer fill="&cPowerFill;" />
+			<LineSymbolizer stroke="&cPowerCasing;" stroke-width="0.4" />
 		</Rule>
 		
 		
@@ -329,32 +329,32 @@
 			<Filter>[natural] = 'wood' or [landuse] = 'wood'</Filter>
 			&maxscale_zoom8;
 			
-			<PolygonSymbolizer fill="#aed1a0" />
+			<PolygonSymbolizer fill="&cNaturalWood;" />
 		</Rule>
 		<Rule>
 			<Filter>[natural] = 'desert'</Filter>
 			&maxscale_zoom8;
 			
-			<PolygonSymbolizer fill="#e3b57a" />
+			<PolygonSymbolizer fill="&cNaturalDesert;" />
 		</Rule>
 		<Rule>
 			<Filter>[natural] = 'sand'</Filter>
 			&maxscale_zoom10;
 			
-			<PolygonSymbolizer fill="#ffdf88" />
+			<PolygonSymbolizer fill="&cNaturalSand;" />
 		</Rule>
 		<Rule>
 			<Filter>[natural] = 'heath'</Filter>
 			&maxscale_zoom10;
 			
-			<PolygonSymbolizer fill="#d6d99f" />
+			<PolygonSymbolizer fill="&cNaturalHeath;" />
 		</Rule>
 		<Rule>
 			<Filter>[natural] = 'scrub'</Filter>
 			&maxscale_zoom10;
 			&minscale_zoom13;
 			
-			<PolygonSymbolizer fill="#b5e3b5" />
+			<PolygonSymbolizer fill="&cNaturalScrub;" />
 		</Rule>
 		<Rule>
 			&maxscale_zoom14;
@@ -369,25 +369,25 @@
 			<Filter>[amenity] = 'university' or [amenity] = 'college' or [amenity] = 'school' or [amenity] = 'hospital' or [amenity] = 'kindergarten'</Filter>
 			&maxscale_zoom10;
 			
-			<PolygonSymbolizer fill="#f0f0d8" />
+			<PolygonSymbolizer fill="&cAmenitySchoolFill;" />
 		</Rule>
 		<Rule>
 			<Filter>[amenity] = 'university' or [amenity] = 'college' or [amenity] = 'school' or [amenity] = 'hospital' or [amenity] = 'kindergarten'</Filter>
 			&maxscale_zoom12;
 			
-			<LineSymbolizer stroke="brown" stroke-width="0.3" />
+			<LineSymbolizer stroke="&cAmenitySchoolCasing;" stroke-width="0.3" />
 		</Rule>
 		<Rule>
 			<Filter>[amenity] = 'parking'</Filter>
 			&maxscale_zoom10;
 			
-			<PolygonSymbolizer fill="#f7efb7" />
+			<PolygonSymbolizer fill="&cAmenityParkingFill;" />
 		</Rule>
 		<Rule>
 			<Filter>[amenity] = 'parking'</Filter>
 			&maxscale_zoom15;
 			
-			<LineSymbolizer stroke="#eeeed1" stroke-width="0.3" />
+			<LineSymbolizer stroke="&cAmenityParkingCasing;" stroke-width="0.3" />
 		</Rule>
 		
 		
@@ -396,14 +396,14 @@
 			<Filter>[aeroway] = 'apron'</Filter>
 			&maxscale_zoom12;
 			
-			<PolygonSymbolizer fill="#e9d1ff" />
+			<PolygonSymbolizer fill="&cAerowayApron;" />
 		</Rule>
 		<Rule>
 			<Filter>[aeroway] = 'aerodrome'</Filter>
 			&maxscale_zoom12;
 			
-			<PolygonSymbolizer fill="#ccc" fill-opacity="0.2" />
-			<LineSymbolizer stroke="#555" stroke-width="0.2" />
+			<PolygonSymbolizer fill="&cAerowayAerodromeFill;" fill-opacity="0.2" />
+			<LineSymbolizer stroke="&cAerowayAerodromeCasing;" stroke-width="0.2" />
 		</Rule>
 		
 		
@@ -421,7 +421,7 @@
 			<Filter>[highway] = 'services' or [highway] = 'rest_area'</Filter>
 			&maxscale_zoom14;
 			
-			<PolygonSymbolizer fill="#efc8c8" />
+			<PolygonSymbolizer fill="&cHighwayServices;" />
 		</Rule>
 	</Style>
 
@@ -452,12 +452,12 @@
 			&maxscale_zoom14;
 			&minscale_zoom15;
 			
-			<LineSymbolizer stroke="#f2efe9" stroke-width="3" stroke-linejoin="round" stroke-linecap="square" />
+			<LineSymbolizer stroke="&cManmadeCutline;" stroke-width="3" stroke-linejoin="round" stroke-linecap="square" />
 		</Rule>
 		<Rule>
 			&maxscale_zoom16;
 			
-			<LineSymbolizer stroke="#f2efe9" stroke-width="6" stroke-linejoin="round" stroke-linecap="square" />
+			<LineSymbolizer stroke="&cManmadeCutline;" stroke-width="6" stroke-linejoin="round" stroke-linecap="square" />
 		</Rule>
 	</Style>
 
@@ -494,21 +494,21 @@
 			<Filter>[leisure] = 'sports_centre' or [leisure] = 'stadium'</Filter>
 			&maxscale_zoom10;
 			
-			<PolygonSymbolizer fill="#33cc99" />
+			<PolygonSymbolizer fill="&cSportsStadium;" />
 		</Rule>
 		<Rule>
 			<Filter>[leisure] = 'track'</Filter>
 			&maxscale_zoom10;
 			
-			<PolygonSymbolizer fill="#74dcba" />
-			<LineSymbolizer stroke="#888" stroke-width="0.5" />
+			<PolygonSymbolizer fill="&cSportsTrackFill;" />
+			<LineSymbolizer stroke="&cSportsTrackOutline;" stroke-width="0.5" />
 		</Rule>
 		<Rule>
 			<Filter>[leisure] = 'pitch'</Filter>
 			&maxscale_zoom10;
 			
-			<PolygonSymbolizer fill="#8ad3af" />
-			<LineSymbolizer stroke="#888" stroke-width="0.5" />
+			<PolygonSymbolizer fill="&cSportsPitchFill;" />
+			<LineSymbolizer stroke="&cSportsPitchOutline;" stroke-width="0.5" />
 		</Rule>
 	</Style>
 </Include>
