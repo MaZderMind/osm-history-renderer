@@ -4,23 +4,30 @@
     %inc;
 ]>
 
+<!--
+  small: track, pedestrian, cycleway, footway, bridleway, byway, steps, ford
+  medium: residential, living_street, unclassified, service, road
+  big: tertiary, secondary, primary, trunk, motorway
+-->
+
 <Include xmlns:xi="http://www.w3.org/2001/XInclude">
-	<Layer name="roads-minor" status="on" srs="&dbProjection;">
+	<Layer name="roads-small" status="on" srs="&dbProjection;">
+		<StyleName>roads-livingstreet-area-fill</StyleName>
 		<StyleName>roads-residential-tunnel-casing</StyleName>
 		<StyleName>roads-residential-tunnel-fill</StyleName>
 		
 		<StyleName>roads-residential-bridge-casing</StyleName>
 		<StyleName>roads-residential-bridge-fill</StyleName>
 		
+		<StyleName>roads-livingstreet-casing</StyleName>
 		<StyleName>roads-residential-casing</StyleName>
+		<StyleName>roads-livingstreet-fill</StyleName>
 		<StyleName>roads-residential-fill</StyleName>
 		
+		<StyleName>roads-livingstreet-construction</StyleName>
 		<StyleName>roads-residential-construction</StyleName>
 		<StyleName>roads-residential-access</StyleName>
 		<StyleName>roads-residential-text</StyleName>
-		
-		<!--StyleName>roads-unclassified</StyleName-->
-		<!--StyleName>roads-service</StyleName-->
 		
 		<Datasource>
 			<Parameter name="table">
@@ -32,7 +39,7 @@
 				  CASE WHEN tags->'bridge' in ('yes', 'true', '1') then 'yes'::text ELSE tags->'bridge' END AS bridge, 
 				  CASE WHEN tags->'service' in ('parking_aisle', 'drive-through', 'driveway') THEN 'service-minor'::text ELSE tags->'service' END AS service
 				  FROM &prefix;_line
-				 WHERE tags->'highway' IN ('residential', 'unclassified', 'service')
+				 WHERE tags->'highway' IN ('residential', 'living_street', 'unclassified', 'service', 'road')
 				   AND &date;
 				
 			) as subq
@@ -66,13 +73,17 @@
 	<xi:include href="roads/residential.xml" xpointer="area-casing" />
 	<xi:include href="roads/residential.xml" xpointer="bridge-casing" />
 	<xi:include href="roads/residential.xml" xpointer="tunnel-casing" />
+	<xi:include href="roads/livingstreet.xml" xpointer="casing" />
 	<xi:include href="roads/residential.xml" xpointer="casing" />
 	
+	<xi:include href="roads/livingstreet.xml" xpointer="area-fill" />
 	<xi:include href="roads/residential.xml" xpointer="area-fill" />
 	<xi:include href="roads/residential.xml" xpointer="tunnel-fill" />
 	<xi:include href="roads/residential.xml" xpointer="bridge-fill" />
+	<xi:include href="roads/livingstreet.xml" xpointer="fill" />
 	<xi:include href="roads/residential.xml" xpointer="fill" />
 	
+	<xi:include href="roads/livingstreet.xml" xpointer="construction" />
 	<xi:include href="roads/residential.xml" xpointer="construction" />
 	<xi:include href="roads/residential.xml" xpointer="access" />
 	<xi:include href="roads/residential.xml" xpointer="text" />

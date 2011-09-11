@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE Include [
+    <!ENTITY % inc SYSTEM "../../inc.xml.inc">
+    %inc;
+]>
+
+<Include xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Style name="roads-livingstreet-area-fill" xml:id="area-fill">
+		<Rule>
+			&maxscale_zoom14;
+			<Filter>[highway]='living_street'</Filter>
+			<PolygonSymbolizer fill="&cLivingstreetFill;" />
+		</Rule>
+	</Style>
+	
+	
+	
+	<Style name="roads-livingstreet-casing" xml:id="casing">
+		<Rule>
+			<Filter>[highway]='living_street'</Filter>
+			&maxscale_zoom12;
+			&minscale_zoom13;
+			<LineSymbolizer stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" stroke="&cLivingstreetCasing;" />
+		</Rule>
+		<Rule>
+			<Filter>[highway]='living_street'</Filter>
+			&maxscale_zoom14;
+			&minscale_zoom14;
+			<LineSymbolizer stroke-linecap="round" stroke-linejoin="round" stroke-width="4" stroke="&cLivingstreetCasing;" />
+		</Rule>
+		<Rule>
+			<Filter>[highway]='living_street'</Filter>
+			&maxscale_zoom15;
+			&minscale_zoom15;
+			<LineSymbolizer stroke-linecap="round" stroke-linejoin="round" stroke-width="6" stroke="&cLivingstreetCasing;" />
+		</Rule>
+		<Rule>
+			<Filter>[highway]='living_street'</Filter>
+			&maxscale_zoom16;
+			&minscale_zoom16;
+			<LineSymbolizer stroke-linecap="round" stroke-linejoin="round" stroke-width="9" stroke="&cLivingstreetCasing;" />
+		</Rule>
+		<Rule>
+			<Filter>[highway]='living_street'</Filter>
+			&maxscale_zoom17;
+			<LineSymbolizer stroke-linecap="round" stroke-linejoin="round" stroke-width="14.5" stroke="&cLivingstreetCasing;" />
+		</Rule>
+	</Style>
+	
+	
+	
+	<Style name="roads-livingstreet-fill" xml:id="fill">
+		<Rule>
+			<Filter>[highway] = 'living_street'</Filter>
+			&maxscale_zoom12;
+			&minscale_zoom13;
+			<LineSymbolizer stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" stroke="&cLivingstreetFill;" />
+		</Rule>
+		<Rule>
+			<Filter>[highway] = 'living_street'</Filter>
+			&maxscale_zoom14;
+			&minscale_zoom14;
+			<LineSymbolizer stroke-linecap="round" stroke-linejoin="round" stroke-width="3" stroke="&cLivingstreetFill;" />
+		</Rule>
+		<Rule>
+			<Filter>[highway] = 'living_street'</Filter>
+			&maxscale_zoom15;
+			&minscale_zoom15;
+			<LineSymbolizer stroke-linecap="round" stroke-linejoin="round" stroke-width="4.7" stroke="&cLivingstreetFill;" />
+		</Rule>
+		<Rule>
+			<Filter>[highway] = 'living_street'</Filter>
+			&maxscale_zoom16;
+			&minscale_zoom16;
+			<LineSymbolizer stroke-linecap="round" stroke-linejoin="round" stroke-width="7.4" stroke="&cLivingstreetFill;" />
+		</Rule>
+		<Rule>
+			<Filter>[highway] = 'living_street'</Filter>
+			&maxscale_zoom17;
+			&minscale_zoom18;
+			<LineSymbolizer stroke-linecap="round" stroke-linejoin="round" stroke-width="13" stroke="&cLivingstreetFill;" />
+		</Rule>
+	</Style>
+	
+	
+	
+	<Style name="roads-livingstreet-construction" xml:id="construction">
+		<Rule>
+			&maxscale_zoom13;
+			&minscale_zoom15;
+			<Filter>([highway]='proposed' or [highway]='construction') and [construction]='living_street'</Filter>
+			<LineSymbolizer stroke="&cLivingstreetConstructionA;" stroke-width="4" />
+			<LineSymbolizer stroke="&cLivingstreetConstructionB;" stroke-width="3.5" stroke-dasharray="6,4"/>
+		</Rule>
+		<Rule>
+			&maxscale_zoom16;
+			<Filter>([highway]='proposed' or [highway]='construction') and [construction]='living_street'</Filter>
+			<LineSymbolizer stroke="&cLivingstreetConstructionA;" stroke-width="8" />
+			<LineSymbolizer stroke="&cLivingstreetConstructionB;" stroke-width="7" stroke-dasharray="8,6"/>
+		</Rule>
+	</Style>
+</Include>

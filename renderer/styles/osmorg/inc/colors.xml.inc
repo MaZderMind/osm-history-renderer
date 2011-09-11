@@ -81,3 +81,9 @@
 <!ENTITY cResidentialFill "#FFFFFF">
 <!ENTITY cResidentialConstructionA "#AAAAAA">
 <!ENTITY cResidentialConstructionB "#FFFFFF">
+
+<!-- livingstreet -->
+<!ENTITY cLivingstreetCasing "#FFFFFF">
+<!ENTITY cLivingstreetFill "#CCCCCC">
+<!ENTITY cLivingstreetConstructionA "#AAAAAA">
+<!ENTITY cLivingstreetConstructionB "#FFFFFF">
