@@ -4,8 +4,8 @@
 #
 #------------------------------------------------------------------------------
 
-CXX = g++
-#CXX = clang++
+#CXX = g++
+CXX = clang++
 
 CXXFLAGS = -g -O3 -Wall -Wextra -pedantic
 CXXFLAGS += -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64
