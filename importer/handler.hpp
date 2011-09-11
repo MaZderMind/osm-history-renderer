@@ -188,6 +188,9 @@ private:
     }
 
     std::string format_time(const time_t time) {
+        if(time == 0) {
+            return "\\N";
+        }
         struct tm *tm = gmtime(&time);
         std::string s(timestamp_length, '\0');
         /* This const_cast is ok, because we know we have enough space
@@ -368,12 +371,32 @@ public:
         Osmium::OSM::Way cur = m_way_tracker.cur();
         Osmium::OSM::Way prev = m_way_tracker.prev();
 
-        std::string valid_from(prev.timestamp_as_string());
-        std::string valid_to("\\N");
+        time_t valid_from = prev.timestamp();
+        time_t valid_to = 0;
+
+        std::vector<time_t> *minor_times = NULL;
+        if(prev.visible()) {
+            if(m_way_tracker.cur_is_same_entity()) {
+                minor_times = m_store.calculateMinorTimes(prev.nodes(), prev.timestamp(), cur.timestamp());
+            } else {
+                minor_times = m_store.calculateMinorTimes(prev.nodes(), prev.timestamp());
+            }
+
+            if(!minor_times) {
+                std::stringstream msg;
+                msg << "error calculating minor ways for way " << prev.id() << 'v' << prev.version();
+                throw std::runtime_error(msg.str().c_str());
+            }
+        }
+
+        // if there are minor ways, it's the timestamp of the first minor way
+        if(minor_times && minor_times->size() > 0) {
+            valid_to = *minor_times->begin();
+        }
 
         // if this is another version of the same entity, the end-timestamp of the previous entity is the timestamp of the current one
-        if(m_way_tracker.cur_is_same_entity()) {
-            valid_to = cur.timestamp_as_string();
+        else if(m_way_tracker.cur_is_same_entity()) {
+            valid_to = cur.timestamp();
         }
 
         // if the prev version is deleted, it's end-timestamp is the same as its creation-timestamp
@@ -394,24 +417,42 @@ public:
             prev.nodes()
         );
 
-        // write the minor way version
-        std::vector<time_t> *minor_times;
-        if(m_way_tracker.cur_is_same_entity()) {
-            minor_times = m_store.calculateMinorTimes(prev.nodes(), prev.timestamp(), cur.timestamp());
-        } else {
-            minor_times = m_store.calculateMinorTimes(prev.nodes(), prev.timestamp());
-        }
+        if(minor_times) {
+            // write the minor way versions of prev between prev & cur
+            int minor = 1;
+            std::vector<time_t>::const_iterator end = minor_times->end();
+            for(std::vector<time_t>::const_iterator it = minor_times->begin(); it != end; it++) {
+                if(Osmium::debug()) {
+                    std::cout << "minor way w" << prev.id() << 'v' << prev.version() << '.' << minor << " at tstamp " << *it << " (" << format_time(*it) << ")" << std::endl;
+                }
 
-        if(!minor_times) {
-            std::cerr << "error calculating minor ways for way " << prev.id() << 'v' << prev.version() << std::endl;
-            return;
-        }
+                valid_from = *it;
+                if(it == end-1) {
+                    if(m_way_tracker.cur_is_same_entity()) {
+                        valid_to = cur.timestamp();
+                    } else {
+                        valid_to = 0;
+                    }
+                } else {
+                    valid_to = *(it+1);
+                }
 
-        int minor = 1;
-        for(std::vector<time_t>::iterator it = minor_times->begin(); it != minor_times->end(); it++) {
-            std::cout << "minor way w" << prev.id() << 'v' << prev.version() << '.' << (minor++) << " at tstamp " << *it << " (" << format_time(*it) << ")" << std::endl;
+                write_way_to_db(
+                    prev.id(),
+                    prev.version(),
+                    minor,
+                    true,
+                    *it,
+                    valid_from,
+                    valid_to,
+                    prev.tags(),
+                    prev.nodes()
+                );
+
+                minor++;
+            }
+            delete minor_times;
         }
-        delete minor_times;
     }
 
     void write_way_to_db(
@@ -420,19 +461,19 @@ public:
         osm_version_t minor,
         bool visible,
         time_t timestamp,
-        std::string &valid_from,
-        std::string &valid_to,
+        time_t valid_from,
+        time_t valid_to,
         Osmium::OSM::TagList &tags,
         Osmium::OSM::WayNodeList &nodes
     ) {
         if(Osmium::debug()) {
-            std::cerr << "forging geometry of way " << id << " v" << version << " at tstamp " << timestamp << std::endl;
+            std::cerr << "forging geometry of way " << id << 'v' << version << '.' << minor << " at tstamp " << timestamp << std::endl;
         }
 
         bool looksLikePolygon = m_polygonident.looksLikePolygon(tags);
         geos::geom::Geometry* geom = m_store.forgeGeometry(nodes, timestamp, looksLikePolygon);
         if(!geom) {
-            std::cerr << "no valid geometry for way " << id << " v" << version << " at tstamp " << timestamp << std::endl;
+            std::cerr << "no valid geometry for way " << id << 'v' << version << '.' << minor << " at tstamp " << timestamp << std::endl;
             return;
         }
 
@@ -442,10 +483,10 @@ public:
         line << std::setprecision(8) <<
             id << '\t' <<
             version << '\t' <<
-            minor << '\t' << // minor
+            minor << '\t' <<
             (visible ? 't' : 'f') << '\t' <<
-            valid_from << '\t' <<
-            valid_to << '\t' <<
+            format_time(valid_from) << '\t' <<
+            format_time(valid_to) << '\t' <<
             format_hstore(tags) << '\t';
 
         if(geom->getGeometryTypeId() == geos::geom::GEOS_POLYGON) {
