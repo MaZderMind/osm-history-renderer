@@ -4,8 +4,6 @@
 class Nodestore {
 public:
     struct Nodeinfo {
-        // MEMORY: may remove the version, it's not really required
-        osm_version_t version;
         double lat;
         double lon;
     };
@@ -32,7 +30,7 @@ public:
     }
 
     void record(osm_object_id_t id, osm_version_t v, time_t t, double lon, double lat) {
-        Nodeinfo info = {v, lon, lat};
+        Nodeinfo info = {lon, lat};
 
         nodemap_it it = m_nodemap.find(id);
         timemap *tmap;
@@ -54,9 +52,7 @@ public:
         }
     }
 
-    Nodeinfo lookup(osm_object_id_t id, time_t t) {
-        Nodeinfo nullinfo = {0, 0, 0};
-
+    Nodeinfo lookup(osm_object_id_t id, time_t t, bool &found) {
         if(Osmium::debug()) {
             std::cerr << "looking up information of node #" << id << " at tstamp " << t << std::endl;
         }
@@ -64,6 +60,8 @@ public:
         nodemap_it nit = m_nodemap.find(id);
         if(nit == m_nodemap.end()) {
             std::cerr << "no timemap for node #" << id << ", skipping node" << std::endl;
+            found = false;
+            Nodeinfo nullinfo = {0, 0};
             return nullinfo;
         }
 
@@ -71,11 +69,12 @@ public:
         timemap_it tit = tmap->upper_bound(t);
 
         if(tit == tmap->begin()) {
-            std::cerr << "reference to node #" << id << " at tstamp " << t << " which is before the youngest available version of that node, using version " << tit->second.version << std::endl;
+            std::cerr << "reference to node #" << id << " at tstamp " << t << " which is before the youngest available version of that node, using first version" << std::endl;
         } else {
             tit--;
         }
 
+        found = true;
         return tit->second;
     }
 
@@ -90,12 +89,13 @@ public:
         for(Osmium::OSM::WayNodeList::const_iterator it = nodes.begin(); it != end; ++it) {
             osm_object_id_t id = it->ref();
 
-            Nodeinfo info = lookup(id, t);
-            if(info.version == 0)
+            bool found;
+            Nodeinfo info = lookup(id, t, found);
+            if(!found)
                 continue;
 
             if(Osmium::debug()) {
-                std::cerr << "node #" << id << " at tstamp " << t << " references version " << info.version << std::endl;
+                std::cerr << "node #" << id << " at tstamp " << t << " references node at POINT(" << std::setprecision(8) << info.lat << ' ' << info.lon << ')' << std::endl;
             }
             
             c->push_back(geos::geom::Coordinate(info.lat, info.lon, DoubleNotANumber));
