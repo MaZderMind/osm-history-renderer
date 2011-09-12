@@ -12,21 +12,32 @@
 
 <Include xmlns:xi="http://www.w3.org/2001/XInclude">
 	<Layer name="roads-small" status="on" srs="&dbProjection;">
-		<StyleName>roads-livingstreet-area-fill</StyleName>
+		<StyleName>roads-service-tunnel-casing</StyleName>
 		<StyleName>roads-residential-tunnel-casing</StyleName>
+		
 		<StyleName>roads-residential-tunnel-fill</StyleName>
 		
+		<StyleName>roads-service-bridge-casing</StyleName>
 		<StyleName>roads-residential-bridge-casing</StyleName>
+		
+		<StyleName>roads-service-bridge-fill</StyleName>
 		<StyleName>roads-residential-bridge-fill</StyleName>
 		
+		<StyleName>roads-service-casing</StyleName>
 		<StyleName>roads-livingstreet-casing</StyleName>
 		<StyleName>roads-residential-casing</StyleName>
+		
+		<StyleName>roads-service-fill</StyleName>
 		<StyleName>roads-livingstreet-fill</StyleName>
 		<StyleName>roads-residential-fill</StyleName>
 		
+		<StyleName>roads-service-construction</StyleName>
 		<StyleName>roads-livingstreet-construction</StyleName>
 		<StyleName>roads-residential-construction</StyleName>
+		
+		<StyleName>roads-service-access</StyleName>
 		<StyleName>roads-residential-access</StyleName>
+		
 		<StyleName>roads-residential-text</StyleName>
 		
 		<Datasource>
@@ -37,7 +48,7 @@
 				       tags->'name' AS name, tags->'ref' AS ref, 
 				  CASE WHEN tags->'tunnel' in ('yes', 'true', '1') then 'yes'::text ELSE tags->'tunnel' END AS tunnel, 
 				  CASE WHEN tags->'bridge' in ('yes', 'true', '1') then 'yes'::text ELSE tags->'bridge' END AS bridge, 
-				  CASE WHEN tags->'service' in ('parking_aisle', 'drive-through', 'driveway') THEN 'service-minor'::text ELSE tags->'service' END AS service
+				  CASE WHEN tags->'service' in ('parking_aisle', 'drive-through', 'driveway') THEN 'minor'::text ELSE tags->'service' END AS service
 				  FROM &prefix;_line
 				 WHERE tags->'highway' IN ('residential', 'living_street', 'unclassified', 'service', 'road')
 				   AND &date;
@@ -50,7 +61,11 @@
 	</Layer>
 	
 	<Layer name="roads-minor-area" status="on" srs="&dbProjection;">
+		<StyleName>roads-service-area-casing</StyleName>
 		<StyleName>roads-residential-area-casing</StyleName>
+		
+		<StyleName>roads-livingstreet-area-fill</StyleName>
+		<StyleName>roads-service-area-fill</StyleName>
 		<StyleName>roads-residential-area-fill</StyleName>
 		
 		
@@ -58,9 +73,13 @@
 			<Parameter name="table">
 			(
 			
-				SELECT way, tags->'highway' AS highway
+				SELECT way, tags->'highway' AS highway, tags->'construction' AS construction, tags->'access' AS access, 
+				       tags->'name' AS name, tags->'ref' AS ref, 
+				  CASE WHEN tags->'tunnel' in ('yes', 'true', '1') then 'yes'::text ELSE tags->'tunnel' END AS tunnel, 
+				  CASE WHEN tags->'bridge' in ('yes', 'true', '1') then 'yes'::text ELSE tags->'bridge' END AS bridge, 
+				  CASE WHEN tags->'service' in ('parking_aisle', 'drive-through', 'driveway') THEN 'minor'::text ELSE tags->'service' END AS service
 				  FROM &prefix;_polygon
-				 WHERE tags->'highway' IN ('residential', 'unclassified', 'service')
+				 WHERE tags->'highway' IN ('residential', 'living_street', 'unclassified', 'service', 'road')
 				   AND &date;
 				
 			) as subq
@@ -70,21 +89,38 @@
 		</Datasource>
 	</Layer>
 	
+	<xi:include href="roads/service.xml"      xpointer="xpointer(/Include/Style[@name=   'roads-service-area-casing'        ])" />
 	<xi:include href="roads/residential.xml"  xpointer="xpointer(/Include/Style[@name=   'roads-residential-area-casing'    ])" />
+	
+	<xi:include href="roads/service.xml"      xpointer="xpointer(/Include/Style[@name=   'roads-service-bridge-casing'      ])" />
 	<xi:include href="roads/residential.xml"  xpointer="xpointer(/Include/Style[@name=   'roads-residential-bridge-casing'  ])" />
+	
+	<xi:include href="roads/service.xml"      xpointer="xpointer(/Include/Style[@name=   'roads-service-tunnel-casing'      ])" />
 	<xi:include href="roads/residential.xml"  xpointer="xpointer(/Include/Style[@name=   'roads-residential-tunnel-casing'  ])" />
+	
+	<xi:include href="roads/service.xml"      xpointer="xpointer(/Include/Style[@name=   'roads-service-casing'             ])" />
 	<xi:include href="roads/livingstreet.xml" xpointer="xpointer(/Include/Style[@name=   'roads-livingstreet-casing'        ])" />
 	<xi:include href="roads/residential.xml"  xpointer="xpointer(/Include/Style[@name=   'roads-residential-casing'         ])" />
 	
+	<xi:include href="roads/service.xml"      xpointer="xpointer(/Include/Style[@name=   'roads-service-area-fill'          ])" />
 	<xi:include href="roads/livingstreet.xml" xpointer="xpointer(/Include/Style[@name=   'roads-livingstreet-area-fill'     ])" />
 	<xi:include href="roads/residential.xml"  xpointer="xpointer(/Include/Style[@name=   'roads-residential-area-fill'      ])" />
+	
 	<xi:include href="roads/residential.xml"  xpointer="xpointer(/Include/Style[@name=   'roads-residential-tunnel-fill'    ])" />
+	
+	<xi:include href="roads/service.xml"      xpointer="xpointer(/Include/Style[@name=   'roads-service-bridge-fill'        ])" />
 	<xi:include href="roads/residential.xml"  xpointer="xpointer(/Include/Style[@name=   'roads-residential-bridge-fill'    ])" />
+	
+	<xi:include href="roads/service.xml"      xpointer="xpointer(/Include/Style[@name=   'roads-service-fill'               ])" />
 	<xi:include href="roads/livingstreet.xml" xpointer="xpointer(/Include/Style[@name=   'roads-livingstreet-fill'          ])" />
 	<xi:include href="roads/residential.xml"  xpointer="xpointer(/Include/Style[@name=   'roads-residential-fill'           ])" />
 	
+	<xi:include href="roads/service.xml"      xpointer="xpointer(/Include/Style[@name=   'roads-service-construction'       ])" />
 	<xi:include href="roads/livingstreet.xml" xpointer="xpointer(/Include/Style[@name=   'roads-livingstreet-construction'  ])" />
 	<xi:include href="roads/residential.xml"  xpointer="xpointer(/Include/Style[@name=   'roads-residential-construction'   ])" />
+	
+	<xi:include href="roads/service.xml"      xpointer="xpointer(/Include/Style[@name=   'roads-service-access'             ])" />
 	<xi:include href="roads/residential.xml"  xpointer="xpointer(/Include/Style[@name=   'roads-residential-access'         ])" />
+	
 	<xi:include href="roads/residential.xml"  xpointer="xpointer(/Include/Style[@name=   'roads-residential-text'           ])" />
 </Include>

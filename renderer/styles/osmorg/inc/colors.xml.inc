@@ -104,6 +104,7 @@
 <!-- access -->
 <!ENTITY cAccessPermissive "#CCFF99">
 <!ENTITY cAccessDestination "#C2E0FF">
+<!ENTITY cAccessPrivate "#EFA9A9">
 
 <!-- residential (includes unclassified) -->
 <!ENTITY cResidentialCasing "#999999">
@@ -116,3 +117,11 @@
 <!ENTITY cLivingstreetFill "#CCCCCC">
 <!ENTITY cLivingstreetConstructionA "#AAAAAA">
 <!ENTITY cLivingstreetConstructionB "#FFFFFF">
+
+<!-- service -->
+<!ENTITY cServiceAreaCasing "#808080">
+<!ENTITY cServiceAreaFill "#FFFFFF">
+<!ENTITY cServiceCasing "#999999">
+<!ENTITY cServiceFill "#FFFFFF">
+<!ENTITY cServiceConstructionA "#AAAAAA">
+<!ENTITY cServiceConstructionB "#FFFFFF">

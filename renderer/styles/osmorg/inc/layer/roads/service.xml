@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE Include [
+    <!ENTITY % inc SYSTEM "../../inc.xml.inc">
+    %inc;
+]>
+
+<Include xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Style name="roads-service-area-casing">
+		<Rule>
+			&maxscale_zoom14;
+			<Filter>[highway]='service'</Filter>
+			<LineSymbolizer stroke-width="1" stroke="&cServiceAreaCasing;" />
+		</Rule>
+	</Style>
+	
+	
+	
+	<Style name="roads-service-area-fill">
+		<Rule>
+			&maxscale_zoom14;
+			<Filter>[highway]='service'</Filter>
+			<PolygonSymbolizer fill="&cServiceAreaFill;" />
+		</Rule>
+	</Style>
+	
+	
+	
+	<Style name="roads-service-casing">
+		<Rule>
+			&maxscale_zoom14;
+			&minscale_zoom15;
+			<Filter>[highway]='service' and not [service]='minor' and not [tunnel]='yes'</Filter>
+			<LineSymbolizer stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" stroke="&cServiceCasing;" />
+		</Rule>
+		<Rule>
+			&maxscale_zoom16;
+			<Filter>[highway]='service' and not [service]='minor' and not [tunnel]='yes'</Filter>
+			<LineSymbolizer stroke-linecap="round" stroke-linejoin="round" stroke-width="7" stroke="&cServiceCasing;" />
+		</Rule>
+		
+		
+		<Rule>
+			&maxscale_zoom16;
+			<Filter>[highway]='service' and [service]='minor'</Filter>
+			<LineSymbolizer stroke-linecap="round" stroke-linejoin="round" stroke-width="4" stroke="&cServiceCasing;" />
+	   </Rule>
+	</Style>
+	
+	
+	
+	<Style name="roads-service-fill">
+		<Rule>
+			&maxscale_zoom13;
+			&minscale_zoom13;
+			<Filter>[highway]='service' and not [service]='minor'</Filter>
+			<LineSymbolizer stroke-width="1" stroke="#bbbbbb" />
+		</Rule>
+		<Rule>
+			&maxscale_zoom14;
+			&minscale_zoom15;
+			<Filter>[highway]='service' and not [service]='minor'</Filter>
+			<LineSymbolizer stroke-linecap="round" stroke-linejoin="round" stroke-width="2" stroke="&cServiceFill;" />
+		</Rule>
+		<Rule>
+			&maxscale_zoom16;
+			<Filter>[highway]='service' and not [service]='minor'</Filter>
+			<LineSymbolizer stroke-linecap="round" stroke-linejoin="round" stroke-width="6" stroke="&cServiceFill;" />
+		</Rule>
+		
+		
+		<Rule>
+			&maxscale_zoom16;
+			<Filter>[highway]='service' and [service]='minor'</Filter>
+			<LineSymbolizer stroke-linecap="round" stroke-linejoin="round" stroke-width="3" stroke="&cServiceFill;" />
+		</Rule>
+	</Style>
+	
+	
+	
+	<Style name="roads-service-tunnel-casing">
+		<Rule>
+			<Filter>[highway]='service' and [tunnel]='yes'</Filter>
+			&maxscale_zoom14;
+			&minscale_zoom15;
+			<LineSymbolizer stroke-dasharray="4,2" stroke-width="2.5" stroke="&cServiceCasing;" />
+		</Rule>
+		<Rule>
+			<Filter>[highway]='service' and [tunnel]='yes'</Filter>
+			&maxscale_zoom16;
+			<LineSymbolizer stroke-dasharray="4,2" stroke-width="7" stroke="&cServiceCasing;" />
+		</Rule>
+	</Style>
+	
+	
+	
+	<Style name="roads-service-bridge-casing">
+		<Rule>
+			<Filter>[highway]='service' and [bridge]='yes'</Filter>
+			&maxscale_zoom14;
+			&minscale_zoom15;
+			<LineSymbolizer stroke-width="3" stroke="&cBridgeCasing;" />
+		</Rule>
+		<Rule>
+			<Filter>[highway]='service' and [bridge]='yes'</Filter>
+			&maxscale_zoom16;
+			<LineSymbolizer stroke-width="8" stroke="&cBridgeCasing;" />
+		</Rule>
+	</Style>
+	
+	
+	
+	<Style name="roads-service-bridge-fill">
+		<Rule>
+			<Filter>[highway]='service' and [bridge]='yes'</Filter>
+			&maxscale_zoom14;
+			&minscale_zoom15;
+			<LineSymbolizer stroke-linecap="round" stroke-linejoin="round" stroke-width="2" stroke="&cServiceFill;" />
+		</Rule>
+		<Rule>
+			<Filter>[highway]='service' and [bridge]='yes'</Filter>
+			&maxscale_zoom16;
+			<LineSymbolizer stroke-linecap="round" stroke-linejoin="round" stroke-width="6" stroke="&cServiceFill;" />
+		</Rule>
+	</Style>
+	
+	
+	
+	<Style name="roads-service-construction">
+		<Rule>
+			&maxscale_zoom13;
+			&minscale_zoom15;
+			<Filter>([highway]='proposed' or [highway]='construction') and [construction]='service'</Filter>
+			<LineSymbolizer stroke="&cServiceConstructionA;" stroke-width="4" />
+			<LineSymbolizer stroke="&cServiceConstructionB;" stroke-width="3.5" stroke-dasharray="6,4"/>
+		</Rule>
+		<Rule>
+			&maxscale_zoom16;
+			<Filter>([highway]='proposed' or [highway]='construction') and [construction]='service'</Filter>
+			<LineSymbolizer stroke="&cServiceConstructionA;" stroke-width="8" />
+			<LineSymbolizer stroke="&cServiceConstructionB;" stroke-width="7" stroke-dasharray="8,6"/>
+		</Rule>
+	</Style>
+	
+	
+	
+	<Style name="roads-service-access">
+		<Rule>
+			&maxscale_zoom15;
+			&minscale_zoom15;
+			<Filter>[access]='permissive' and [highway]='service' and not [service]='minor'</Filter>
+			<LineSymbolizer stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.5" stroke-dasharray="6,8" stroke-width="3" stroke="&cAccessPermissive;" />
+		</Rule>
+		<Rule>
+			<Filter>[access]='permissive' and [highway]='service'</Filter>
+			&maxscale_zoom16;
+			<LineSymbolizer stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.5" stroke-dasharray="6,8" stroke-width="6" stroke="&cAccessPermissive;" />
+		</Rule>
+		
+		
+		<Rule>
+			&maxscale_zoom15;
+			&minscale_zoom15;
+			<Filter>[access]='destination' and [highway]='service' and not [service]='minor'</Filter>
+			<LineSymbolizer stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.5" stroke-dasharray="6,8" stroke-width="3" stroke="&cAccessDestination;" />
+		</Rule>
+		<Rule>
+			<Filter>[access]='destination' and [highway]='service'</Filter>
+			&maxscale_zoom16;
+			<LineSymbolizer stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.5" stroke-dasharray="6,8" stroke-width="6" stroke="&cAccessDestination;" />
+		</Rule>
+		
+		
+		<Rule>
+			<Filter>([access]='private' or [access]='no') and [highway]='service' and not [service]='minor'</Filter>
+			&maxscale_zoom15;
+			&minscale_zoom15;
+			<LineSymbolizer stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.5" stroke-dasharray="6,8" stroke-width="3" stroke="&cAccessPrivate;" />
+		</Rule>
+	</Style>
+</Include>
