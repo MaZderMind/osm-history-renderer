@@ -6,7 +6,7 @@
 
 <!--
   small: track, pedestrian, cycleway, footway, bridleway, byway, steps, ford
-  medium: residential, living_street, unclassified, service, road
+  medium: residential, living_street, unclassified (included in residential), service, road
   big: tertiary, secondary, primary, trunk, motorway
 -->
 
