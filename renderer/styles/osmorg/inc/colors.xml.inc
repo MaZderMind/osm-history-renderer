@@ -105,7 +105,7 @@
 <!ENTITY cAccessPermissive "#CCFF99">
 <!ENTITY cAccessDestination "#C2E0FF">
 
-<!-- residential -->
+<!-- residential (includes unclassified) -->
 <!ENTITY cResidentialCasing "#999999">
 <!ENTITY cResidentialFill "#FFFFFF">
 <!ENTITY cResidentialConstructionA "#AAAAAA">
