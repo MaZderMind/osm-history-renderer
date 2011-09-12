@@ -5,7 +5,7 @@
 ]>
 
 <Include xmlns:xi="http://www.w3.org/2001/XInclude">
-	<Style name="roads-livingstreet-area-fill" xml:id="area-fill">
+	<Style name="roads-livingstreet-area-fill">
 		<Rule>
 			&maxscale_zoom14;
 			<Filter>[highway]='living_street'</Filter>
@@ -15,7 +15,7 @@
 	
 	
 	
-	<Style name="roads-livingstreet-casing" xml:id="casing">
+	<Style name="roads-livingstreet-casing">
 		<Rule>
 			<Filter>[highway]='living_street'</Filter>
 			&maxscale_zoom12;
@@ -49,7 +49,7 @@
 	
 	
 	
-	<Style name="roads-livingstreet-fill" xml:id="fill">
+	<Style name="roads-livingstreet-fill">
 		<Rule>
 			<Filter>[highway] = 'living_street'</Filter>
 			&maxscale_zoom12;
@@ -84,7 +84,7 @@
 	
 	
 	
-	<Style name="roads-livingstreet-construction" xml:id="construction">
+	<Style name="roads-livingstreet-construction">
 		<Rule>
 			&maxscale_zoom13;
 			&minscale_zoom15;

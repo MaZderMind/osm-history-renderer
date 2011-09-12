@@ -70,21 +70,21 @@
 		</Datasource>
 	</Layer>
 	
-	<xi:include href="roads/residential.xml" xpointer="area-casing" />
-	<xi:include href="roads/residential.xml" xpointer="bridge-casing" />
-	<xi:include href="roads/residential.xml" xpointer="tunnel-casing" />
-	<xi:include href="roads/livingstreet.xml" xpointer="casing" />
-	<xi:include href="roads/residential.xml" xpointer="casing" />
+	<xi:include href="roads/residential.xml"  xpointer="xpointer(/Include/Style[@name=   'roads-residential-area-casing'    ])" />
+	<xi:include href="roads/residential.xml"  xpointer="xpointer(/Include/Style[@name=   'roads-residential-bridge-casing'  ])" />
+	<xi:include href="roads/residential.xml"  xpointer="xpointer(/Include/Style[@name=   'roads-residential-tunnel-casing'  ])" />
+	<xi:include href="roads/livingstreet.xml" xpointer="xpointer(/Include/Style[@name=   'roads-livingstreet-casing'        ])" />
+	<xi:include href="roads/residential.xml"  xpointer="xpointer(/Include/Style[@name=   'roads-residential-casing'         ])" />
 	
-	<xi:include href="roads/livingstreet.xml" xpointer="area-fill" />
-	<xi:include href="roads/residential.xml" xpointer="area-fill" />
-	<xi:include href="roads/residential.xml" xpointer="tunnel-fill" />
-	<xi:include href="roads/residential.xml" xpointer="bridge-fill" />
-	<xi:include href="roads/livingstreet.xml" xpointer="fill" />
-	<xi:include href="roads/residential.xml" xpointer="fill" />
+	<xi:include href="roads/livingstreet.xml" xpointer="xpointer(/Include/Style[@name=   'roads-livingstreet-area-fill'     ])" />
+	<xi:include href="roads/residential.xml"  xpointer="xpointer(/Include/Style[@name=   'roads-residential-area-fill'      ])" />
+	<xi:include href="roads/residential.xml"  xpointer="xpointer(/Include/Style[@name=   'roads-residential-tunnel-fill'    ])" />
+	<xi:include href="roads/residential.xml"  xpointer="xpointer(/Include/Style[@name=   'roads-residential-bridge-fill'    ])" />
+	<xi:include href="roads/livingstreet.xml" xpointer="xpointer(/Include/Style[@name=   'roads-livingstreet-fill'          ])" />
+	<xi:include href="roads/residential.xml"  xpointer="xpointer(/Include/Style[@name=   'roads-residential-fill'           ])" />
 	
-	<xi:include href="roads/livingstreet.xml" xpointer="construction" />
-	<xi:include href="roads/residential.xml" xpointer="construction" />
-	<xi:include href="roads/residential.xml" xpointer="access" />
-	<xi:include href="roads/residential.xml" xpointer="text" />
+	<xi:include href="roads/livingstreet.xml" xpointer="xpointer(/Include/Style[@name=   'roads-livingstreet-construction'  ])" />
+	<xi:include href="roads/residential.xml"  xpointer="xpointer(/Include/Style[@name=   'roads-residential-construction'   ])" />
+	<xi:include href="roads/residential.xml"  xpointer="xpointer(/Include/Style[@name=   'roads-residential-access'         ])" />
+	<xi:include href="roads/residential.xml"  xpointer="xpointer(/Include/Style[@name=   'roads-residential-text'           ])" />
 </Include>
