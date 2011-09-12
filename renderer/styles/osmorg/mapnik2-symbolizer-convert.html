@@ -1,0 +1,35 @@
+<html>
+    <head>
+        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.3/jquery.min.js"></script>
+        <script type="text/javascript">
+            $(function() {
+                var io = $('#io');
+                io.keydown(function(e) {
+                    if(e.which == 13) {
+                        var input = io.val();
+                        
+                        var el = $('<div/>').html(input);
+                        var sym = $(el.children().get(0));
+                        var css = sym.find('cssparameter');
+                        css.each(function(idx, it) {
+                            it = $(it);
+                            var k = it.attr('name').replace('_', '-');
+                            var v = it.text();
+                            
+                            sym.attr(k, v);
+                            it.remove();
+                        });
+                        sym.html("");
+                        var output = el.html();
+                        output = output.replace(/linesymbolizer/g, 'LineSymbolizer').replace('></LineSymbolizer>', ' />');
+                        io.val(output);
+                        el.remove();
+                    }
+                });
+            });
+        </script>
+    </head>
+    <body>
+        <textarea id="io" style="width: 100%; height: 100%;"></textarea>
+    </body>
+</html>
