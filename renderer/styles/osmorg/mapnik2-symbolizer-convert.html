@@ -21,7 +21,9 @@
                         });
                         sym.html("");
                         var output = el.html();
-                        output = output.replace(/linesymbolizer/g, 'LineSymbolizer').replace('></LineSymbolizer>', ' />');
+                        output = output.trim()
+                            .replace(/linesymbolizer/g, 'LineSymbolizer').replace('></LineSymbolizer>', ' />')
+                            .replace(/polygonsymbolizer/g, 'PolygonSymbolizer').replace('></PolygonSymbolizer>', ' />');
                         io.val(output);
                         el.remove();
                     }
