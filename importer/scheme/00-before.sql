@@ -39,7 +39,8 @@ CREATE TABLE hist_line (
     visible boolean,
     valid_from timestamp without time zone,
     valid_to timestamp without time zone,
-    tags hstore
+    tags hstore,
+    z_order integer
 );
 SELECT AddGeometryColumn(
     -- table name

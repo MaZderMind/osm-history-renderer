@@ -487,13 +487,13 @@ public:
             (visible ? 't' : 'f') << '\t' <<
             format_time(valid_from) << '\t' <<
             format_time(valid_to) << '\t' <<
-            format_hstore(tags) << '\t';
+            format_hstore(tags) << '\t' <<
+            m_polygonident.calculateZOrder(tags) << '\t';
 
         if(geom->getGeometryTypeId() == geos::geom::GEOS_POLYGON) {
             const geos::geom::Polygon* poly = dynamic_cast<const geos::geom::Polygon*>(geom);
 
             // a polygon, polygon-meta to table
-            line << m_polygonident.calculateZOrder(tags) << '\t';
             line << poly->getArea() << '\t';
 
             // write geometry to polygon table
