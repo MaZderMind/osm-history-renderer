@@ -3,6 +3,7 @@
 # render data from postgresql to an image or a pdf
 #
 
+import psycopg2
 from optparse import OptionParser
 import sys, os, subprocess
 import cStringIO
@@ -42,6 +43,30 @@ def main():
     parser.add_option("-d", "--date", action="store", type="string", dest="date", 
                       help="date to render the image for (historic database related), format 'YYYY-MM-DD HH:II:SS'")
     
+    
+    parser.add_option("-v", "--view", action="store_true", dest="view", default=True, 
+                      help="if this option is set, the render-script will create views in the database to enable rendering with 'normal' mapnik styles, written for osm2pgsql databases ([default: %default]")
+    
+    parser.add_option("-p", "--view-prefix", action="store", type="string", dest="viewprefix", default="hist_view", 
+                      help="if thie -v/--view option is set, this script will one view for each osm2pgsql-table (point, line, polygon, roads) with this prefix (eg. hist_view_point)")
+    
+    parser.add_option("-o", "--view-hstore", action="store_true", dest="viewhstore", default=False, 
+                      help="if this option is set, the views will contain a single hstore-column called 'tags' containing all tags")
+    
+    parser.add_option("-c", "--view-columns", action="store", type="string", dest="viewcolumns", default="access,addr:housename,addr:housenumber,addr:interpolation,admin_level,aerialway,aeroway,amenity,area,barrier,bicycle,brand,bridge,boundary,building,construction,covered,culvert,cutting,denomination,disused,embankment,foot,generator:source,harbour,highway,tracktype,capital,ele,historic,horse,intermittent,junction,landuse,layer,leisure,lock,man_made,military,motorcar,name,natural,oneway,operator,population,power,power_source,place,railway,ref,religion,route,service,shop,sport,surface,toll,tourism,tower:type,tunnel,water,waterway,wetland,width,wood", 
+                      help="by default the view will contain a column for each of tag used by the default osm.org style. With this setting the default set of columns can be overriden.")
+    
+    parser.add_option("-e", "--extra-view-columns", action="store", type="string", dest="extracolumns", default="", 
+                      help="if you need only some additional columns, you can use this flag to add them to the default set of columns")
+    
+    
+    parser.add_option("-D", "--db", action="store", type="string", dest="dsn", default="", 
+                      help="database connection string used for view creation")
+    
+    parser.add_option("-P", "--dbprefix", action="store", type="string", dest="dbprefix", default="hist", 
+                      help="database table prefix of imported tables, used for view creation [default: %default]")
+    
+    
     (options, args) = parser.parse_args()
     
     if options.size:
@@ -77,14 +102,19 @@ def main():
     render(options)
 
 def render(options):
+    # create view
+    if(options.view):
+        columns = options.viewcolumns.split(',')
+        if(options.extracolumns):
+            columns += options.extracolumns.split(',')
+        
+        create_views(options.dsn, options.dbprefix, options.viewprefix, options.viewhstore, columns, options.date)
+    
     # create map
     m = mapnik.Map(options.size[0], options.size[1])
     
-    # preprocess style with xmllint to include date information
-    processed_style = preprocess(options.style, options.date);
-    
     # load style
-    mapnik.load_map_from_string(m, processed_style, True, options.style)
+    mapnik.load_map(m, options.style)
     
     # create projection object
     prj = mapnik.Projection("+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +no_defs +over")
@@ -126,6 +156,10 @@ def render(options):
     
     elif isinstance(s, cairo.Surface):
         s.finish()
+    
+    if(options.view):
+        drop_views(options.dsn, options.viewprefix)
+    
 
 def zoom2size(bbox, zoom):
     prj = mapnik.Projection("+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +no_defs +over")
@@ -195,26 +229,47 @@ def zoom2size(bbox, zoom):
     
     return (wp, hp)
 
+def create_views(dsn, dbprefix, viewprefix, hstore, columns, date):
+    con = psycopg2.connect(dsn)
+    cur = con.cursor()
+    
+    columselect = ""
+    for column in columns:
+        columselect += "tags->'%s' AS \"%s\", " % (column, column)
+    
+    cur.execute("DROP VIEW %s_point" % (viewprefix))
+    sql = "CREATE OR REPLACE VIEW %s_point AS SELECT id AS osm_id, %s way FROM %s_point WHERE '%s' BETWEEN valid_from AND COALESCE(valid_to, '9999-12-31');" % (viewprefix, columselect, dbprefix, date)
+    cur.execute(sql)
+    
+    cur.execute("DROP VIEW %s_line" % (viewprefix))
+    sql = "CREATE OR REPLACE VIEW %s_line AS SELECT id AS osm_id, %s z_order, way FROM %s_line WHERE '%s' BETWEEN valid_from AND COALESCE(valid_to, '9999-12-31');" % (viewprefix, columselect, dbprefix, date)
+    cur.execute(sql)
+    
+    cur.execute("DROP VIEW %s_roads" % (viewprefix))
+    sql = "CREATE OR REPLACE VIEW %s_roads AS SELECT id AS osm_id, %s z_order, way FROM %s_line WHERE '%s' BETWEEN valid_from AND COALESCE(valid_to, '9999-12-31');" % (viewprefix, columselect, dbprefix, date)
+    cur.execute(sql)
+    
+    cur.execute("DROP VIEW %s_polygon" % (viewprefix))
+    sql = "CREATE OR REPLACE VIEW %s_polygon AS SELECT id AS osm_id, %s z_order, way_area, way FROM %s_polygon WHERE '%s' BETWEEN valid_from AND COALESCE(valid_to, '9999-12-31');" % (viewprefix, columselect, dbprefix, date)
+    cur.execute(sql)
+    
+    con.commit()
+    cur.close()
+    con.close()
 
-def preprocess(style, date):
-    style = output = subprocess.Popen(["xmllint", "--noent", "--xinclude", style], stdout=subprocess.PIPE).communicate()[0]
-    return style.replace('{DATE}', date)
+def drop_views(dsn, viewprefix):
+    con = psycopg2.connect(dsn)
+    cur = con.cursor()
+    
+    cur.execute("DROP VIEW %s_point" % (viewprefix))
+    cur.execute("DROP VIEW %s_line" % (viewprefix))
+    cur.execute("DROP VIEW %s_roads" % (viewprefix))
+    cur.execute("DROP VIEW %s_polygon" % (viewprefix))
+    
+    con.commit()
+    cur.close()
+    con.close()
 
-# this does not work with python 2.7 because of http://bugs.python.org/issue902037
-#def preprocess(style, date):
-#    io = cStringIO.StringIO()
-#    reader = sax.make_parser()
-#    writer = saxutils.XMLGenerator(io)
-#    filter = DateRaplaceFilter(reader, writer, date)
-#    
-#    reader.parse(style)
-#    return io.getvalue()
-#
-#class DateRaplaceFilter(saxutils.XMLFilterBase):
-#    def __init__(self, upstream, downstream, date):
-#        saxutils.XMLFilterBase.__init__(self, upstream)
-#        self.downstream = downstream
-#        self.date = date
 
 if __name__ == "__main__":
     main()
