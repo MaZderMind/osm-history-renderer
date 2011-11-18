@@ -18,7 +18,7 @@ def main():
     parser.add_option("-f", "--file", action="store", type="string", dest="file", default="animap", 
                       help="path to the destination file without the file extension [default: %default]")
     
-    parser.add_option("-t", "--type", action="store", type="string", dest="type", default="gif", 
+    parser.add_option("-t", "--type", action="store", type="string", dest="type", default="png", 
                       help="file type to render [default: %default]")
     
     parser.add_option("-x", "--size", action="store", type="string", dest="size", default="800x600", 
@@ -30,10 +30,21 @@ def main():
     parser.add_option("-z", "--zoom", action="store", type="int", dest="zoom", 
                       help="the zoom level to render. this overrules --size")
     
-    parser.add_option("-d", "--date", action="store", type="string", dest="date", 
-                      help="date to render the image for (historic database related), format 'YYYY-MM-DD HH:II:SS'")
     
+    parser.add_option("-v", "--view", action="store_true", dest="view", default=True, 
+                      help="if this option is set, the render-script will create views in the database to enable rendering with 'normal' mapnik styles, written for osm2pgsql databases [default: %default]")
     
+    parser.add_option("-p", "--view-prefix", action="store", type="string", dest="viewprefix", default="hist_view", 
+                      help="if thie -v/--view option is set, this script will one view for each osm2pgsql-table (point, line, polygon, roads) with this prefix (eg. hist_view_point)")
+    
+    parser.add_option("-o", "--view-hstore", action="store_true", dest="viewhstore", default=False, 
+                      help="if this option is set, the views will contain a single hstore-column called 'tags' containing all tags")
+    
+    parser.add_option("-c", "--view-columns", action="store", type="string", dest="viewcolumns", default="access,addr:housename,addr:housenumber,addr:interpolation,admin_level,aerialway,aeroway,amenity,area,barrier,bicycle,brand,bridge,boundary,building,construction,covered,culvert,cutting,denomination,disused,embankment,foot,generator:source,harbour,highway,tracktype,capital,ele,historic,horse,intermittent,junction,landuse,layer,leisure,lock,man_made,military,motorcar,name,natural,oneway,operator,population,power,power_source,place,railway,ref,religion,route,service,shop,sport,surface,toll,tourism,tower:type,tunnel,water,waterway,wetland,width,wood", 
+                      help="by default the view will contain a column for each of tag used by the default osm.org style. With this setting the default set of columns can be overriden.")
+    
+    parser.add_option("-e", "--extra-view-columns", action="store", type="string", dest="extracolumns", default="", 
+                      help="if you need only some additional columns, you can use this flag to add them to the default set of columns")
     
     
     parser.add_option("-A", "--anistart", action="store", type="string", dest="anistart", 
@@ -43,7 +54,7 @@ def main():
                       help="end-date of the animation, defaults to now")
     
     parser.add_option("-S", "--anistep", action="store", type="string", dest="anistep", default="months=+1", 
-                      help="stepping of the animation [default: %default]")
+                      help="stepping of the animation (could be something like days=+14, weeks=+1 or hours=+12) [default: %default]")
     
     parser.add_option("-F", "--fps", action="store", type="string", dest="fps", default="2", 
                       help="desired number od frames per second [default: %default]")
@@ -52,12 +63,10 @@ def main():
                       help="keep the generated PNGs after assembling the animation")
     
     
-    
-    
     parser.add_option("-D", "--db", action="store", type="string", dest="dsn", default="", 
                       help="database connection string used for auto-infering animation start")
     
-    parser.add_option("-P", "--dbprefix", action="store", type="string", dest="dbprefix", default="hist_", 
+    parser.add_option("-P", "--dbprefix", action="store", type="string", dest="dbprefix", default="hist", 
                       help="database table prefix used for auto-infering animation start [default: %default]")
     
     (options, args) = parser.parse_args()
@@ -130,7 +139,10 @@ def main():
     print "assemmbling animation"
     opts = ["-r "+options.fps, "-i", tempdir+"/%010d.png"]
     if anitype == "gif":
-        opts.extend(["-pix_fmt", "rgb24"])
+        opts.extend(["-pix_fmt rgb24"])
+    elif anitype == "mp4":
+        opts.extend(["-crf", "0"])
+        # somehow the lossless setting is not applied(?)
     
     opts.append("%s.%s" % (anifile, anitype))
     

@@ -45,7 +45,7 @@ def main():
     
     
     parser.add_option("-v", "--view", action="store_true", dest="view", default=True, 
-                      help="if this option is set, the render-script will create views in the database to enable rendering with 'normal' mapnik styles, written for osm2pgsql databases ([default: %default]")
+                      help="if this option is set, the render-script will create views in the database to enable rendering with 'normal' mapnik styles, written for osm2pgsql databases [default: %default]")
     
     parser.add_option("-p", "--view-prefix", action="store", type="string", dest="viewprefix", default="hist_view", 
                       help="if thie -v/--view option is set, this script will one view for each osm2pgsql-table (point, line, polygon, roads) with this prefix (eg. hist_view_point)")
@@ -237,21 +237,23 @@ def create_views(dsn, dbprefix, viewprefix, hstore, columns, date):
     for column in columns:
         columselect += "tags->'%s' AS \"%s\", " % (column, column)
     
-    cur.execute("DROP VIEW %s_point" % (viewprefix))
-    sql = "CREATE OR REPLACE VIEW %s_point AS SELECT id AS osm_id, %s way FROM %s_point WHERE '%s' BETWEEN valid_from AND COALESCE(valid_to, '9999-12-31');" % (viewprefix, columselect, dbprefix, date)
-    cur.execute(sql)
+    cur.execute("DELETE FROM geometry_columns WHERE f_table_catalog = '' AND f_table_schema = 'public' AND f_table_name IN ('%s_point', '%s_line', '%s_roads', '%s_polygon');" % (viewprefix, viewprefix, viewprefix, viewprefix))
     
-    cur.execute("DROP VIEW %s_line" % (viewprefix))
-    sql = "CREATE OR REPLACE VIEW %s_line AS SELECT id AS osm_id, %s z_order, way FROM %s_line WHERE '%s' BETWEEN valid_from AND COALESCE(valid_to, '9999-12-31');" % (viewprefix, columselect, dbprefix, date)
-    cur.execute(sql)
+    cur.execute("DROP VIEW IF EXISTS %s_point" % (viewprefix))
+    cur.execute("CREATE OR REPLACE VIEW %s_point AS SELECT id AS osm_id, %s way FROM %s_point WHERE '%s' BETWEEN valid_from AND COALESCE(valid_to, '9999-12-31');" % (viewprefix, columselect, dbprefix, date))
+    cur.execute("INSERT INTO geometry_columns (f_table_catalog, f_table_schema, f_table_name, f_geometry_column, coord_dimension, srid, type) VALUES ('', 'public', '%s_point', 'way', 2, 900913, 'POINT');" % (viewprefix))
     
-    cur.execute("DROP VIEW %s_roads" % (viewprefix))
-    sql = "CREATE OR REPLACE VIEW %s_roads AS SELECT id AS osm_id, %s z_order, way FROM %s_line WHERE '%s' BETWEEN valid_from AND COALESCE(valid_to, '9999-12-31');" % (viewprefix, columselect, dbprefix, date)
-    cur.execute(sql)
+    cur.execute("DROP VIEW IF EXISTS %s_line" % (viewprefix))
+    cur.execute("CREATE OR REPLACE VIEW %s_line AS SELECT id AS osm_id, %s z_order, way FROM %s_line WHERE '%s' BETWEEN valid_from AND COALESCE(valid_to, '9999-12-31');" % (viewprefix, columselect, dbprefix, date))
+    cur.execute("INSERT INTO geometry_columns (f_table_catalog, f_table_schema, f_table_name, f_geometry_column, coord_dimension, srid, type) VALUES ('', 'public', '%s_line', 'way', 2, 900913, 'LINESTRING');" % (viewprefix))
     
-    cur.execute("DROP VIEW %s_polygon" % (viewprefix))
-    sql = "CREATE OR REPLACE VIEW %s_polygon AS SELECT id AS osm_id, %s z_order, way_area, way FROM %s_polygon WHERE '%s' BETWEEN valid_from AND COALESCE(valid_to, '9999-12-31');" % (viewprefix, columselect, dbprefix, date)
-    cur.execute(sql)
+    cur.execute("DROP VIEW IF EXISTS %s_roads" % (viewprefix))
+    cur.execute("CREATE OR REPLACE VIEW %s_roads AS SELECT id AS osm_id, %s z_order, way FROM %s_line WHERE '%s' BETWEEN valid_from AND COALESCE(valid_to, '9999-12-31');" % (viewprefix, columselect, dbprefix, date))
+    cur.execute("INSERT INTO geometry_columns (f_table_catalog, f_table_schema, f_table_name, f_geometry_column, coord_dimension, srid, type) VALUES ('', 'public', '%s_roads', 'way', 2, 900913, 'LINESTRING');" % (viewprefix))
+    
+    cur.execute("DROP VIEW IF EXISTS %s_polygon" % (viewprefix))
+    cur.execute("CREATE OR REPLACE VIEW %s_polygon AS SELECT id AS osm_id, %s z_order, way_area, way FROM %s_polygon WHERE '%s' BETWEEN valid_from AND COALESCE(valid_to, '9999-12-31');" % (viewprefix, columselect, dbprefix, date))
+    cur.execute("INSERT INTO geometry_columns (f_table_catalog, f_table_schema, f_table_name, f_geometry_column, coord_dimension, srid, type) VALUES ('', 'public', '%s_polygon', 'way', 2, 900913, 'POLYGON');" % (viewprefix))
     
     con.commit()
     cur.close()
@@ -265,6 +267,7 @@ def drop_views(dsn, viewprefix):
     cur.execute("DROP VIEW %s_line" % (viewprefix))
     cur.execute("DROP VIEW %s_roads" % (viewprefix))
     cur.execute("DROP VIEW %s_polygon" % (viewprefix))
+    cur.execute("DELETE FROM geometry_columns WHERE f_table_catalog = '' AND f_table_schema = 'public' AND f_table_name IN ('%s_point', '%s_line', '%s_roads', '%s_polygon');" % (viewprefix, viewprefix, viewprefix, viewprefix))
     
     con.commit()
     cur.close()
