@@ -78,7 +78,7 @@ public:
         return tit->second;
     }
 
-    geos::geom::Geometry* forgeGeometry(Osmium::OSM::WayNodeList &nodes, time_t t, bool looksLikePolygon) {
+    geos::geom::Geometry* forgeGeometry(const Osmium::OSM::WayNodeList &nodes, time_t t, bool looksLikePolygon) {
         // shorthand to the geometry factory
         geos::geom::GeometryFactory *f = Osmium::Geometry::geos_geometry_factory();
 
@@ -135,7 +135,7 @@ public:
         return geom;
     }
 
-    std::vector<time_t> *calculateMinorTimes(Osmium::OSM::WayNodeList &nodes, time_t from, time_t to) {
+    std::vector<time_t> *calculateMinorTimes(const Osmium::OSM::WayNodeList &nodes, time_t from, time_t to) {
         std::vector<time_t> *minor_times = new std::vector<time_t>();
 
         for(Osmium::OSM::WayNodeList::const_iterator nodeit = nodes.begin(); nodeit != nodes.end(); nodeit++) {
@@ -161,7 +161,7 @@ public:
         return minor_times;
     }
 
-    std::vector<time_t> *calculateMinorTimes(Osmium::OSM::WayNodeList &nodes, time_t from) {
+    std::vector<time_t> *calculateMinorTimes(const Osmium::OSM::WayNodeList &nodes, time_t from) {
         return calculateMinorTimes(nodes, from, 0);
     }
 };

@@ -281,8 +281,8 @@ public:
 
 
 
-    void node(Osmium::OSM::Node* node) {
-        m_node_tracker.feed(*node);
+    void node(const shared_ptr<Osmium::OSM::Node const>& node) {
+        m_node_tracker.feed(node);
 
         // we're always writing the one-off node
         if(m_node_tracker.has_prev()) {
@@ -302,43 +302,43 @@ public:
     }
 
     void write_node() {
-        Osmium::OSM::Node cur = m_node_tracker.cur();
-        Osmium::OSM::Node prev = m_node_tracker.prev();
+        const shared_ptr<Osmium::OSM::Node const>& cur = m_node_tracker.cur();
+        const shared_ptr<Osmium::OSM::Node const>& prev = m_node_tracker.prev();
 
-        std::string valid_from(prev.timestamp_as_string());
+        std::string valid_from(prev->timestamp_as_string());
         std::string valid_to("\\N");
 
         // if this is another version of the same entity, the end-timestamp of the previous entity is the timestamp of the current one
         if(m_node_tracker.cur_is_same_entity()) {
-            valid_to = cur.timestamp_as_string();
+            valid_to = cur->timestamp_as_string();
         }
 
         // if the prev version is deleted, it's end-timestamp is the same as its creation-timestamp
-        else if(!m_node_tracker.prev().visible()) {
+        else if(!m_node_tracker.prev()->visible()) {
             valid_to = valid_from;
         }
 
-        double lat = prev.get_lat() * DEG_TO_RAD;
-        double lon = prev.get_lon() * DEG_TO_RAD;
+        double lat = prev->get_lat() * DEG_TO_RAD;
+        double lon = prev->get_lon() * DEG_TO_RAD;
         int r = pj_transform(pj_4326, pj_900913, 1, 1, &lon, &lat, NULL);
         if(r != 0) {
             std::stringstream msg;
-            msg << "error transforming POINT(" << prev.get_lat() << " " << prev.get_lon() << ") from 4326 to 900913)";
+            msg << "error transforming POINT(" << prev->get_lat() << " " << prev->get_lon() << ") from 4326 to 900913)";
             throw std::runtime_error(msg.str().c_str());
         }
 
-        m_store.record(prev.id(), prev.version(), prev.timestamp(), lon, lat);
+        m_store.record(prev->id(), prev->version(), prev->timestamp(), lon, lat);
 
         // SPEED: sum up 64k of data, before sending them to the database
         // SPEED: instead of stringstream, which does dynamic allocation, use a fixed buffer and snprintf
         std::stringstream line;
         line << std::setprecision(8) <<
-            prev.id() << '\t' <<
-            prev.version() << '\t' <<
-            (prev.visible() ? 't' : 'f') << '\t' <<
+            prev->id() << '\t' <<
+            prev->version() << '\t' <<
+            (prev->visible() ? 't' : 'f') << '\t' <<
             valid_from << '\t' <<
             valid_to << '\t' <<
-            format_hstore(prev.tags()) << '\t' <<
+            format_hstore(prev->tags()) << '\t' <<
             "SRID=900913;POINT(" << lon << ' ' << lat << ')' <<
             '\n';
 
@@ -347,8 +347,8 @@ public:
 
 
 
-    void way(Osmium::OSM::Way* way) {
-        m_way_tracker.feed(*way);
+    void way(const shared_ptr<Osmium::OSM::Way const>& way) {
+        m_way_tracker.feed(way);
 
         // we're always writing the one-off way
         if(m_way_tracker.has_prev()) {
@@ -368,23 +368,23 @@ public:
     }
 
     void write_way() {
-        Osmium::OSM::Way cur = m_way_tracker.cur();
-        Osmium::OSM::Way prev = m_way_tracker.prev();
+        const shared_ptr<Osmium::OSM::Way const>& cur = m_way_tracker.cur();
+        const shared_ptr<Osmium::OSM::Way const>& prev = m_way_tracker.prev();
 
-        time_t valid_from = prev.timestamp();
+        time_t valid_from = prev->timestamp();
         time_t valid_to = 0;
 
         std::vector<time_t> *minor_times = NULL;
-        if(prev.visible()) {
+        if(prev->visible()) {
             if(m_way_tracker.cur_is_same_entity()) {
-                minor_times = m_store.calculateMinorTimes(prev.nodes(), prev.timestamp(), cur.timestamp());
+                minor_times = m_store.calculateMinorTimes(prev->nodes(), prev->timestamp(), cur->timestamp());
             } else {
-                minor_times = m_store.calculateMinorTimes(prev.nodes(), prev.timestamp());
+                minor_times = m_store.calculateMinorTimes(prev->nodes(), prev->timestamp());
             }
 
             if(!minor_times) {
                 std::stringstream msg;
-                msg << "error calculating minor ways for way " << prev.id() << 'v' << prev.version();
+                msg << "error calculating minor ways for way " << prev->id() << 'v' << prev->version();
                 throw std::runtime_error(msg.str().c_str());
             }
         }
@@ -396,25 +396,25 @@ public:
 
         // if this is another version of the same entity, the end-timestamp of the previous entity is the timestamp of the current one
         else if(m_way_tracker.cur_is_same_entity()) {
-            valid_to = cur.timestamp();
+            valid_to = cur->timestamp();
         }
 
         // if the prev version is deleted, it's end-timestamp is the same as its creation-timestamp
-        else if(!prev.visible()) {
+        else if(!prev->visible()) {
             valid_to = valid_from;
         }
 
         // write the main way version
         write_way_to_db(
-            prev.id(),
-            prev.version(),
+            prev->id(),
+            prev->version(),
             0 /*minor*/,
-            prev.visible(),
-            prev.timestamp(),
+            prev->visible(),
+            prev->timestamp(),
             valid_from,
             valid_to,
-            prev.tags(),
-            prev.nodes()
+            prev->tags(),
+            prev->nodes()
         );
 
         if(minor_times) {
@@ -423,13 +423,13 @@ public:
             std::vector<time_t>::const_iterator end = minor_times->end();
             for(std::vector<time_t>::const_iterator it = minor_times->begin(); it != end; it++) {
                 if(Osmium::debug()) {
-                    std::cout << "minor way w" << prev.id() << 'v' << prev.version() << '.' << minor << " at tstamp " << *it << " (" << format_time(*it) << ")" << std::endl;
+                    std::cout << "minor way w" << prev->id() << 'v' << prev->version() << '.' << minor << " at tstamp " << *it << " (" << format_time(*it) << ")" << std::endl;
                 }
 
                 valid_from = *it;
                 if(it == end-1) {
                     if(m_way_tracker.cur_is_same_entity()) {
-                        valid_to = cur.timestamp();
+                        valid_to = cur->timestamp();
                     } else {
                         valid_to = 0;
                     }
@@ -438,15 +438,15 @@ public:
                 }
 
                 write_way_to_db(
-                    prev.id(),
-                    prev.version(),
+                    prev->id(),
+                    prev->version(),
                     minor,
                     true,
                     *it,
                     valid_from,
                     valid_to,
-                    prev.tags(),
-                    prev.nodes()
+                    prev->tags(),
+                    prev->nodes()
                 );
 
                 minor++;
@@ -463,8 +463,8 @@ public:
         time_t timestamp,
         time_t valid_from,
         time_t valid_to,
-        Osmium::OSM::TagList &tags,
-        Osmium::OSM::WayNodeList &nodes
+        const Osmium::OSM::TagList &tags,
+        const Osmium::OSM::WayNodeList &nodes
     ) {
         if(Osmium::debug()) {
             std::cerr << "forging geometry of way " << id << 'v' << version << '.' << minor << " at tstamp " << timestamp << std::endl;
@@ -528,7 +528,7 @@ public:
 
 
 
-    void relation(Osmium::OSM::Relation* relation) {
+    void relation(const shared_ptr<Osmium::OSM::Relation const>& relation) {
         m_progress.relation(relation);
     }
 };

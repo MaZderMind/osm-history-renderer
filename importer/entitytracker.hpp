@@ -5,36 +5,35 @@ template <class TObject>
 class EntityTracker {
 
 private:
-    // SPEED: use pointers instead of class values, allowing swap() to just shift pointers around instead of copying data
-    TObject m_prev;
-    TObject m_cur;
+    shared_ptr<TObject const> m_prev;
+    shared_ptr<TObject const> m_cur;
 
 public:
-    EntityTracker() : m_prev(), m_cur() {}
+    EntityTracker() {}
 
 
-    TObject &prev() {
+    const shared_ptr<TObject const>& prev() {
         return m_prev;
     }
 
-    TObject &cur() {
+    const shared_ptr<TObject const>& cur() {
         return m_cur;
     }
 
-    void feed(TObject &obj) {
-        m_cur = TObject(obj);
+    void feed(const shared_ptr<TObject const>& obj) {
+        m_cur = obj;
     }
 
     bool has_prev() {
-        return m_prev.id() > 0;
+        return m_prev->id() > 0;
     }
 
     bool cur_is_same_entity() {
-        return m_prev.id() == m_cur.id();
+        return m_prev->id() == m_cur->id();
     }
 
     void swap() {
-        m_prev = TObject(m_cur);
+        m_prev = m_cur;
         m_cur.reset();
     }
 
