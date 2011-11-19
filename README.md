@@ -9,7 +9,7 @@ In order to run it, you'll need data-input. I'd suggest starting with a small ex
 All extracts have been created using my [OpenStreetMap History Splitter](https://github.com/MaZderMind/osm-history-splitter/), so if you want your own area, go and download the latest [Full-Experimental Dump](http://planet.osm.org/full-experimental/) and split it yourself using the --softcut mode.
 
 After you have your data in place, use the importer to import the data:
- ./osm-history-importer gau-odernheim.osh.pbf
+    ./osm-history-importer gau-odernheim.osh.pbf
 
 You can specify some options at the command line:
  ./osm-history-importer --debug --prefix "hist_" --dsn "host='172.16.0.73' dbname='histtest'" gau-odernheim.osh.pbf
@@ -17,22 +17,25 @@ You can specify some options at the command line:
 See the [libpq documentation](http://www.postgresql.org/docs/8.1/static/libpq.html#LIBPQ-CONNECT) for a detailed descriptions of the dsn parameters.
 
 After the import is completed, you can use the render.py and render-animation.py in the "rendering" directory. They work on regular osm styles, so you need to follow the usual preparations for those styles:
- svn co http://svn.openstreetmap.org/applications/rendering/mapnik/ osm-mapnik-style
- cd osm-mapnik-style/
- ./get-coastlines.sh
- ./generate_xml.py --accept-none --prefix 'hist_view'
+
+    svn co http://svn.openstreetmap.org/applications/rendering/mapnik/ osm-mapnik-style
+    cd osm-mapnik-style/
+    ./get-coastlines.sh
+    ./generate_xml.py --accept-none --prefix 'hist_view'
 
 If you have mapnik2, you'll need to migrate the osm.xml to mapnik2 syntax:
- upgrade_map_xml.py osm.xml osm-mapnik2.xml
+    upgrade_map_xml.py osm.xml osm-mapnik2.xml
 
 'hist_view' is a special value. During rendering, render.py will create views (hist_view_point, hist_view_line, ..) that represent the state of the database at a given point in time. Those views behave just like regular osm2pgsql tables and enable history rendering with nearly all existing osm2pgsql styles. Now that you prepared your rendering-style, it's time to render your first image:
- ./render.py --style ~/osm-mapnik-style/osm-mapnik2.xml --bbox 8.177700,49.771700,8.205600,49.791600 --date 2009-01-01
+
+    ./render.py --style ~/osm-mapnik-style/osm-mapnik2.xml --bbox 8.177700,49.771700,8.205600,49.791600 --date 2009-01-01
 
 Interesting how your town looked in 2009, hm? And it was all in the OSM-Database -- all the time! Sleeping data.. *getting melancholic*
 So let's see how your town evolved over time - let's make an animation:
- ./render-animation.py --style ~/osm-mapnik-style/osm-mapnik2.xml --bbox 8.177700,49.771700,8.205600,49.791600
 
-This will leave you with an set of .png files, one for each month since the first node was placed in your area. If you want render-animation.py to assemble a real video for you, use --type mp4. This will create a lossless mp4 for you. Use render-animation.py -h to get information over the wide range of control, the script gives to you. Happy Video-Creation.
+    ./render-animation.py --style ~/osm-mapnik-style/osm-mapnik2.xml --bbox 8.177700,49.771700,8.205600,49.791600
+
+This will leave you with an set of .png files, one for each month since the first node was placed in your area. If you want render-animation.py to assemble a real video for you, use --type mp4. This will create a lossless mp4 for you. Use render-animation.py -h to get information over the wide range of control, the script gives to you.
 
 
 ## Speeeeed
@@ -47,7 +50,11 @@ And I'm currently working on 2. Some lines in the code have been annotated with 
 Is the rendering slow? Who knows - I don't. I don't know how a combined spatial + date-time btree index performs on a huge dataset, if a simple geom index will be more efficient or if another database scheme is suited better, but as with the imorter there's no other way to learn about this other then trying.
 
 ## Memory usage
-The importer currently stores lat, lon and version for each and every node, indexed by node-id and node-timestamp inside two nested std::map instances. This is okay for smaller regions but there are ways to improve both, memory usage and speed. The roadmap is here very similar to the one mentioned above: 1. Make it work, 2. Make it scalable, 3. Make it fast.
+The importer currently stores lat, lon and version for each and every node, indexed by node-id and node-timestamp inside two nested std::map instances. This is okay for smaller regions but there are ways to improve both, memory usage and speed. The roadmap is here very similar to the one mentioned above:
+
+ 1. Make it work
+ 2. Make it scale
+ 3. Make it fast.
 
 Currently I'm thinking of some ways to improve memory usage. I don't think the version is really needed so we may save 4 bytes per node. Lat/Lon is stored as double which could be shrinked using a fixed-length storage and varints. I'm thinking about using protobuffers or sqlite as node-stores but some benchmarks would be needed. If you have another idea, don't hesitate to drop me an email.
 
