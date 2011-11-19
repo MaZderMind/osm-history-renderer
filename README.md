@@ -9,10 +9,12 @@ In order to run it, you'll need data-input. I'd suggest starting with a small ex
 All extracts have been created using my [OpenStreetMap History Splitter](https://github.com/MaZderMind/osm-history-splitter/), so if you want your own area, go and download the latest [Full-Experimental Dump](http://planet.osm.org/full-experimental/) and split it yourself using the --softcut mode.
 
 After you have your data in place, use the importer to import the data:
+
     ./osm-history-importer gau-odernheim.osh.pbf
 
 You can specify some options at the command line:
- ./osm-history-importer --debug --prefix "hist_" --dsn "host='172.16.0.73' dbname='histtest'" gau-odernheim.osh.pbf
+
+    ./osm-history-importer --debug --prefix "hist_" --dsn "host='172.16.0.73' dbname='histtest'" gau-odernheim.osh.pbf
 
 See the [libpq documentation](http://www.postgresql.org/docs/8.1/static/libpq.html#LIBPQ-CONNECT) for a detailed descriptions of the dsn parameters.
 
