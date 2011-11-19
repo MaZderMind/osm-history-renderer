@@ -34,9 +34,10 @@ Next one will be the importer and renderer:
     cd osm-history-renderer
     git submodule init
     git submodule update
+    cd importer
     make
     sudo make install
-    cd ..
+    cd ../..
 
 ## cutting your area
  Most people will want to create their own extract before rendering, so we'll cover this step here, too. Go to 
