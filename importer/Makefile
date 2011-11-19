@@ -13,7 +13,7 @@ CXXFLAGS += -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64
 #CXXFLAGS += -Wpadded -Winline
 
 # path to osmium
-CXXFLAGS += -I../../osmium/include
+CXXFLAGS += -Iosmium/include
 
 # compile & link against expat to have xml reading support
 LDFLAGS += -lexpat
