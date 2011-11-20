@@ -55,7 +55,7 @@ next we'll create a splitter-config-file. Create a file named "splitter.config" 
 make sure to use .osh as primary file extension, as a .osm won't contain the visible-information.
 Now you're ready to run the splitter:
 
-    osm-history-splitter splitter.config germany.osh.pbf
+    osm-history-splitter germany.osh.pbf splitter.config
 
 it will run for some minutes and create the karlsruhe-extract for you.
 
