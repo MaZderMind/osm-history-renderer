@@ -41,6 +41,8 @@ osm-history-importer: importer.cpp handler.hpp entitytracker.hpp nodestore.hpp p
 install:
 	install -m 755 -g root -o root -d $(DESTDIR)/usr/bin
 	install -m 755 -g root -o root osm-history-importer $(DESTDIR)/usr/bin/osm-history-importer
+	install -m 755 -g root -o root -d $(DESTDIR)/usr/share/osm-history-importer/scheme
+	install -m 644 -g root -o root scheme/*.sql $(DESTDIR)/usr/share/osm-history-importer/scheme
 
 clean:
 	rm -f *.o core osm-history-importer

@@ -124,8 +124,7 @@ private:
         }
     }
 
-    void execfile(PGconn *conn, const std::string& file) {
-        std::ifstream f(file.c_str());
+    void execfile(PGconn *conn, std::ifstream& f) {
         std::string cmd((std::istreambuf_iterator<char>(f)),
                          std::istreambuf_iterator<char>());
 
@@ -245,7 +244,12 @@ public:
         if(Osmium::debug()) {
             std::cerr << "running scheme/00-before.sql" << std::endl;
         }
-        execfile(m_general, "scheme/00-before.sql");
+
+        std::ifstream sqlfile("scheme/00-before.sql");
+        if(!sqlfile)
+            sqlfile.open("/usr/share/osm-history-importer/scheme/00-before.sql");
+
+        execfile(m_general, sqlfile);
 
         m_point = opencopy(m_dsn, "point");
         m_line = opencopy(m_dsn, "line");
@@ -271,7 +275,12 @@ public:
         if(Osmium::debug()) {
             std::cerr << "running scheme/99-after.sql" << std::endl;
         }
-        execfile(m_general, "scheme/99-after.sql");
+
+        std::ifstream sqlfile("scheme/99-after.sql");
+        if(!sqlfile)
+            sqlfile.open("/usr/share/osm-history-importer/scheme/99-after.sql");
+
+        execfile(m_general, sqlfile);
 
         if(Osmium::debug()) {
             std::cerr << "disconnecting from database" << std::endl;
@@ -302,8 +311,8 @@ public:
     }
 
     void write_node() {
-        const shared_ptr<Osmium::OSM::Node const>& cur = m_node_tracker.cur();
-        const shared_ptr<Osmium::OSM::Node const>& prev = m_node_tracker.prev();
+        const shared_ptr<Osmium::OSM::Node const> cur = m_node_tracker.cur();
+        const shared_ptr<Osmium::OSM::Node const> prev = m_node_tracker.prev();
 
         std::string valid_from(prev->timestamp_as_string());
         std::string valid_to("\\N");
@@ -368,8 +377,8 @@ public:
     }
 
     void write_way() {
-        const shared_ptr<Osmium::OSM::Way const>& cur = m_way_tracker.cur();
-        const shared_ptr<Osmium::OSM::Way const>& prev = m_way_tracker.prev();
+        const shared_ptr<Osmium::OSM::Way const> cur = m_way_tracker.cur();
+        const shared_ptr<Osmium::OSM::Way const> prev = m_way_tracker.prev();
 
         time_t valid_from = prev->timestamp();
         time_t valid_to = 0;
