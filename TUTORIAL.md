@@ -70,6 +70,7 @@ now we'll get that data into the database. Oh wait: which database? We'll first 
     sudo -u postgres psql peter </usr/share/postgresql/8.4/contrib/postgis-1.5/postgis.sql
     sudo -u postgres psql peter </usr/share/postgresql/8.4/contrib/postgis-1.5/spatial_ref_sys.sql
     echo 'GRANT ALL ON geometry_columns TO peter' | sudo -u postgres psql peter
+    echo 'GRANT ALL ON spatial_ref_sys TO peter' | sudo -u postgres psql peter
 
 now your ready to connect to your database:
 
