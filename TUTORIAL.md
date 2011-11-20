@@ -39,11 +39,27 @@ Next one will be the importer and renderer:
     sudo make install
     cd ../..
 
+congratulations, you're now equipped with everything you need.
+
 ## cutting your area
- Most people will want to create their own extract before rendering, so we'll cover this step here, too. Go to 
+ Most people will want to create their own extract before rendering, so we'll cover this step here, too. First, go to [GWDG](http://ftp5.gwdg.de/pub/misc/openstreetmap/osm-full-history-extracts/110919/pbf/) and find the extract that fits your desired area best. In this example we'll render the city of Karlsruhe, so we'll download the germany extract. If you can't find a matching extract, download the [http://ftp5.gwdg.de/pub/misc/openstreetmap/osm-full-history-extracts/full-planet-110919-1418.osh.pbf](full-planet pbf).
+ 
+    mkdir osm-data
+    cd osm-data
+    wget http://ftp5.gwdg.de/pub/misc/openstreetmap/osm-full-history-extracts/110919/pbf/europe/germany.osh.pbf
+
+next we'll create a splitter-config-file. Create a file named "splitter.config" which contains a single line:
+
+    karlsruhe.osh.pbf BBOX 8.3122,48.9731,8.5139,49.0744
+
+make sure to use .osh as primary file extension, as a .osm won't contain the visible-information.
 
 ## importing
 
 ## getting the style
 
 ## rendering
+
+
+## system requirements
+This tutorial was testet on a Debian 6.0.3 i386 box with 512 MB of RAM and a single Core. Rendering was not really fast but it worked.
