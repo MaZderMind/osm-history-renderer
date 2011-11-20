@@ -33,6 +33,7 @@ private:
 
     std::string m_dsn, m_prefix;
     bool m_storeerrors;
+    bool m_interior;
 
     static const int timestamp_length = 20 + 1; // length of ISO timestamp string yyyy-mm-ddThh:mm:ssZ\0
 
@@ -203,7 +204,7 @@ private:
     }
 
 public:
-    ImportHandler(bool storeerrors) : m_progress(), m_node_tracker(), m_store(storeerrors), m_polygonident(), wkb(), m_prefix("hist_"), m_storeerrors(storeerrors) {
+    ImportHandler(bool storeerrors, bool interior) : m_progress(), m_node_tracker(), m_store(storeerrors), m_polygonident(), wkb(), m_prefix("hist_"), m_storeerrors(storeerrors), m_interior(interior) {
         //if(!(pj_900913 = pj_init_plus("+init=epsg:900913"))) {
         if(!(pj_900913 = pj_init_plus("+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +no_defs"))) {
             throw std::runtime_error("can't initialize proj4 with 900913");
@@ -513,14 +514,23 @@ public:
             line << '\t';
 
             // calculate interior point
-            try {
-                geos::geom::Coordinate center;
-                geos::algorithm::InteriorPointArea interior_calculator(poly);
-                interior_calculator.getInteriorPoint(center);
+            if(m_interior) {
+                try {
+                    // will leak with invalid geometries on old geos code:
+                    //  http://trac.osgeo.org/geos/ticket/475
+                    geos::geom::Coordinate center;
+                    geos::algorithm::InteriorPointArea interior_calculator(poly);
+                    interior_calculator.getInteriorPoint(center);
 
-                // write interior point
-                line << "SRID=900913;POINT(" << center.x << ' ' << center.x << ')';
-            } catch(geos::util::GEOSException e) {
+                    // write interior point
+                    line << "SRID=900913;POINT(" << center.x << ' ' << center.x << ')';
+                } catch(geos::util::GEOSException e) {
+                    std::cerr << "error calculating interior point: " << e.what() << std::endl;
+                    line << "\\N";
+                }
+            }
+            else
+            {
                 line << "\\N";
             }
 
