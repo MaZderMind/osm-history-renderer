@@ -55,7 +55,7 @@ next we'll create a splitter-config-file. Create a file named "splitter.config" 
 make sure to use .osh as primary file extension, as a .osm won't contain the visible-information.
 Now you're ready to run the splitter:
 
-    osm-history-splitter germany.osh.pbf splitter.config
+    osm-history-splitter --softcut germany.osh.pbf splitter.config
 
 it will run for some minutes and create the karlsruhe-extract for you.
 
@@ -77,6 +77,11 @@ now your ready to connect to your database:
     psql
 
 type \d to get an overview of the tables in your database.
+Now, run the importer on that file:
+
+    osm-history-importer karlsruhe.osh.pbf
+
+It will walk through the file and create a neat history database of it, including valid-from, valid-to and minor-version fields.
 
 ## getting the style
 
@@ -84,4 +89,4 @@ type \d to get an overview of the tables in your database.
 
 
 ## system requirements
-This tutorial was testet on a Debian 6.0.3 i386 box with 512 MB of RAM and a single Core. Rendering was not really fast but it worked.
+This tutorial was testet on a Debian 6.0.3 i386 box with 1 GB of RAM and a single Core. Rendering was not really fast but it worked.
