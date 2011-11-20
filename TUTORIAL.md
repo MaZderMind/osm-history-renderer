@@ -55,7 +55,7 @@ next we'll create a splitter-config-file. Create a file named "splitter.config" 
 make sure to use .osh as primary file extension, as a .osm won't contain the visible-information.
 Now you're ready to run the splitter:
 
-    osm-history-splitter splitter.config germany.osh.pbf
+    osm-history-splitter --softcut germany.osh.pbf splitter.config
 
 it will run for some minutes and create the karlsruhe-extract for you.
 
@@ -70,12 +70,18 @@ now we'll get that data into the database. Oh wait: which database? We'll first 
     sudo -u postgres psql peter </usr/share/postgresql/8.4/contrib/postgis-1.5/postgis.sql
     sudo -u postgres psql peter </usr/share/postgresql/8.4/contrib/postgis-1.5/spatial_ref_sys.sql
     echo 'GRANT ALL ON geometry_columns TO peter' | sudo -u postgres psql peter
+    echo 'GRANT ALL ON spatial_ref_sys TO peter' | sudo -u postgres psql peter
 
 now your ready to connect to your database:
 
     psql
 
 type \d to get an overview of the tables in your database.
+Now, run the importer on that file:
+
+    osm-history-importer karlsruhe.osh.pbf
+
+It will walk through the file and create a neat history database of it, including valid-from, valid-to and minor-version fields.
 
 ## getting the style
 
@@ -83,4 +89,4 @@ type \d to get an overview of the tables in your database.
 
 
 ## system requirements
-This tutorial was testet on a Debian 6.0.3 i386 box with 512 MB of RAM and a single Core. Rendering was not really fast but it worked.
+This tutorial was testet on a Debian 6.0.3 i386 box with 1 GB of RAM and a single Core. Rendering was not really fast but it worked.
