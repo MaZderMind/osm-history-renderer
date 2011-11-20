@@ -4,9 +4,9 @@ This is a complete tutorial which will guide you into getting your own history a
 ## installing the packages
 First off, you'll need a set of packages:
 
-    sudo aptitude install postgresql postgresql-contrib postgis zlib1g-dev libexpat1 libexpat1-dev libxml2 libxml2-dev \
-        libgeos-dev libprotobuf6 libprotobuf-dev protobuf-compiler libsparsehash-dev libboost-dev libgdal1-dev subversion \
-        git build-essential python-mapnik python-dateutil
+    sudo aptitude install postgresql postgresql-contrib postgresql-8.4-postgis postgis zlib1g-dev libexpat1 libexpat1-dev  \
+        libxml2 libxml2-dev libgeos-dev libprotobuf6 libprotobuf-dev protobuf-compiler libsparsehash-dev libboost-dev \
+        libgdal1-dev subversion git build-essential python-mapnik python-dateutil
 
 ## getting and building the tools
 Next, you'll want to download and build the history-splitter and the history-renderer.
@@ -53,8 +53,29 @@ next we'll create a splitter-config-file. Create a file named "splitter.config" 
     karlsruhe.osh.pbf BBOX 8.3122,48.9731,8.5139,49.0744
 
 make sure to use .osh as primary file extension, as a .osm won't contain the visible-information.
+Now you're ready to run the splitter:
+
+    osm-history-splitter splitter.config germany.osh.pbf
+
+it will run for some minutes and create the karlsruhe-extract for you.
 
 ## importing
+now we'll get that data into the database. Oh wait: which database? We'll first have to setup our postgres database. It's best if you use your user-database (that's database-name = your unix username):
+
+    sudo -u postgres createuser peter
+    sudo -u postgres createdb -EUTF8 -Opeter peter
+    sudo -u postgres createlang plpgsql peter
+    sudo -u postgres psql peter </usr/share/postgresql/8.4/contrib/hstore.sql
+    sudo -u postgres psql peter </usr/share/postgresql/8.4/contrib/btree_gist.sql
+    sudo -u postgres psql peter </usr/share/postgresql/8.4/contrib/postgis-1.5/postgis.sql
+    sudo -u postgres psql peter </usr/share/postgresql/8.4/contrib/postgis-1.5/spatial_ref_sys.sql
+    echo 'GRANT ALL ON geometry_columns TO peter' | sudo -u postgres psql peter
+
+now your ready to connect to your database:
+
+    psql
+
+type \d to get an overview of the tables in your database.
 
 ## getting the style
 
