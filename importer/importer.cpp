@@ -13,9 +13,11 @@
 int main(int argc, char *argv[]) {
     std::string filename, dsn, prefix = "hist_";
     bool debug = false;
+    bool storeerrors = false;
 
     static struct option long_options[] = {
         {"debug",               no_argument, 0, 'd'},
+        {"storeerrors",         no_argument, 0, 'e'},
         {"dsn",                 required_argument, 0, 'D'},
         {"prefix",              required_argument, 0, 'P'},
         {0, 0, 0, 0}
@@ -29,6 +31,9 @@ int main(int argc, char *argv[]) {
         switch (c) {
             case 'd':
                 debug = true;
+                break;
+            case 'e':
+                storeerrors = true;
                 break;
             case 'D':
                 dsn = optarg;
@@ -49,7 +54,7 @@ int main(int argc, char *argv[]) {
     Osmium::init(debug);
     Osmium::OSMFile infile(filename);
 
-    ImportHandler handler;
+    ImportHandler handler(storeerrors);
     if(dsn.size()) {
         handler.dsn(dsn);
     }

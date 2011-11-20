@@ -20,8 +20,10 @@ private:
     typedef std::map< osm_object_id_t, timemap* >::const_iterator nodemap_cit;
     nodemap m_nodemap;
 
+    bool m_storeerrors;
+
 public:
-    Nodestore() : m_nodemap() {}
+    Nodestore(bool storeerrors) : m_nodemap(), m_storeerrors(storeerrors) {}
     ~Nodestore() {
         nodemap_cit end = m_nodemap.end();
         for(nodemap_cit it = m_nodemap.begin(); it != end; ++it) {
@@ -59,7 +61,9 @@ public:
 
         nodemap_it nit = m_nodemap.find(id);
         if(nit == m_nodemap.end()) {
-            std::cerr << "no timemap for node #" << id << ", skipping node" << std::endl;
+            if(m_storeerrors) {
+                std::cerr << "no timemap for node #" << id << ", skipping node" << std::endl;
+            }
             found = false;
             Nodeinfo nullinfo = {0, 0};
             return nullinfo;
@@ -69,7 +73,9 @@ public:
         timemap_it tit = tmap->upper_bound(t);
 
         if(tit == tmap->begin()) {
-            std::cerr << "reference to node #" << id << " at tstamp " << t << " which is before the youngest available version of that node, using first version" << std::endl;
+            if(m_storeerrors) {
+                std::cerr << "reference to node #" << id << " at tstamp " << t << " which is before the youngest available version of that node, using first version" << std::endl;
+            }
         } else {
             tit--;
         }
@@ -102,7 +108,9 @@ public:
         }
 
         if(c->size() < 2) {
-            std::cerr << "found only " << c->size() << " valid coordinates, skipping way" << std::endl;
+            if(m_storeerrors) {
+                std::cerr << "found only " << c->size() << " valid coordinates, skipping way" << std::endl;
+            }
             delete c;
             return NULL;
         }
@@ -111,7 +119,7 @@ public:
 
         try {
             // tags say it could be a polygon and the way is closed
-            if(looksLikePolygon && c->front() == c->back()) {
+            if(looksLikePolygon && c->front() == c->back() && c->size() >= 4) {
                 // build a polygon
                 geom = f->createPolygon(
                     f->createLinearRing(
@@ -126,7 +134,9 @@ public:
                 );
             }
         } catch(geos::util::GEOSException e) {
-            std::cerr << "error creating polygon: " << e.what() << std::endl;
+            if(m_storeerrors) {
+                std::cerr << "error creating polygon: " << e.what() << std::endl;
+            }
             delete c;
             return NULL;
         }
@@ -143,7 +153,9 @@ public:
 
             nodemap_it nit = m_nodemap.find(id);
             if(nit == m_nodemap.end()) {
-                std::cerr << "no timemap for node #" << id << ", skipping node" << std::endl;
+                if(m_storeerrors) {
+                    std::cerr << "no timemap for node #" << id << ", skipping node" << std::endl;
+                }
                 continue;
             }
 
