@@ -123,8 +123,14 @@ def render(options):
     #c1 = prj.forward(Coord(bbox[2],bbox[3]))
     #e = Box2d(c0.x,c0.y,c1.x,c1.y)
     
+    # map bounds
+    if hasattr(mapnik, 'Box2d'):
+        bbox = mapnik.Box2d(*options.bbox)
+    else:
+        bbox = mapnik.Envelope(*options.bbox)
+    
     # project bounds to map projection
-    e = mapnik.forward_(mapnik.Box2d(*options.bbox), prj)
+    e = mapnik.forward_(bbox, prj)
     
     # zoom map to bounding box
     m.zoom_to_box(e)
