@@ -6,7 +6,7 @@ First off, you'll need a set of packages:
 
     sudo aptitude install postgresql postgresql-contrib postgresql-8.4-postgis postgis zlib1g-dev libexpat1 libexpat1-dev  \
         libxml2 libxml2-dev libgeos-dev libprotobuf6 libprotobuf-dev protobuf-compiler libsparsehash-dev libboost-dev \
-        libgdal1-dev libproj-dev subversion git build-essential python-mapnik python-dateutil
+        libgdal1-dev libproj-dev subversion git build-essential unzip python-mapnik python-dateutil python-psycopg2
 
 ## getting and building the tools
 Next, you'll want to download and build the history-splitter and the history-renderer.
@@ -81,12 +81,29 @@ Now, run the importer on that file:
 
     osm-history-importer karlsruhe.osh.pbf
 
-It will walk through the file and create a neat history database of it, including valid-from, valid-to and minor-version fields.
+It will walk through the file and create a neat history database of it, including valid-from, valid-to and minor-version fields and geometries of all nodes and ways.
 
 ## getting the style
+now it's time to visualize that data. You can use any mapnik-style you want like the [openstreetmap.org-style](http://svn.openstreetmap.org/applications/rendering/mapnik/) or the [mapquest-style](https://github.com/MapQuest/MapQuest-Mapnik-Style). We'll choose the openstreetmap.org-style for this tutorial:
+
+    svn co http://svn.openstreetmap.org/applications/rendering/mapnik/ osm-mapnik-style
+    cd osm-mapnik-style
+    ./get-coastlines.sh
+    ./generate_xml.py --accept-none --prefix hist_view
+    cd ..
+
+so now you have the style and all required components.
 
 ## rendering
+let's paint colorful maps:
 
+    osm-history-renderer/renderer/render.py --style osm-mapnik-style/osm.xml --date 2011-10-01 --bbox 8.3122,48.9731,8.5139,49.0744 --file 2011
+
+yeehaw! this is karlsruhe! But how did it look in 2008?
+
+    osm-history-renderer/renderer/render.py --style osm-mapnik-style/osm.xml --date 2008-10-01 --bbox 8.3122,48.9731,8.5139,49.0744 --file 2008
+
+awsome, what we achived in only 3 years!
 
 ## system requirements
 This tutorial was testet on a Debian 6.0.3 i386 box with 1 GB of RAM and a single Core. Rendering was not really fast but it worked.
