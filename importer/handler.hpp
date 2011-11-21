@@ -388,15 +388,15 @@ public:
         std::vector<time_t> *minor_times = NULL;
         if(prev->visible()) {
             if(m_way_tracker.cur_is_same_entity()) {
-                minor_times = m_store.calculateMinorTimes(prev->nodes(), prev->timestamp(), cur->timestamp());
+                if(prev->timestamp() > cur->timestamp()) {
+                    if(m_storeerrors) {
+                        std::cerr << "inverse timestamp-order in way " << prev->id() << " between v" << prev->version() << " and v" << cur->version() << ", skipping minor ways" << std::endl;
+                    }
+                } else {
+                    minor_times = m_store.calculateMinorTimes(prev->nodes(), prev->timestamp(), cur->timestamp());
+                }
             } else {
                 minor_times = m_store.calculateMinorTimes(prev->nodes(), prev->timestamp());
-            }
-
-            if(!minor_times) {
-                std::stringstream msg;
-                msg << "error calculating minor ways for way " << prev->id() << 'v' << prev->version();
-                throw std::runtime_error(msg.str().c_str());
             }
         }
 
