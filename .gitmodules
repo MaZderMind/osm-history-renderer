@@ -1,3 +1,0 @@
-[submodule "importer/osmium"]
-	path = importer/osmium
-	url = https://github.com/MaZderMind/osmium.git
