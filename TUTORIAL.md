@@ -97,11 +97,13 @@ so now you have the style and all required components.
 ## rendering
 let's paint colorful maps:
 
-    osm-history-renderer/renderer/render.py --style osm-mapnik-style/osm.xml --date 2011-10-01 --bbox 8.3122,48.9731,8.5139,49.0744 --file 2011
+    osm-history-renderer/renderer/render.py --style osm-mapnik-style/osm.xml --date 2011-10-01 \
+        --bbox 8.3122,48.9731,8.5139,49.0744 --file 2011
 
 yeehaw! this is karlsruhe! But how did it look in 2008?
 
-    osm-history-renderer/renderer/render.py --style osm-mapnik-style/osm.xml --date 2008-10-01 --bbox 8.3122,48.9731,8.5139,49.0744 --file 2008
+    osm-history-renderer/renderer/render.py --style osm-mapnik-style/osm.xml --date 2008-10-01 \
+        --bbox 8.3122,48.9731,8.5139,49.0744 --file 2008
 
 awsome, what we achived in only 3 years!
 
