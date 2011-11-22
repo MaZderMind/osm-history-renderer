@@ -106,6 +106,16 @@ yeehaw! this is karlsruhe! But how did it look in 2008?
         --bbox 8.3122,48.9731,8.5139,49.0744 --file 2008
 
 awsome, what we achived in only 3 years!
+But what happend in between? Let's make an animation of that area:
+
+    osm-history-renderer/renderer/render-animation.py --style osm-mapnik-style/osm.xml --bbox 8.3122,48.9731,8.5139,49.0744
+
+The script will calculate the first time a node was placed in that area and render one frame per month until today. You can control the start and end-date, the time span between the frames and much, much more using other command-line args. Just check out
+
+    osm-history-renderer/renderer/render-animation.py -h
+
+to learn about your possibilities.
 
 ## system requirements
 This tutorial was testet on a Debian 6.0.3 i386 box with 1 GB of RAM and a single Core. Rendering was not really fast but it worked.
+Most memory was used while splitting the germany.osh.pbf. It did fill up the whole RAM plus 1/2 of the SWAP but it ran pretty smoothly.
