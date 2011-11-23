@@ -18,8 +18,8 @@ def main():
     parser.add_option("-f", "--file", action="store", type="string", dest="file", default="animap", 
                       help="path to the destination file without the file extension [default: %default]")
     
-    parser.add_option("-t", "--type", action="store", type="string", dest="type", default="png", 
-                      help="file type to render [default: %default]")
+    parser.add_option("-t", "--type", action="store", type="string", dest="type", default="html", 
+                      help="file type to render (supports: html (html-player with png images), png (only the png images), gif (animated gif) and every other format supported by ffmpeg (eg. mp4) [default: %default]")
     
     parser.add_option("-x", "--size", action="store", type="string", dest="size", default="800x600", 
                       help="requested sizeof the resulting image in pixels, format is <width>x<height> [default: %default]")
@@ -116,14 +116,22 @@ def main():
     anifile = options.file
     date = options.anistart
     
-    tempdir = tempfile.mkdtemp()
+    if anitype == "html":
+        buildhtml = True
+        anitype = "png"
+    
+    if anitype == "png":
+        os.mkdir(anifile)
+    else:
+        tempdir = tempfile.mkdtemp()
+    
     i = 0
     while date < options.aniend:
         
         options.date = date.strftime("%Y-%m-%d %H:%M:%S")
         options.type = "png"
         if anitype == "png":
-            options.file = "%s-%010d" % (anifile, i)
+            options.file = "%s/%010d" % (anifile, i)
         else:
             options.file = "%s/%010d" % (tempdir, i)
         
@@ -133,6 +141,9 @@ def main():
         date = date + options.anistep
         i += 1
     
+    if buildhtml:
+        do_buildhtml    (anifile, i, options.fps)
+    
     if anitype == "png":
         return
     
@@ -140,6 +151,7 @@ def main():
     opts = ["-r "+options.fps, "-i", tempdir+"/%010d.png"]
     if anitype == "gif":
         opts.extend(["-pix_fmt rgb24"])
+    
     elif anitype == "mp4":
         opts.extend(["-crf", "0"])
         # somehow the lossless setting is not applied(?)
@@ -150,7 +162,7 @@ def main():
     
     if options.keep:
         print "PNGs are kept in", tempdir
-    else:
+    elif tempdir:
         shutil.rmtree(tempdir)
 
 
@@ -170,5 +182,195 @@ def infer_anistart(dsn, prefix, bbox):
     con.close()
     return min
 
+def do_buildhtml(file, images, fps):
+    s = """<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+		<title>animap of bbox 8.3122,48.9731,8.5139,49.0744</title>
+		
+		<style>
+			body {
+				padding: 50px 0 100px 0;
+			}
+			
+			.animap-container {
+				margin: 0 auto;
+			}
+			
+			.animap-image-next {
+				display: none;
+			}
+			
+			.animap-controls .ui-slider {
+				height: 20px;
+				padding-right: 20px;
+				margin-left: 55px;
+				background: silver;
+				border-radius: 3px;
+			}
+			
+			.animap-controls .ui-slider-handle {
+				display: block;
+				height: 20px;
+				width: 20px;
+				background: darkblue;
+				border-radius: 3px;
+				outline: none;
+				position: relative;
+			}
+			
+			.animap-controls .ui-slider-disabled .ui-slider-handle {
+				background: darkgray;
+			}
+			
+			.animap-controls .animap-btn {
+				display: block;
+				height: 20px;
+				width: 50px;
+				background: darkblue;
+				border-radius: 3px;
+				outline: none;
+				float: left;
+				color: white;
+				font-weight: bold;
+				text-align: center;
+				cursor: pointer;
+			}
+			</style>
+		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.2/jquery.min.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>
+		<script>
+			(function($) {
+				$.fn.animap = function(options) {
+					if(options == 'play') return play();
+					else if(options == 'pause') return pause();
+					else if(options == 'frame') return frame(attributes[1]);
+					
+					options = options || {}
+					options.fps = options.fps || 2;
+					options.file = options.file || 'animap';
+					options.namelen = options.namelen || 10;
+					options.playText = options.playText || 'play';
+					options.pauseText = options.pauseText || 'pause';
+					
+					var playing = false;
+					var frameReady = false, timerReady = false;
+					var timer;
+					
+					var container = $(this);
+					var btn = container.find('.animap-btn').click(function() {
+						playing ? pause() : play();
+					});
+					var current = container.find('.animap-image-current');
+					var next = container.find('.animap-image-next').load(function() {
+						frameLoaded();
+					});
+					var slider = container.find('.animap-slider').slider({
+						min: 0,
+						max: options.images,
+						step: 1,
+						slide: function(e, ui) {
+							frame(ui.value);
+						}
+					});
+					
+					function play() {
+						if(playing) return;
+						playing = true;
+						slider.slider('disable');
+						btn.text('pause');
+						nextFrame();
+					}
+					
+					function pause() {
+						if(!playing) return;
+						playing = false;
+						slider.slider('enable');
+						btn.text('play');
+						clearTimeout(timer);
+					}
+					
+					function nextFrame() {
+						var currentIdx = slider.slider('value');
+						frame(currentIdx);
+						
+						timerReady = false;
+						timer = setTimeout(function() {
+							timerReady = true;
+							if(frameReady) {
+								showNextFrame();
+							}
+						}, 1000 / options.fps);
+					}
+					
+					function showNextFrame() {
+						var currentIdx = slider.slider('value');
+						if(currentIdx >= options.images) currentIdx = 0;
+						else currentIdx++
+						slider.slider('value', currentIdx);
+						swap();
+						nextFrame();
+					}
+					
+					function frame(i) {
+						frameReady = false;
+						
+						if(i < 0) i = 0;
+						else if(i > options.images) i = options.images;
+						
+						var imgIdStr = ''+i;
+						for(var i = 0, l = options.namelen - imgIdStr.length; i<l; i++) {
+							imgIdStr = '0'+imgIdStr;
+						}
+						
+						next.attr('src', '').attr('src', options.file+'/'+imgIdStr+'.png');
+					}
+					
+					function frameLoaded(i) {
+						frameReady = true;
+						if(playing && timerReady) {
+							showNextFrame();
+						}
+						else swap();
+					}
+					
+					function swap() {
+						current.attr('src', next.attr('src'));
+					}
+					
+					if(options.autoplay) play();
+					
+					return this;
+				}
+			})(jQuery);
+		</script>
+	</head>
+	<body>
+		<div id="animap-container-1" class="animap-container" style="width: 800px;">
+			<div class="animap-image">
+				<img src="%s/0000000000.png" alt="" class="animap-image-current" width="800" height="600" />
+				<img src="" alt="" class="animap-image-next" width="800" height="600" />
+			</div>
+			<div class="animap-controls">
+				<a class="animap-btn">play</a>
+				<div class="animap-slider"></div>
+			</div>
+		</div>
+		<script>
+			var animap1 = $('#animap-container-1').animap({
+				file: '%s',
+				images: %s,
+				fps: %s,
+				autoplay: true
+			});
+		</script>
+	</body>
+</html>""" % (file, file, images-1, fps)
+    f = open(file+".html", 'w')
+    f.write(s)
+    f.close()
+
+
 if __name__ == "__main__":
-  main()
+    main()
