@@ -100,6 +100,9 @@ def main():
         print "infering animation start date from database..."
         options.anistart = infer_anistart(options.dsn, options.dbprefix, options.bbox)
     
+    if options.anistart is None:
+        return
+    
     if not options.aniend:
         options.aniend = datetime.today()
     
@@ -176,7 +179,10 @@ def infer_anistart(dsn, prefix, bbox):
     cur = con.cursor()
     cur.execute(sql)
     (min,) = cur.fetchone()
-    print "infered animation start date:", min.strftime("%Y-%m-%d %H:%M:%S")
+    if min is None:
+        print "unable to infer animation start date. does your database contain data in that area?"
+    else:
+        print "infered animation start date:", min.strftime("%Y-%m-%d %H:%M:%S")
     
     cur.close()
     con.close()
