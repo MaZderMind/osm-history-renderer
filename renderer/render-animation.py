@@ -59,6 +59,13 @@ def main():
     parser.add_option("-F", "--fps", action="store", type="string", dest="fps", default="2", 
                       help="desired number od frames per second [default: %default]")
     
+    parser.add_option("-L", "--label", action="store", type="string", dest="label", 
+                      help="add a label with the date shown in the frame to each frame. You can use all strftime arguments (eg. %Y-%m-%d)")
+    
+    parser.add_option("-G", "--label-gravity", action="store", type="string", dest="labelgravity", default="South", 
+                      help="when a label is added tothe image, where should it be added? [default: %default]")
+    
+    
     parser.add_option("-K", "--keep", action="store_true", dest="keep", 
                       help="keep the generated PNGs after assembling the animation")
     
@@ -95,7 +102,10 @@ def main():
         options.size = render.zoom2size(options.bbox, options.zoom);
     
     if options.anistart:
-        options.anistart = datetime.strptime(options.anistart, "%Y-%m-%d %H:%M:%S")
+        try:
+            options.anistart = datetime.strptime(options.anistart, "%Y-%m-%d %H:%M:%S")
+        except ValueError:
+            options.anistart = datetime.strptime(options.anistart, "%Y-%m-%d")
     else:
         print "infering animation start date from database..."
         options.anistart = infer_anistart(options.dsn, options.dbprefix, options.bbox)
@@ -103,7 +113,12 @@ def main():
     if options.anistart is None:
         return
     
-    if not options.aniend:
+    if options.aniend:
+        try:
+            options.aniend = datetime.strptime(options.aniend, "%Y-%m-%d %H:%M:%S")
+        except ValueError:
+            options.aniend = datetime.strptime(options.aniend, "%Y-%m-%d")
+    else:
         options.aniend = datetime.today()
     
     args = dict()
@@ -140,6 +155,10 @@ def main():
         
         print date
         render.render(options)
+        
+        if(options.label):
+            opts = ["mogrify", "-gravity", options.labelgravity, "-draw", "fill 'Black'; font-size 18; text 0,10 '%s'" % (date.strftime(options.label)), options.file]
+            os.spawnvp(os.P_WAIT, "gm", opts)
         
         date = date + options.anistep
         i += 1
@@ -193,7 +212,7 @@ def do_buildhtml(file, images, fps):
 <html>
 	<head>
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
-		<title>animap of bbox 8.3122,48.9731,8.5139,49.0744</title>
+		<title>animap</title>
 		
 		<style>
 			body {
@@ -276,7 +295,7 @@ def do_buildhtml(file, images, fps):
 						min: 0,
 						max: options.images,
 						step: 1,
-						slide: function(e, ui) {
+						change: function(e, ui) {
 							frame(ui.value);
 						}
 					});
