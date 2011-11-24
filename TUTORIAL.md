@@ -117,6 +117,14 @@ The script will calculate the first time a node was placed in that area and rend
 
 to learn about your possibilities.
 
+## example rendering
+
+[this example](http://mazdermind.github.com/osm-history-renderer/karlsruhe.html) example was created using that command-line:
+
+     ./osm-history-renderer/renderer/render-animation.py --style ~/osm-mapnik-style/osm-mapnik2.xml \
+         --bbox 8.3122,48.9731,8.5139,49.0744 --anistart=2006-09-01 --type html --file karlsruhe \
+         --label "%d.%m.%Y" --label-gravity SouthEast
+
 ## system requirements
 This tutorial was testet on a Debian 6.0.3 i386 box with 1 GB of RAM and a single Core. Rendering was not really fast but it worked.
 Most memory was used while splitting the germany.osh.pbf. It did fill up the whole RAM plus 1/2 of the SWAP but it ran pretty smoothly.
