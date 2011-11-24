@@ -6,7 +6,8 @@ First off, you'll need a set of packages:
 
     sudo aptitude install postgresql postgresql-contrib postgresql-8.4-postgis postgis zlib1g-dev libexpat1 libexpat1-dev  \
         libxml2 libxml2-dev libgeos-dev libprotobuf6 libprotobuf-dev protobuf-compiler libsparsehash-dev libboost-dev \
-        libgdal1-dev libproj-dev subversion git build-essential unzip python-mapnik python-dateutil python-psycopg2
+        libgdal1-dev libproj-dev subversion git build-essential unzip python-mapnik python-dateutil python-psycopg2 \
+        graphicsmagick
 
 ## getting and building the tools
 Next, you'll want to download and build the history-splitter and the history-renderer.
