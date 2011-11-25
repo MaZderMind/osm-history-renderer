@@ -1,5 +1,5 @@
-# Getting startet
-This is a complete tutorial which will guide you into getting your own history animation. It's build on a fresh Debian 6.0.3 installation.
+# Getting started
+This is a complete tutorial which will guide you through creating your own history animation. It's built on a fresh Debian 6.0.3 installation.
 
 ## installing the packages
 First off, you'll need a set of packages:
@@ -40,7 +40,7 @@ Next one will be the importer and renderer:
     sudo make install
     cd ../..
 
-congratulations, you're now equipped with everything you need.
+Congratulations. You're now equipped with everything you need.
 
 ## cutting your area
  Most people will want to create their own extract before rendering, so we'll cover this step here, too. First, go to [GWDG](http://ftp5.gwdg.de/pub/misc/openstreetmap/osm-full-history-extracts/110919/pbf/) and find the extract that fits your desired area best. In this example we'll render the city of Karlsruhe, so we'll download the germany extract. If you can't find a matching extract, download the [full-planet pbf](http://ftp5.gwdg.de/pub/misc/openstreetmap/osm-full-history-extracts/full-planet-110919-1418.osh.pbf).
@@ -58,7 +58,7 @@ Now you're ready to run the splitter:
 
     osm-history-splitter --softcut germany.osh.pbf splitter.config
 
-it will run for some minutes and create the karlsruhe-extract for you.
+it will run for several minutes and create the karlsruhe-extract for you.
 
 ## importing
 now we'll get that data into the database. Oh wait: which database? We'll first have to setup our postgres database. It's best if you use your user-database (that's database-name = your unix username):
@@ -73,7 +73,7 @@ now we'll get that data into the database. Oh wait: which database? We'll first 
     echo 'GRANT ALL ON geometry_columns TO peter' | sudo -u postgres psql peter
     echo 'GRANT ALL ON spatial_ref_sys TO peter' | sudo -u postgres psql peter
 
-now your ready to connect to your database:
+now you're ready to connect to your database:
 
     psql
 
@@ -106,7 +106,7 @@ yeehaw! this is karlsruhe! But how did it look in 2008?
     osm-history-renderer/renderer/render.py --style osm-mapnik-style/osm.xml --date 2008-10-01 \
         --bbox 8.3122,48.9731,8.5139,49.0744 --file 2008
 
-awsome, what we achived in only 3 years!
+awesome what we achived in only 3 years!
 But what happend in between? Let's make an animation of that area:
 
     osm-history-renderer/renderer/render-animation.py --style osm-mapnik-style/osm.xml --bbox 8.3122,48.9731,8.5139,49.0744
@@ -115,7 +115,7 @@ The script will calculate the first time a node was placed in that area and rend
 
     osm-history-renderer/renderer/render-animation.py -h
 
-to learn about your possibilities.
+to see the help information explaining various parameters and possibilities.
 
 ## example rendering
 
@@ -126,5 +126,5 @@ to learn about your possibilities.
          --label "%d.%m.%Y" --label-gravity SouthEast
 
 ## system requirements
-This tutorial was testet on a Debian 6.0.3 i386 box with 1 GB of RAM and a single Core. Rendering was not really fast but it worked.
+This tutorial was tested on a Debian 6.0.3 i386 box with 1 GB of RAM and a single Core. Rendering was not really fast but it worked.
 Most memory was used while splitting the germany.osh.pbf. It did fill up the whole RAM plus 1/2 of the SWAP but it ran pretty smoothly.
