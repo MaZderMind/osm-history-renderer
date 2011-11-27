@@ -2,7 +2,7 @@
 This Repository contains an experimental, work-in-progress (as everything in the OSM universe, i think ;)) history renderer. It is able to import a history excerpt (or a full history dump) of OpenStreetMap data and create an image from a specified region for a specific point in time. You may want to see berlin as it was in 2008? No Problem! The importer is written against [Jochen Topfs](https://github.com/joto) great osmium framework which provides history-capable readers for xml and pbf. If you want ot try it, check out the [Tutorial](https://github.com/MaZderMind/osm-history-renderer/blob/master/TUTORIAL.md).
 
 ## Build it
-The importer can be compiled with g++ or clang++. Noth compilers are mentioned in the Makefile, so just uncomment whichever suites your needs best. Build it using make and then run it als described below.
+The importer can be compiled with g++ or clang++. Both compilers are mentioned in the Makefile, so just uncomment whichever suites your needs best. Build it using make and then run it als described below.
 
 ## Run it
 In order to run it, you'll need data-input. I'd suggest starting with a small extract as a basis. There are some extracts [hosted at gwdg's public ftp](http://ftp5.gwdg.de/pub/misc/openstreetmap/osm-full-history-extracts/110919/pbf/) They are created in hardcut-mode which may drop some versions of a objects which can lead to rendering bugs, so better cut the extracts on your own or wait until I've uploaded the new ones.
