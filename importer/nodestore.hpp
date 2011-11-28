@@ -23,12 +23,20 @@ private:
     bool m_storeerrors;
 
 public:
-    Nodestore(bool storeerrors) : m_nodemap(), m_storeerrors(storeerrors) {}
+    Nodestore() : m_nodemap() {}
     ~Nodestore() {
         nodemap_cit end = m_nodemap.end();
         for(nodemap_cit it = m_nodemap.begin(); it != end; ++it) {
             delete it->second;
         }
+    }
+
+    bool isPrintingStoreErrors() {
+        return m_storeerrors;
+    }
+
+    void printStoreErrors(bool shouldPrintStoreErrors) {
+        m_storeerrors = shouldPrintStoreErrors;
     }
 
     void record(osm_object_id_t id, osm_version_t v, time_t t, double lon, double lat) {

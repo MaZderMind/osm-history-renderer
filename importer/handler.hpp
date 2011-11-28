@@ -32,8 +32,7 @@ private:
     geos::io::WKBWriter wkb;
 
     std::string m_dsn, m_prefix;
-    bool m_storeerrors;
-    bool m_interior;
+    bool m_storeerrors, m_interior;
 
     static const int timestamp_length = 20 + 1; // length of ISO timestamp string yyyy-mm-ddThh:mm:ssZ\0
 
@@ -204,7 +203,7 @@ private:
     }
 
 public:
-    ImportHandler(bool storeerrors, bool interior) : m_progress(), m_node_tracker(), m_store(storeerrors), m_polygonident(), wkb(), m_prefix("hist_"), m_storeerrors(storeerrors), m_interior(interior) {
+    ImportHandler() : m_progress(), m_node_tracker(), m_store(), m_polygonident(), wkb(), m_prefix("hist_") {
         //if(!(pj_900913 = pj_init_plus("+init=epsg:900913"))) {
         if(!(pj_900913 = pj_init_plus("+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +no_defs"))) {
             throw std::runtime_error("can't initialize proj4 with 900913");
@@ -223,16 +222,33 @@ public:
         return m_dsn;
     }
 
-    void dsn(std::string& new_dsn) {
-        m_dsn = new_dsn;
+    void dsn(std::string& newDsn) {
+        m_dsn = newDsn;
     }
 
     std::string prefix() {
         return m_prefix;
     }
 
-    void prefix(std::string& new_prefix) {
-        m_prefix = new_prefix;
+    void prefix(std::string& newPrefix) {
+        m_prefix = newPrefix;
+    }
+
+    bool isPrintingStoreErrors() {
+        return m_storeerrors;
+    }
+
+    void printStoreErrors(bool shouldPrintStoreErrors) {
+        m_storeerrors = shouldPrintStoreErrors;
+        m_store.printStoreErrors(shouldPrintStoreErrors);
+    }
+
+    bool isCalculatingInterior() {
+        return m_interior;
+    }
+
+    void calculateInterior(bool shouldCalculateInterior) {
+        m_interior = shouldCalculateInterior;
     }
 
 
