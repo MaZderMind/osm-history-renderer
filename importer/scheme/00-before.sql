@@ -1,6 +1,6 @@
 -- requires hstore_new, postgis, gist_btree
 
-DROP TABLE IF EXISTS hist_point;
+DROP TABLE IF EXISTS hist_point CASCADE;
 CREATE TABLE hist_point (
     -- optional 64bit support
     -- id BIGINT,
@@ -29,7 +29,7 @@ SELECT AddGeometryColumn(
 );
 
 
-DROP TABLE IF EXISTS hist_line;
+DROP TABLE IF EXISTS hist_line CASCADE;
 CREATE TABLE hist_line (
     -- optional 64bit support
     -- id BIGINT,
@@ -60,7 +60,7 @@ SELECT AddGeometryColumn(
 );
 
 
-DROP TABLE IF EXISTS hist_polygon;
+DROP TABLE IF EXISTS hist_polygon CASCADE;
 CREATE TABLE hist_polygon (
     -- optional 64bit support
     -- id BIGINT,
