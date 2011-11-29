@@ -34,7 +34,7 @@ static const int n_polygons = (sizeof(polygons) / sizeof(*polygons));
 static struct {
     int offset;
     const char *highway;
-    int lowzoom;
+    bool lowzoom;
 } layers[] = {
     { 3, "minor",         0 },
     { 3, "road",          0 },
@@ -70,8 +70,8 @@ public:
         return false;
     }
 
-    int calculateZOrder(const Osmium::OSM::TagList& tags) {
-        int z_order = 0;
+    long int calculateZOrder(const Osmium::OSM::TagList& tags) {
+        long int z_order = 0;
         int lowzoom;
 
         const char *layer = tags.get_tag_by_key("layer");
