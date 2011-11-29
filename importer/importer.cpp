@@ -37,7 +37,7 @@ int main(int argc, char *argv[]) {
     static struct option long_options[] = {
         {"help",                no_argument, 0, 'h'},
         {"debug",               no_argument, 0, 'd'},
-        {"store-errors",         no_argument, 0, 'e'},
+        {"store-errors",        no_argument, 0, 'e'},
         {"interior",            no_argument, 0, 'i'},
         {"dsn",                 required_argument, 0, 'D'},
         {"prefix",              required_argument, 0, 'P'},
