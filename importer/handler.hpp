@@ -55,6 +55,15 @@ private:
             throw std::runtime_error("connection to database failed");
         }
 
+        PGresult *res = PQexec(conn, "SET synchronous_commit TO off;");
+        if(PQresultStatus(res) != PGRES_COMMAND_OK)
+        {
+            std::cerr << PQerrorMessage(conn) << std::endl;
+            PQclear(res);
+            PQfinish(conn);
+            throw std::runtime_error("setting synchronous_commit to off failed");
+        }
+
         return conn;
     }
 
