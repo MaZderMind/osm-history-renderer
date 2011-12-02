@@ -349,9 +349,10 @@ public:
         double lon = prev->get_lon() * DEG_TO_RAD;
         int r = pj_transform(pj_4326, pj_900913, 1, 1, &lon, &lat, NULL);
         if(r != 0) {
-            std::stringstream msg;
-            msg << "error transforming POINT(" << prev->get_lat() << " " << prev->get_lon() << ") from 4326 to 900913)";
-            throw std::runtime_error(msg.str().c_str());
+            if(Osmium::debug()) {
+                std::cerr << "error transforming POINT(" << prev->get_lat() << " " << prev->get_lon() << ") from 4326 to 900913)" << std::endl;
+            }
+            return;
         }
 
         m_store.record(prev->id(), prev->version(), prev->timestamp(), lon, lat);
