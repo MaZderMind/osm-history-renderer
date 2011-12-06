@@ -13,7 +13,7 @@ CXXFLAGS += `getconf LFS_CFLAGS`
 #CXXFLAGS += -Wpadded -Winline
 
 # path to osmium
-CXXFLAGS += -Iosmium/include
+CXXFLAGS += -I/home/peter/osmium/include -I/usr/include/postgres/
 
 # compile & link against expat to have xml reading support
 LDFLAGS += -lexpat
