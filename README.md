@@ -56,7 +56,7 @@ The importer currently stores lat, lon and version for each and every node, inde
 
  1. Make it work
  2. Make it scale
- 3. Make it fast.
+ 3. Make it fast
 
 Currently I'm thinking of some ways to improve memory usage. I don't think the version is really needed so we may save 4 bytes per node. Lat/Lon is stored as double which could be shrinked using a fixed-length storage and varints. I'm thinking about using protobuffers or sqlite as node-stores but some benchmarks would be needed. If you have another idea, don't hesitate to drop me an email.
 
