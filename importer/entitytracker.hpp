@@ -11,8 +11,9 @@
 #define IMPORTER_ENTITYTRACKER_HPP
 
 /**
- * the EntityTracker is templated to allow nodes, ways and relations as
- * child objects.
+ * Tracks a previous and a current entity, provides a method to make the
+ * current entity the previous one and manages freeing of the entities.
+ * It is templated to allow nodes, ways and relations as child objects.
  */
 template <class TObject>
 class EntityTracker {

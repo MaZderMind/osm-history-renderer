@@ -36,7 +36,7 @@ static struct {
     { 8, "trunk",          true },
     { 9, "motorway_link",  true },
     { 9, "motorway",       true },
-    
+
     // 0-value signals end-of-list
     { 0, 0, 0 }
 };
