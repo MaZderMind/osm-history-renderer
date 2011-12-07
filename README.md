@@ -6,7 +6,7 @@ The importer can be compiled with g++ or clang++. Both compilers are mentioned i
 
 ## Run it
 In order to run it, you'll need data-input. I'd suggest starting with a small extract as a basis. There are some extracts [hosted at gwdg's public ftp](http://ftp5.gwdg.de/pub/misc/openstreetmap/osm-full-history-extracts/110919/pbf/) They are created in hardcut-mode which may drop some versions of a objects which can lead to rendering bugs, so better cut the extracts on your own or wait until I've uploaded the new ones.
-All extracts have been created using my [OpenStreetMap History Splitter](https://github.com/MaZderMind/osm-history-splitter/), so if you want your own area, go and download the latest [Full-Experimental Dump](http://planet.osm.org/full-experimental/) and split it yourself using the --softcut mode.
+All extracts have been created using my [OpenStreetMap History Splitter](https://github.com/MaZderMind/osm-history-splitter/), so if you want your own area, go and download the latest [Full-Experimental Dump](http://planet.osm.org/full-experimental/) and split it yourself using the `--softcut` mode.
 
 After you have your data in place, use the importer to import the data:
 
@@ -32,12 +32,12 @@ If you have mapnik2, you'll need to migrate the osm.xml to mapnik2 syntax:
 
     ./render.py --style ~/osm-mapnik-style/osm-mapnik2.xml --bbox 8.177700,49.771700,8.205600,49.791600 --date 2009-01-01
 
-Interesting how your town looked in 2009, hm? And it was all in the OSM-Database -- all the time! Sleeping data.. *getting melancholic*
+Interesting how your town looked in 2009, hm? And it was all in the OSM-Database - all the time! Sleeping data.. *getting melancholic*
 So let's see how your town evolved over time - let's make an animation:
 
     ./render-animation.py --style ~/osm-mapnik-style/osm-mapnik2.xml --bbox 8.177700,49.771700,8.205600,49.791600
 
-This will leave you with an set of .png files, one for each month since the first node was placed in your area. If you want render-animation.py to assemble a real video for you, use --type mp4. This will create a lossless mp4 for you. Use render-animation.py -h to get information over the wide range of control, the script gives to you.
+This will leave you with an set of .png files, one for each month since the first node was placed in your area. If you want render-animation.py to assemble a real video for you, use `--type mp4`. This will create a lossless mp4 for you. Use render-animation.py `-h` to get information over the wide range of control, the script gives to you.
 
 
 ## Speeeeed
