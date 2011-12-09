@@ -17,6 +17,7 @@
 #include "polygonidentifyer.hpp"
 #include "zordercalculator.hpp"
 #include "dbconn.hpp"
+#include "dbcopyconn.hpp"
 
 class ImportHandler : public Osmium::Handler::Base {
 private:
@@ -26,7 +27,8 @@ private:
 
     Nodestore m_store;
 
-    DbConn m_general, m_point, m_line, m_polygon;
+    DbConn m_general;
+    DbCopyConn m_point, m_line, m_polygon;
 
     projPJ pj_900913, pj_4326;
 
@@ -173,9 +175,9 @@ public:
 
         m_general.execfile(sqlfile);
 
-        m_point.opencopy(m_dsn, m_prefix, "point");
-        m_line.opencopy(m_dsn, m_prefix, "line");
-        m_polygon.opencopy(m_dsn, m_prefix, "polygon");
+        m_point.open(m_dsn, m_prefix, "point");
+        m_line.open(m_dsn, m_prefix, "line");
+        m_polygon.open(m_dsn, m_prefix, "polygon");
 
         m_progress.init(meta);
 
@@ -186,13 +188,13 @@ public:
         m_progress.final();
 
         std::cerr << "closing point-table..." << std::endl;
-        m_point.closecopy();
+        m_point.close();
 
         std::cerr << "closing line-table..." << std::endl;
-        m_line.closecopy();
+        m_line.close();
 
         std::cerr << "closing polygon-table..." << std::endl;
-        m_polygon.closecopy();
+        m_polygon.close();
 
         if(Osmium::debug()) {
             std::cerr << "running scheme/99-after.sql" << std::endl;
