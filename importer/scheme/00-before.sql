@@ -16,7 +16,7 @@ SELECT AddGeometryColumn(
     'hist_point',
 
     -- column name
-    'way',
+    'geom',
 
     -- SRID (900913 = Spherical Mercator)
     900913,
@@ -47,7 +47,7 @@ SELECT AddGeometryColumn(
     'hist_line',
 
     -- column name
-    'way',
+    'geom',
 
     -- SRID (900913 = Spherical Mercator)
     900913,
@@ -72,14 +72,14 @@ CREATE TABLE hist_polygon (
     valid_to timestamp without time zone,
     tags hstore,
     z_order integer,
-    way_area real
+    area real
 );
 SELECT AddGeometryColumn(
     -- table name
     'hist_polygon',
 
     -- column name
-    'way',
+    'geom',
 
     -- SRID (900913 = Spherical Mercator)
     900913,
