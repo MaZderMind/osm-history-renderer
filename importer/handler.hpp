@@ -16,6 +16,7 @@
 #include "nodestore.hpp"
 #include "polygonidentifyer.hpp"
 #include "zordercalculator.hpp"
+#include "dbconn.hpp"
 
 class ImportHandler : public Osmium::Handler::Base {
 private:
@@ -25,7 +26,7 @@ private:
 
     Nodestore m_store;
 
-    PGconn *m_general, *m_point, *m_line, *m_polygon;
+    DbConn m_general, m_point, m_line, m_polygon;
 
     projPJ pj_900913, pj_4326;
 
@@ -43,112 +44,6 @@ private:
     static const char *timestamp_format() {
         static const char f[] = "%Y-%m-%dT%H:%M:%SZ";
         return f;
-    }
-
-    PGconn *open(const std::string& dsn) {
-        PGconn *conn = PQconnectdb(dsn.c_str());
-
-        if(PQstatus(conn) != CONNECTION_OK)
-        {
-            std::cerr << PQerrorMessage(conn) << std::endl;
-            PQfinish(conn);
-            throw std::runtime_error("connection to database failed");
-        }
-
-        PGresult *res = PQexec(conn, "SET synchronous_commit TO off;");
-        if(PQresultStatus(res) != PGRES_COMMAND_OK)
-        {
-            std::cerr << PQerrorMessage(conn) << std::endl;
-            PQclear(res);
-            PQfinish(conn);
-            throw std::runtime_error("setting synchronous_commit to off failed");
-        }
-
-        return conn;
-    }
-
-    PGconn *opencopy(const std::string& dsn, const std::string& table) {
-        PGconn *conn = open(dsn);
-
-        std::stringstream cmd;
-        cmd << "COPY " << m_prefix << table << " FROM STDIN;";
-
-        PGresult *res = PQexec(conn, cmd.str().c_str());
-        if(PQresultStatus(res) != PGRES_COPY_IN)
-        {
-            std::cerr << PQresultErrorMessage(res) << std::endl;
-
-            PQclear(res);
-            PQfinish(conn);
-            throw std::runtime_error("COPY FROM STDIN command failed");
-        }
-
-        PQclear(res);
-        return conn;
-    }
-
-    void close(PGconn *conn) {
-        PQfinish(conn);
-    }
-
-    void closecopy(PGconn *conn) {
-        int res = PQputCopyEnd(conn, NULL);
-        if(-1 == res)
-        {
-            std::cerr << PQerrorMessage(conn) << std::endl;
-            PQfinish(conn);
-            throw std::runtime_error("COPY FROM STDIN finilization failed");
-        }
-
-        PGresult *qres = PQgetResult(conn);
-        while(qres != NULL) {
-            ExecStatusType qstatus = PQresultStatus(qres);
-            switch(qstatus) {
-                case PGRES_FATAL_ERROR:
-                case PGRES_NONFATAL_ERROR:
-                    std::cerr << "error from postgres: " << PQresultErrorMessage(qres) << std::endl;
-                    break;
-                
-                case PGRES_COMMAND_OK:
-                    break;
-                
-                default:
-                    std::cerr << "PQresultStatus=" << qstatus << std::endl;
-                    break;
-            }
-
-            PQclear(qres);
-            break;
-        }
-
-        close(conn);
-    }
-
-    void copy(PGconn *conn, const std::string& data) {
-        int res = PQputCopyData(conn, data.c_str(), data.size());
-
-        if(-1 == res) {
-            std::cerr << PQerrorMessage(conn) << std::endl;
-            PQfinish(conn);
-            throw std::runtime_error("COPY data-transfer failed");
-        }
-    }
-
-    void execfile(PGconn *conn, std::ifstream& f) {
-        std::string cmd((std::istreambuf_iterator<char>(f)),
-                         std::istreambuf_iterator<char>());
-
-        PGresult *res = PQexec(conn, cmd.c_str());
-        ExecStatusType status = PQresultStatus(res);
-        if(status != PGRES_COMMAND_OK && status != PGRES_TUPLES_OK)
-        {
-            std::cerr << PQresultErrorMessage(res) << std::endl;
-            PQclear(res);
-            PQfinish(conn);
-            throw std::runtime_error("command failed");
-        }
-
-        PQclear(res);
     }
 
     std::string escape_hstore(const char* str) {
@@ -267,7 +162,7 @@ public:
             std::cerr << "connecting to database using dsn: " << m_dsn << std::endl;
         }
 
-        m_general = open(m_dsn);
+        m_general.open(m_dsn);
         if(Osmium::debug()) {
             std::cerr << "running scheme/00-before.sql" << std::endl;
         }
@@ -276,11 +171,11 @@ public:
         if(!sqlfile)
             sqlfile.open("/usr/share/osm-history-importer/scheme/00-before.sql");
 
-        execfile(m_general, sqlfile);
+        m_general.execfile(sqlfile);
 
-        m_point = opencopy(m_dsn, "point");
-        m_line = opencopy(m_dsn, "line");
-        m_polygon = opencopy(m_dsn, "polygon");
+        m_point.opencopy(m_dsn, m_prefix, "point");
+        m_line.opencopy(m_dsn, m_prefix, "line");
+        m_polygon.opencopy(m_dsn, m_prefix, "polygon");
 
         m_progress.init(meta);
 
@@ -291,13 +186,13 @@ public:
         m_progress.final();
 
         std::cerr << "closing point-table..." << std::endl;
-        closecopy(m_point);
+        m_point.closecopy();
 
         std::cerr << "closing line-table..." << std::endl;
-        closecopy(m_line);
+        m_line.closecopy();
 
         std::cerr << "closing polygon-table..." << std::endl;
-        closecopy(m_polygon);
+        m_polygon.closecopy();
 
         if(Osmium::debug()) {
             std::cerr << "running scheme/99-after.sql" << std::endl;
@@ -307,12 +202,12 @@ public:
         if(!sqlfile)
             sqlfile.open("/usr/share/osm-history-importer/scheme/99-after.sql");
 
-        execfile(m_general, sqlfile);
+        m_general.execfile(sqlfile);
 
         if(Osmium::debug()) {
             std::cerr << "disconnecting from database" << std::endl;
         }
-        close(m_general);
+        m_general.close();
     }
 
 
@@ -379,7 +274,7 @@ public:
             "SRID=900913;POINT(" << lon << ' ' << lat << ')' <<
             '\n';
 
-        copy(m_point, line.str());
+        m_point.copy(line.str());
     }
 
 
@@ -561,13 +456,13 @@ public:
             }
 
             line << '\n';
-            copy(m_polygon, line.str());
+            m_polygon.copy(line.str());
         } else {
             // a linestring, write geometry to line-table
             wkb.writeHEX(*geom, line);
 
             line << '\n';
-            copy(m_line, line.str());
+            m_line.copy(line.str());
 
         }
         delete geom;
