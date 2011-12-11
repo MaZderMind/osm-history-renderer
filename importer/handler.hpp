@@ -16,6 +16,7 @@
 #include "nodestore.hpp"
 #include "polygonidentifyer.hpp"
 #include "zordercalculator.hpp"
+#include "hstore.hpp"
 #include "dbconn.hpp"
 #include "dbcopyconn.hpp"
 
@@ -46,51 +47,6 @@ private:
     static const char *timestamp_format() {
         static const char f[] = "%Y-%m-%dT%H:%M:%SZ";
         return f;
-    }
-
-    std::string escape_hstore(const char* str) {
-        // SPEED: instead of stringstream, which does dynamic allocation, use a fixed buffer
-        std::stringstream escaped;
-        for(int i = 0; ; i++) {
-            char c = str[i];
-            switch(c) {
-                case '\\':
-                    escaped << "\\\\\\\\";
-                    break;
-                case '"':
-                    escaped << "\\\\\"";
-                    break;
-                case '\t':
-                    escaped << "\\\t";
-                    break;
-                case '\r':
-                    escaped << "\\\r";
-                    break;
-                case '\n':
-                    escaped << "\\\n";
-                    break;
-                case '\0':
-                    return escaped.str();
-                default:
-                    escaped << c;
-                    break;
-            }
-        }
-    }
-
-    std::string format_hstore(const Osmium::OSM::TagList& tags) {
-        // SPEED: instead of stringstream, which does dynamic allocation, use a fixed buffer
-        std::stringstream hstore;
-        for(Osmium::OSM::TagList::const_iterator it = tags.begin(); it != tags.end(); ++it) {
-            std::string k = escape_hstore(it->key());
-            std::string v = escape_hstore(it->value());
-            
-            hstore << '"' << k << "\"=>\"" << v << '"';
-            if(it+1 != tags.end()) {
-                hstore << ',';
-            }
-        }
-        return hstore.str();
     }
 
     std::string format_time(const time_t time) {
@@ -272,7 +228,7 @@ public:
             (prev->visible() ? 't' : 'f') << '\t' <<
             valid_from << '\t' <<
             valid_to << '\t' <<
-            format_hstore(prev->tags()) << '\t' <<
+            HStore::format(prev->tags()) << '\t' <<
             "SRID=900913;POINT(" << lon << ' ' << lat << ')' <<
             '\n';
 
@@ -423,7 +379,7 @@ public:
             (visible ? 't' : 'f') << '\t' <<
             format_time(valid_from) << '\t' <<
             format_time(valid_to) << '\t' <<
-            format_hstore(tags) << '\t' <<
+            HStore::format(tags) << '\t' <<
             ZOrderCalculator::calculateZOrder(tags) << '\t';
 
         if(geom->getGeometryTypeId() == geos::geom::GEOS_POLYGON) {
