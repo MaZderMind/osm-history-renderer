@@ -55,6 +55,9 @@ public:
             throw std::runtime_error("starting transaction failed");
         }
 
+        // clear the postgres result
+        PQclear(res);
+
         // issue a TRUNCATE statement
         //   this tells postgres that it can throw away the new data in
         //   case of an error which in turn disables the WriteAheadLog
