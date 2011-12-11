@@ -17,6 +17,7 @@
 #include "polygonidentifyer.hpp"
 #include "zordercalculator.hpp"
 #include "hstore.hpp"
+#include "timestamp.hpp"
 #include "dbconn.hpp"
 #include "dbcopyconn.hpp"
 
@@ -37,32 +38,6 @@ private:
 
     std::string m_dsn, m_prefix;
     bool m_storeerrors, m_interior;
-
-    static const int timestamp_length = 20 + 1; // length of ISO timestamp string yyyy-mm-ddThh:mm:ssZ\0
-
-    /**
-     * The timestamp format for OSM timestamps in strftime(3) format.
-     * This is the ISO-Format yyyy-mm-ddThh:mm:ssZ
-     */
-    static const char *timestamp_format() {
-        static const char f[] = "%Y-%m-%dT%H:%M:%SZ";
-        return f;
-    }
-
-    std::string format_time(const time_t time) {
-        if(time == 0) {
-            return "\\N";
-        }
-        struct tm *tm = gmtime(&time);
-        std::string s(timestamp_length, '\0');
-        /* This const_cast is ok, because we know we have enough space
-           in the string for the format we are using (well at least until
-           the year will have 5 digits). And by setting the size
-           afterwards from the result of strftime we make sure thats set
-           right, too. */
-        s.resize(strftime(const_cast<char *>(s.c_str()), timestamp_length, timestamp_format(), tm));
-        return s;
-    }
 
 public:
     ImportHandler() : m_progress(), m_node_tracker(), m_store(), wkb(), m_prefix("hist_") {
@@ -313,7 +288,7 @@ public:
             std::vector<time_t>::const_iterator end = minor_times->end();
             for(std::vector<time_t>::const_iterator it = minor_times->begin(); it != end; it++) {
                 if(Osmium::debug()) {
-                    std::cout << "minor way w" << prev->id() << 'v' << prev->version() << '.' << minor << " at tstamp " << *it << " (" << format_time(*it) << ")" << std::endl;
+                    std::cout << "minor way w" << prev->id() << 'v' << prev->version() << '.' << minor << " at tstamp " << *it << " (" << Timestamp::format(*it) << ")" << std::endl;
                 }
 
                 valid_from = *it;
@@ -377,8 +352,8 @@ public:
             version << '\t' <<
             minor << '\t' <<
             (visible ? 't' : 'f') << '\t' <<
-            format_time(valid_from) << '\t' <<
-            format_time(valid_to) << '\t' <<
+            Timestamp::format(valid_from) << '\t' <<
+            Timestamp::format(valid_to) << '\t' <<
             HStore::format(tags) << '\t' <<
             ZOrderCalculator::calculateZOrder(tags) << '\t';
 
