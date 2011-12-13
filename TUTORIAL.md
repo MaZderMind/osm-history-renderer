@@ -125,6 +125,11 @@ to see the help information explaining various parameters and possibilities.
          --bbox 8.3122,48.9731,8.5139,49.0744 --anistart=2006-09-01 --type html --file karlsruhe \
          --label "%d.%m.%Y" --label-gravity SouthEast
 
+## like it?
+If you'd like to support this project, Flatter it:
+
+[![Flattr this git repo](http://api.flattr.com/button/flattr-badge-large.png)](https://flattr.com/submit/auto?user_id=MaZderMind&url=https://github.com/MaZderMind/osm-history-renderer&title=osm-history-renderer&language=en_GB&tags=github&category=software) 
+
 ## system requirements
 This tutorial was tested on a Debian 6.0.3 i386 box with 1 GB of RAM and a single Core. Rendering was not really fast but it worked.
 Most memory was used while splitting the germany.osh.pbf. It did fill up the whole RAM plus 1/2 of the SWAP but it ran pretty smoothly.
