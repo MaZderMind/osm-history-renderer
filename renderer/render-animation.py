@@ -164,7 +164,7 @@ def main():
         i += 1
     
     if buildhtml:
-        do_buildhtml    (anifile, i, options.fps)
+        do_buildhtml(anifile, i, options.fps, options.size[0], options.size[1])
     
     if anitype == "png":
         return
@@ -207,12 +207,12 @@ def infer_anistart(dsn, prefix, bbox):
     con.close()
     return min
 
-def do_buildhtml(file, images, fps):
+def do_buildhtml(file, images, fps, width, height):
     s = """<!DOCTYPE HTML>
 <html>
 	<head>
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
-		<title>animap</title>
+		<title>%(file)s</title>
 		
 		<style>
 			body {
@@ -372,10 +372,10 @@ def do_buildhtml(file, images, fps):
 		</script>
 	</head>
 	<body>
-		<div id="animap-container-1" class="animap-container" style="width: 800px;">
+		<div id="animap-container-1" class="animap-container" style="width: %(width)upx;">
 			<div class="animap-image">
-				<img src="%s/0000000000.png" alt="" class="animap-image-current" width="800" height="600" />
-				<img src="" alt="" class="animap-image-next" width="800" height="600" />
+				<img src="%(file)s/0000000000.png" alt="" class="animap-image-current" width="%(width)u" height="%(height)u" />
+				<img src="" alt="" class="animap-image-next" width="%(width)u" height="%(height)u" />
 			</div>
 			<div class="animap-controls">
 				<a class="animap-btn">play</a>
@@ -384,14 +384,14 @@ def do_buildhtml(file, images, fps):
 		</div>
 		<script>
 			var animap1 = $('#animap-container-1').animap({
-				file: '%s',
-				images: %s,
-				fps: %s,
+				file: '%(file)s',
+				images: %(images)s,
+				fps: %(fps)s,
 				autoplay: true
 			});
 		</script>
 	</body>
-</html>""" % (file, file, images-1, fps)
+</html>""" % {'file': file, 'images': images-1, 'fps': fps, 'width': width, 'height': height}
     f = open(file+".html", 'w')
     f.write(s)
     f.close()
