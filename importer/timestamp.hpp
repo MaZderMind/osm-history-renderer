@@ -29,7 +29,8 @@ private:
 
 public:
     /**
-     * Format the timestamp
+     * Format the Timestamp according to
+     * ISO timestamp string yyyy-mm-ddThh:mm:ssZ\0
      */
     static std::string format(const time_t time) {
         struct tm *tm = gmtime(&time);
