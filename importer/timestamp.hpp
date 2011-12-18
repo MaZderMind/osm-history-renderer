@@ -34,20 +34,35 @@ public:
     static std::string format(const time_t time) {
         struct tm *tm = gmtime(&time);
         std::string s(timestamp_length, '\0');
-        /* This const_cast is ok, because we know we have enough space
-           in the string for the format we are using (well at least until
-           the year will have 5 digits). And by setting the size
-           afterwards from the result of strftime we make sure thats set
-           right, too. */
+        /*
+         *  This const_cast is ok, because we know we have enough space
+         * in the string for the format we are using (well at least until
+         * the year will have 5 digits). And by setting the size
+         * afterwards from the result of strftime we make sure thats set
+         * right, too.
+         */
         s.resize(strftime(const_cast<char *>(s.c_str()), timestamp_length, timestamp_format(), tm));
         return s;
     }
 
+    /**
+     * the timestamp 0 has a special meaning in the context of osm data.
+     * in 1970 there was no osm. For a valid_to value, where this method
+     * is used for, a timestamp of 0 is identical to "never" (as in: at
+     * least valid untill today) which is in the database represented as
+     * NULL. In the copy pipe used to fill the database, this NULL is
+     * represented as \N which is returned by this method for a timestamp
+     * of 0. In any other cast, the result is identical to the result of
+     * the format(const time_t) method.
+     */
     static std::string formatDb(const time_t time) {
+        // return special string indicating a value of NULL in a postgres
+        // copy pipe for a timestamp of 0
         if(time == 0) {
             return "\\N";
         }
 
+        // return the formatted timestamp
         return format(time);
     }
 };
