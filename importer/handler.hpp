@@ -12,14 +12,19 @@
 
 #include <geos/algorithm/InteriorPointArea.h>
 
+#include "dbconn.hpp"
+#include "dbcopyconn.hpp"
+#include "dbadapter.hpp"
+
 #include "entitytracker.hpp"
 #include "nodestore.hpp"
 #include "polygonidentifyer.hpp"
 #include "zordercalculator.hpp"
 #include "hstore.hpp"
 #include "timestamp.hpp"
-#include "dbconn.hpp"
-#include "dbcopyconn.hpp"
+#include "geombuilder.hpp"
+#include "minortimescalculator.hpp"
+
 
 class ImportHandler : public Osmium::Handler::Base {
 private:
@@ -28,6 +33,9 @@ private:
     EntityTracker<Osmium::OSM::Way> m_way_tracker;
 
     Nodestore m_store;
+    DbAdapter m_adapter;
+    ImportGeomBuilder m_geom;
+    ImportMinorTimesCalculator m_mtimes;
 
     DbConn m_general;
     DbCopyConn m_point, m_line, m_polygon;
@@ -39,8 +47,239 @@ private:
     std::string m_dsn, m_prefix;
     bool m_storeerrors, m_interior;
 
+
+    void write_node() {
+        const shared_ptr<Osmium::OSM::Node const> cur = m_node_tracker.cur();
+        const shared_ptr<Osmium::OSM::Node const> prev = m_node_tracker.prev();
+
+        if(Osmium::debug()) {
+            std::cout << "node n" << prev->id() << 'v' << prev->version() << " at tstamp " << prev->timestamp() << " (" << Timestamp::format(prev->timestamp()) << ")" << std::endl;
+        }
+
+        std::string valid_from(prev->timestamp_as_string());
+        std::string valid_to("\\N");
+
+        // if this is another version of the same entity, the end-timestamp of the previous entity is the timestamp of the current one
+        if(m_node_tracker.cur_is_same_entity()) {
+            valid_to = cur->timestamp_as_string();
+        }
+
+        // if the prev version is deleted, it's end-timestamp is the same as its creation-timestamp
+        else if(!m_node_tracker.prev()->visible()) {
+            valid_to = valid_from;
+        }
+
+        double lat = prev->get_lat() * DEG_TO_RAD;
+        double lon = prev->get_lon() * DEG_TO_RAD;
+        int r = pj_transform(pj_4326, pj_900913, 1, 1, &lon, &lat, NULL);
+        if(r != 0) {
+            if(Osmium::debug()) {
+                std::cerr << "error transforming POINT(" << prev->get_lat() << " " << prev->get_lon() << ") from 4326 to 900913)" << std::endl;
+            }
+            return;
+        }
+
+        m_store.record(prev->id(), prev->version(), prev->timestamp(), lon, lat);
+
+        // SPEED: sum up 64k of data, before sending them to the database
+        // SPEED: instead of stringstream, which does dynamic allocation, use a fixed buffer and snprintf
+        std::stringstream line;
+        line << std::setprecision(8) <<
+            prev->id() << '\t' <<
+            prev->version() << '\t' <<
+            (prev->visible() ? 't' : 'f') << '\t' <<
+            valid_from << '\t' <<
+            valid_to << '\t' <<
+            HStore::format(prev->tags()) << '\t' <<
+            "SRID=900913;POINT(" << lon << ' ' << lat << ')' <<
+            '\n';
+
+        m_point.copy(line.str());
+    }
+
+    void write_way() {
+        const shared_ptr<Osmium::OSM::Way const> cur = m_way_tracker.cur();
+        const shared_ptr<Osmium::OSM::Way const> prev = m_way_tracker.prev();
+
+        if(Osmium::debug()) {
+            std::cout << "way w" << prev->id() << 'v' << prev->version() << " at tstamp " << prev->timestamp() << " (" << Timestamp::format(prev->timestamp()) << ")" << std::endl;
+        }
+
+        time_t valid_from = prev->timestamp();
+        time_t valid_to = 0;
+
+        std::vector<time_t> *minor_times = NULL;
+        if(prev->visible()) {
+            if(m_way_tracker.cur_is_same_entity()) {
+                if(prev->timestamp() > cur->timestamp()) {
+                    if(m_storeerrors) {
+                        std::cerr << "inverse timestamp-order in way " << prev->id() << " between v" << prev->version() << " and v" << cur->version() << ", skipping minor ways" << std::endl;
+                    }
+                } else {
+                    minor_times = m_mtimes.forWay(prev->nodes(), prev->timestamp(), cur->timestamp());
+                }
+            } else {
+                minor_times = m_mtimes.forWay(prev->nodes(), prev->timestamp());
+            }
+        }
+
+        // if there are minor ways, it's the timestamp of the first minor way
+        if(minor_times && minor_times->size() > 0) {
+            valid_to = *minor_times->begin();
+        }
+
+        // if this is another version of the same entity, the end-timestamp of the previous entity is the timestamp of the current one
+        else if(m_way_tracker.cur_is_same_entity()) {
+            valid_to = cur->timestamp();
+        }
+
+        // if the prev version is deleted, it's end-timestamp is the same as its creation-timestamp
+        else if(!prev->visible()) {
+            valid_to = valid_from;
+        }
+
+        // write the main way version
+        write_way_to_db(
+            prev->id(),
+            prev->version(),
+            0 /*minor*/,
+            prev->visible(),
+            prev->timestamp(),
+            valid_from,
+            valid_to,
+            prev->tags(),
+            prev->nodes()
+        );
+
+        if(minor_times) {
+            // write the minor way versions of prev between prev & cur
+            int minor = 1;
+            std::vector<time_t>::const_iterator end = minor_times->end();
+            for(std::vector<time_t>::const_iterator it = minor_times->begin(); it != end; it++) {
+                if(Osmium::debug()) {
+                    std::cout << "minor way w" << prev->id() << 'v' << prev->version() << '.' << minor << " at tstamp " << *it << " (" << Timestamp::format(*it) << ")" << std::endl;
+                }
+
+                valid_from = *it;
+                if(it == end-1) {
+                    if(m_way_tracker.cur_is_same_entity()) {
+                        valid_to = cur->timestamp();
+                    } else {
+                        valid_to = 0;
+                    }
+                } else {
+                    valid_to = *(it+1);
+                }
+
+                write_way_to_db(
+                    prev->id(),
+                    prev->version(),
+                    minor,
+                    true,
+                    *it,
+                    valid_from,
+                    valid_to,
+                    prev->tags(),
+                    prev->nodes()
+                );
+
+                minor++;
+            }
+            delete minor_times;
+        }
+    }
+
+    void write_way_to_db(
+        osm_object_id_t id,
+        osm_version_t version,
+        osm_version_t minor,
+        bool visible,
+        time_t timestamp,
+        time_t valid_from,
+        time_t valid_to,
+        const Osmium::OSM::TagList &tags,
+        const Osmium::OSM::WayNodeList &nodes
+    ) {
+        if(Osmium::debug()) {
+            std::cerr << "forging geometry of way " << id << 'v' << version << '.' << minor << " at tstamp " << timestamp << std::endl;
+        }
+
+        bool looksLikePolygon = PolygonIdentifyer::looksLikePolygon(tags);
+        geos::geom::Geometry* geom = m_geom.forWay(nodes, timestamp, looksLikePolygon);
+        if(!geom) {
+            if(m_storeerrors) {
+                std::cerr << "no valid geometry for way " << id << 'v' << version << '.' << minor << " at tstamp " << timestamp << std::endl;
+            }
+            return;
+        }
+
+        // SPEED: sum up 64k of data, before sending them to the database
+        // SPEED: instead of stringstream, which does dynamic allocation, use a fixed buffer and snprintf
+        std::stringstream line;
+        line << std::setprecision(8) <<
+            id << '\t' <<
+            version << '\t' <<
+            minor << '\t' <<
+            (visible ? 't' : 'f') << '\t' <<
+            Timestamp::format(valid_from) << '\t' <<
+            Timestamp::format(valid_to) << '\t' <<
+            HStore::format(tags) << '\t' <<
+            ZOrderCalculator::calculateZOrder(tags) << '\t';
+
+        if(geom->getGeometryTypeId() == geos::geom::GEOS_POLYGON) {
+            const geos::geom::Polygon* poly = dynamic_cast<const geos::geom::Polygon*>(geom);
+
+            // a polygon, polygon-meta to table
+            line << poly->getArea() << '\t';
+
+            // write geometry to polygon table
+            wkb.writeHEX(*geom, line);
+            line << '\t';
+
+            // calculate interior point
+            if(m_interior) {
+                try {
+                    // will leak with invalid geometries on old geos code:
+                    //  http://trac.osgeo.org/geos/ticket/475
+                    geos::geom::Coordinate center;
+                    geos::algorithm::InteriorPointArea interior_calculator(poly);
+                    interior_calculator.getInteriorPoint(center);
+
+                    // write interior point
+                    line << "SRID=900913;POINT(" << center.x << ' ' << center.x << ')';
+                } catch(geos::util::GEOSException e) {
+                    std::cerr << "error calculating interior point: " << e.what() << std::endl;
+                    line << "\\N";
+                }
+            }
+            else
+            {
+                line << "\\N";
+            }
+
+            line << '\n';
+            m_polygon.copy(line.str());
+        } else {
+            // a linestring, write geometry to line-table
+            wkb.writeHEX(*geom, line);
+
+            line << '\n';
+            m_line.copy(line.str());
+
+        }
+        delete geom;
+    }
+
 public:
-    ImportHandler() : m_progress(), m_node_tracker(), m_store(), wkb(), m_prefix("hist_") {
+    ImportHandler() : 
+            m_progress(),
+            m_node_tracker(),
+            m_store(),
+            m_adapter(),
+            m_geom(&m_store, &m_adapter),
+            m_mtimes(&m_store, &m_adapter),
+            wkb(),
+            m_prefix("hist_") {
         //if(!(pj_900913 = pj_init_plus("+init=epsg:900913"))) {
         if(!(pj_900913 = pj_init_plus("+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +no_defs"))) {
             throw std::runtime_error("can't initialize proj4 with 900913");
@@ -165,53 +404,6 @@ public:
         m_node_tracker.swap();
     }
 
-    void write_node() {
-        const shared_ptr<Osmium::OSM::Node const> cur = m_node_tracker.cur();
-        const shared_ptr<Osmium::OSM::Node const> prev = m_node_tracker.prev();
-
-        std::string valid_from(prev->timestamp_as_string());
-        std::string valid_to("\\N");
-
-        // if this is another version of the same entity, the end-timestamp of the previous entity is the timestamp of the current one
-        if(m_node_tracker.cur_is_same_entity()) {
-            valid_to = cur->timestamp_as_string();
-        }
-
-        // if the prev version is deleted, it's end-timestamp is the same as its creation-timestamp
-        else if(!m_node_tracker.prev()->visible()) {
-            valid_to = valid_from;
-        }
-
-        double lat = prev->get_lat() * DEG_TO_RAD;
-        double lon = prev->get_lon() * DEG_TO_RAD;
-        int r = pj_transform(pj_4326, pj_900913, 1, 1, &lon, &lat, NULL);
-        if(r != 0) {
-            if(Osmium::debug()) {
-                std::cerr << "error transforming POINT(" << prev->get_lat() << " " << prev->get_lon() << ") from 4326 to 900913)" << std::endl;
-            }
-            return;
-        }
-
-        m_store.record(prev->id(), prev->version(), prev->timestamp(), lon, lat);
-
-        // SPEED: sum up 64k of data, before sending them to the database
-        // SPEED: instead of stringstream, which does dynamic allocation, use a fixed buffer and snprintf
-        std::stringstream line;
-        line << std::setprecision(8) <<
-            prev->id() << '\t' <<
-            prev->version() << '\t' <<
-            (prev->visible() ? 't' : 'f') << '\t' <<
-            valid_from << '\t' <<
-            valid_to << '\t' <<
-            HStore::format(prev->tags()) << '\t' <<
-            "SRID=900913;POINT(" << lon << ' ' << lat << ')' <<
-            '\n';
-
-        m_point.copy(line.str());
-    }
-
-
-
     void way(const shared_ptr<Osmium::OSM::Way const>& way) {
         m_way_tracker.feed(way);
 
@@ -231,176 +423,6 @@ public:
 
         m_way_tracker.swap();
     }
-
-    void write_way() {
-        const shared_ptr<Osmium::OSM::Way const> cur = m_way_tracker.cur();
-        const shared_ptr<Osmium::OSM::Way const> prev = m_way_tracker.prev();
-
-        time_t valid_from = prev->timestamp();
-        time_t valid_to = 0;
-
-        std::vector<time_t> *minor_times = NULL;
-        if(prev->visible()) {
-            if(m_way_tracker.cur_is_same_entity()) {
-                if(prev->timestamp() > cur->timestamp()) {
-                    if(m_storeerrors) {
-                        std::cerr << "inverse timestamp-order in way " << prev->id() << " between v" << prev->version() << " and v" << cur->version() << ", skipping minor ways" << std::endl;
-                    }
-                } else {
-                    minor_times = m_store.calculateMinorTimes(prev->nodes(), prev->timestamp(), cur->timestamp());
-                }
-            } else {
-                minor_times = m_store.calculateMinorTimes(prev->nodes(), prev->timestamp());
-            }
-        }
-
-        // if there are minor ways, it's the timestamp of the first minor way
-        if(minor_times && minor_times->size() > 0) {
-            valid_to = *minor_times->begin();
-        }
-
-        // if this is another version of the same entity, the end-timestamp of the previous entity is the timestamp of the current one
-        else if(m_way_tracker.cur_is_same_entity()) {
-            valid_to = cur->timestamp();
-        }
-
-        // if the prev version is deleted, it's end-timestamp is the same as its creation-timestamp
-        else if(!prev->visible()) {
-            valid_to = valid_from;
-        }
-
-        // write the main way version
-        write_way_to_db(
-            prev->id(),
-            prev->version(),
-            0 /*minor*/,
-            prev->visible(),
-            prev->timestamp(),
-            valid_from,
-            valid_to,
-            prev->tags(),
-            prev->nodes()
-        );
-
-        if(minor_times) {
-            // write the minor way versions of prev between prev & cur
-            int minor = 1;
-            std::vector<time_t>::const_iterator end = minor_times->end();
-            for(std::vector<time_t>::const_iterator it = minor_times->begin(); it != end; it++) {
-                if(Osmium::debug()) {
-                    std::cout << "minor way w" << prev->id() << 'v' << prev->version() << '.' << minor << " at tstamp " << *it << " (" << Timestamp::format(*it) << ")" << std::endl;
-                }
-
-                valid_from = *it;
-                if(it == end-1) {
-                    if(m_way_tracker.cur_is_same_entity()) {
-                        valid_to = cur->timestamp();
-                    } else {
-                        valid_to = 0;
-                    }
-                } else {
-                    valid_to = *(it+1);
-                }
-
-                write_way_to_db(
-                    prev->id(),
-                    prev->version(),
-                    minor,
-                    true,
-                    *it,
-                    valid_from,
-                    valid_to,
-                    prev->tags(),
-                    prev->nodes()
-                );
-
-                minor++;
-            }
-            delete minor_times;
-        }
-    }
-
-    void write_way_to_db(
-        osm_object_id_t id,
-        osm_version_t version,
-        osm_version_t minor,
-        bool visible,
-        time_t timestamp,
-        time_t valid_from,
-        time_t valid_to,
-        const Osmium::OSM::TagList &tags,
-        const Osmium::OSM::WayNodeList &nodes
-    ) {
-        if(Osmium::debug()) {
-            std::cerr << "forging geometry of way " << id << 'v' << version << '.' << minor << " at tstamp " << timestamp << std::endl;
-        }
-
-        bool looksLikePolygon = PolygonIdentifyer::looksLikePolygon(tags);
-        geos::geom::Geometry* geom = m_store.forgeGeometry(nodes, timestamp, looksLikePolygon);
-        if(!geom) {
-            if(m_storeerrors) {
-                std::cerr << "no valid geometry for way " << id << 'v' << version << '.' << minor << " at tstamp " << timestamp << std::endl;
-            }
-            return;
-        }
-
-        // SPEED: sum up 64k of data, before sending them to the database
-        // SPEED: instead of stringstream, which does dynamic allocation, use a fixed buffer and snprintf
-        std::stringstream line;
-        line << std::setprecision(8) <<
-            id << '\t' <<
-            version << '\t' <<
-            minor << '\t' <<
-            (visible ? 't' : 'f') << '\t' <<
-            Timestamp::format(valid_from) << '\t' <<
-            Timestamp::format(valid_to) << '\t' <<
-            HStore::format(tags) << '\t' <<
-            ZOrderCalculator::calculateZOrder(tags) << '\t';
-
-        if(geom->getGeometryTypeId() == geos::geom::GEOS_POLYGON) {
-            const geos::geom::Polygon* poly = dynamic_cast<const geos::geom::Polygon*>(geom);
-
-            // a polygon, polygon-meta to table
-            line << poly->getArea() << '\t';
-
-            // write geometry to polygon table
-            wkb.writeHEX(*geom, line);
-            line << '\t';
-
-            // calculate interior point
-            if(m_interior) {
-                try {
-                    // will leak with invalid geometries on old geos code:
-                    //  http://trac.osgeo.org/geos/ticket/475
-                    geos::geom::Coordinate center;
-                    geos::algorithm::InteriorPointArea interior_calculator(poly);
-                    interior_calculator.getInteriorPoint(center);
-
-                    // write interior point
-                    line << "SRID=900913;POINT(" << center.x << ' ' << center.x << ')';
-                } catch(geos::util::GEOSException e) {
-                    std::cerr << "error calculating interior point: " << e.what() << std::endl;
-                    line << "\\N";
-                }
-            }
-            else
-            {
-                line << "\\N";
-            }
-
-            line << '\n';
-            m_polygon.copy(line.str());
-        } else {
-            // a linestring, write geometry to line-table
-            wkb.writeHEX(*geom, line);
-
-            line << '\n';
-            m_line.copy(line.str());
-
-        }
-        delete geom;
-    }
 };
 
 #endif // IMPORTER_HANDLER_HPP
-
