@@ -132,7 +132,6 @@ public:
         while(res != NULL) {
             // get restult status and print messages accordingly
             ExecStatusType status = PQresultStatus(res);
-            std::cerr << "PQresultStatus=" << status << std::endl;
             switch(status) {
                 case PGRES_COMMAND_OK:
                     break;
