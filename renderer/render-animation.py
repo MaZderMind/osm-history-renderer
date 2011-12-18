@@ -193,7 +193,7 @@ def infer_anistart(dsn, prefix, bbox):
     import psycopg2
     con = psycopg2.connect(dsn)
     
-    sql = "SELECT MIN(valid_from) FROM hist_point WHERE way && ST_Transform(ST_SetSRID(ST_MakeBox2D(ST_Point(%f, %f), ST_Point(%f, %f)), 4326), 900913)" % (bbox[0], bbox[1], bbox[2], bbox[3])
+    sql = "SELECT MIN(valid_from) FROM hist_point WHERE geom && ST_Transform(ST_SetSRID(ST_MakeBox2D(ST_Point(%f, %f), ST_Point(%f, %f)), 4326), 900913)" % (bbox[0], bbox[1], bbox[2], bbox[3])
     
     cur = con.cursor()
     cur.execute(sql)
