@@ -221,8 +221,8 @@ private:
             version << '\t' <<
             minor << '\t' <<
             (visible ? 't' : 'f') << '\t' <<
-            Timestamp::format(valid_from) << '\t' <<
-            Timestamp::format(valid_to) << '\t' <<
+            Timestamp::formatDb(valid_from) << '\t' <<
+            Timestamp::formatDb(valid_to) << '\t' <<
             HStore::format(tags) << '\t' <<
             ZOrderCalculator::calculateZOrder(tags) << '\t';
 

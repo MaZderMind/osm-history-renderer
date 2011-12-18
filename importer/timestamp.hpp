@@ -42,6 +42,14 @@ public:
         s.resize(strftime(const_cast<char *>(s.c_str()), timestamp_length, timestamp_format(), tm));
         return s;
     }
+
+    static std::string formatDb(const time_t time) {
+        if(time == 0) {
+            return "\\N";
+        }
+
+        return format(time);
+    }
 };
 
 #endif // IMPORTER_TIMESTAMP_HPP
