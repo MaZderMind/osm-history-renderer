@@ -16,8 +16,10 @@
 #include "dbcopyconn.hpp"
 #include "dbadapter.hpp"
 
-#include "entitytracker.hpp"
 #include "nodestore.hpp"
+#include "nodestore/stl.hpp"
+
+#include "entitytracker.hpp"
 #include "polygonidentifyer.hpp"
 #include "zordercalculator.hpp"
 #include "hstore.hpp"
@@ -32,7 +34,7 @@ private:
     EntityTracker<Osmium::OSM::Node> m_node_tracker;
     EntityTracker<Osmium::OSM::Way> m_way_tracker;
 
-    Nodestore m_store;
+    Nodestore *m_store;
     DbAdapter m_adapter;
     ImportGeomBuilder m_geom;
     ImportMinorTimesCalculator m_mtimes;
@@ -79,7 +81,7 @@ private:
             return;
         }
 
-        m_store.record(prev->id(), prev->version(), prev->timestamp(), lon, lat);
+        m_store->record(prev->id(), prev->version(), prev->timestamp(), lon, lat);
 
         // SPEED: sum up 64k of data, before sending them to the database
         // SPEED: instead of stringstream, which does dynamic allocation, use a fixed buffer and snprintf
@@ -271,13 +273,13 @@ private:
     }
 
 public:
-    ImportHandler() : 
+    ImportHandler(Nodestore *nodestore):
             m_progress(),
             m_node_tracker(),
-            m_store(),
+            m_store(nodestore),
             m_adapter(),
-            m_geom(&m_store, &m_adapter),
-            m_mtimes(&m_store, &m_adapter),
+            m_geom(m_store, &m_adapter),
+            m_mtimes(m_store, &m_adapter),
             wkb(),
             m_prefix("hist_") {
         //if(!(pj_900913 = pj_init_plus("+init=epsg:900913"))) {
@@ -316,7 +318,7 @@ public:
 
     void printStoreErrors(bool shouldPrintStoreErrors) {
         m_storeerrors = shouldPrintStoreErrors;
-        m_store.printStoreErrors(shouldPrintStoreErrors);
+        m_store->printStoreErrors(shouldPrintStoreErrors);
     }
 
     bool isCalculatingInterior() {

@@ -118,7 +118,10 @@ int main(int argc, char *argv[]) {
     Osmium::OSMFile infile(filename);
 
     // create an instance of the import-handler
-    ImportHandler handler;
+    Nodestore *nodestore = new NodestoreStl();
+
+    // create an instance of the import-handler
+    ImportHandler handler(nodestore);
 
     // copy relevant settings to the handler
     if(dsn.size()) {
