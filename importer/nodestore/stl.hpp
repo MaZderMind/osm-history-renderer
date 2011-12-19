@@ -3,6 +3,29 @@
 
 class NodestoreStl : public Nodestore {
 private:
+    /**
+     * a map between the node-id and its map of node-versions and -times (timemap)
+     */
+    typedef std::map< osm_object_id_t, timemap* > nodemap;
+
+    /**
+     * a pair of node-id and pointer to timemap
+     */
+    typedef std::pair< osm_object_id_t, timemap* > nodepair;
+
+    /**
+     * an iterator over the nodemap
+     */
+    typedef std::map< osm_object_id_t, timemap* >::iterator nodemap_it;
+
+    /**
+     * the const-version of this iterator
+     */
+    typedef std::map< osm_object_id_t, timemap* >::const_iterator nodemap_cit;
+
+    /**
+     * main-storage of this nodestore: an instance of nodemap
+     */
     nodemap m_nodemap;
 
 public:
