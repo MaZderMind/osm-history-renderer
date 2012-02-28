@@ -10,11 +10,23 @@ First off, you'll need a set of packages:
         graphicsmagick
 
 ### installing the packages on Ubuntu 11.10
-
+    echo 'deb http://de.archive.ubuntu.com/ubuntu/ precise main restricted universe multiverse
+    deb-src http://de.archive.ubuntu.com/ubuntu/ precise main restricted universe multiverse' | sudo tee /etc/apt/sources.list.d/precise.list
+    
+    echo 'Package: *
+    Pin: release v=11.10, l=Ubuntu
+    Pin-Priority: 700
+    
+    Package: *
+    Pin: release v=12.04, l=Ubuntu
+    Pin-Priority: 600' | sudo tee /etc/apt/preferences.d/pinning
+    
     sudo apt-get install postgresql postgresql-contrib postgresql-9.1-postgis postgis zlib1g-dev libexpat1 libexpat1-dev  \
         libxml2 libxml2-dev libgeos-dev libprotobuf7 libprotobuf-dev protobuf-compiler libsparsehash-dev libboost-dev \
-        libgdal1-dev libproj-dev subversion git build-essential unzip python-mapnik python-dateutil python-psycopg2 \
+        libgdal1-dev libproj-dev subversion git build-essential unzip python-dateutil python-psycopg2 \
         graphicsmagick
+    
+    sudo apt-get -t precise install python-mapnik2
 
 ## getting and building the tools
 Next, you'll want to download and build the history-splitter and the history-renderer.
