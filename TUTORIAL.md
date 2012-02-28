@@ -9,6 +9,13 @@ First off, you'll need a set of packages:
         libgdal1-dev libproj-dev subversion git build-essential unzip python-mapnik python-dateutil python-psycopg2 \
         graphicsmagick
 
+### installing the packages on Ubuntu 11.10
+
+    sudo apt-get install postgresql postgresql-contrib postgresql-9.1-postgis postgis zlib1g-dev libexpat1 libexpat1-dev  \
+        libxml2 libxml2-dev libgeos-dev libprotobuf7 libprotobuf-dev protobuf-compiler libsparsehash-dev libboost-dev \
+        libgdal1-dev libproj-dev subversion git build-essential unzip python-mapnik python-dateutil python-psycopg2 \
+        graphicsmagick
+
 ## getting and building the tools
 Next, you'll want to download and build the history-splitter and the history-renderer.
 First, get and build the osm-pbf lib:
@@ -70,6 +77,16 @@ now we'll get that data into the database. Oh wait: which database? We'll first 
     sudo -u postgres psql peter </usr/share/postgresql/8.4/contrib/btree_gist.sql
     sudo -u postgres psql peter </usr/share/postgresql/8.4/contrib/postgis-1.5/postgis.sql
     sudo -u postgres psql peter </usr/share/postgresql/8.4/contrib/postgis-1.5/spatial_ref_sys.sql
+    echo 'GRANT ALL ON geometry_columns TO peter' | sudo -u postgres psql peter
+    echo 'GRANT ALL ON spatial_ref_sys TO peter' | sudo -u postgres psql peter
+
+### creating the database on Ubuntu 11.10
+    sudo -u postgres createuser peter
+    sudo -u postgres createdb -EUTF8 -Opeter peter
+    echo 'CREATE EXTENSION hstore' | sudo -u postgres psql peter
+    echo 'CREATE EXTENSION btree_gist' | sudo -u postgres psql peter
+    sudo -u postgres psql peter </usr/share/postgresql/9.1/contrib/postgis-1.5/postgis.sql
+    sudo -u postgres psql peter </usr/share/postgresql/9.1/contrib/postgis-1.5/postgis.sql
     echo 'GRANT ALL ON geometry_columns TO peter' | sudo -u postgres psql peter
     echo 'GRANT ALL ON spatial_ref_sys TO peter' | sudo -u postgres psql peter
 
