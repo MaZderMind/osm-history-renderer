@@ -1,15 +1,18 @@
 # Getting started
-This is a complete tutorial which will guide you through creating your own history animation. It's built on a fresh Debian 6.0.3 installation.
+This is a complete tutorial which will guide you through creating your own history animation. It contains instructions for a fresh Debian 6.0.4 or a fresh Ubuntu 11.10 installation.
 
 ## installing the packages
-First off, you'll need a set of packages:
+First off, you'll need a set of packages. The latest Version of the main OpenStreetMap.org-Style requires mapnik2 which is not in the stable releases
+of Debian 6.0.4 or Ubuntu 11.10, which is why we're pulling the mapnik2-libs from the testing repositories.
 
+### on Debian 6.0.4
+TODO: add pinning
     sudo aptitude install postgresql postgresql-contrib postgresql-8.4-postgis postgis zlib1g-dev libexpat1 libexpat1-dev  \
         libxml2 libxml2-dev libgeos-dev libprotobuf6 libprotobuf-dev protobuf-compiler libsparsehash-dev libboost-dev \
         libgdal1-dev libproj-dev subversion git build-essential unzip python-mapnik python-dateutil python-psycopg2 \
         graphicsmagick
 
-### installing the packages on Ubuntu 11.10
+### on Ubuntu 11.10
     echo 'deb http://de.archive.ubuntu.com/ubuntu/ precise main restricted universe multiverse
     deb-src http://de.archive.ubuntu.com/ubuntu/ precise main restricted universe multiverse' | sudo tee /etc/apt/sources.list.d/precise.list
     
@@ -20,6 +23,8 @@ First off, you'll need a set of packages:
     Package: *
     Pin: release v=12.04, l=Ubuntu
     Pin-Priority: 600' | sudo tee /etc/apt/preferences.d/pinning
+    
+    sudo apt-get update
     
     sudo apt-get install postgresql postgresql-contrib postgresql-9.1-postgis postgis zlib1g-dev libexpat1 libexpat1-dev  \
         libxml2 libxml2-dev libgeos-dev libprotobuf7 libprotobuf-dev protobuf-compiler libsparsehash-dev libboost-dev \
@@ -79,9 +84,10 @@ Now you're ready to run the splitter:
 
 it will run for several minutes and create the karlsruhe-extract for you.
 
-## importing
-now we'll get that data into the database. Oh wait: which database? We'll first have to setup our postgres database. It's best if you use your user-database (that's database-name = your unix username):
+## creating the database
+next we'll get that data into the database. Oh wait: which database? We'll first have to setup our postgres database. It's best if you use your user-database (that's database-name = your unix username):
 
+### on Debian 6.0.4
     sudo -u postgres createuser peter
     sudo -u postgres createdb -EUTF8 -Opeter peter
     sudo -u postgres createlang plpgsql peter
@@ -92,21 +98,22 @@ now we'll get that data into the database. Oh wait: which database? We'll first 
     echo 'GRANT ALL ON geometry_columns TO peter' | sudo -u postgres psql peter
     echo 'GRANT ALL ON spatial_ref_sys TO peter' | sudo -u postgres psql peter
 
-### creating the database on Ubuntu 11.10
+### on Ubuntu 11.10
     sudo -u postgres createuser peter
     sudo -u postgres createdb -EUTF8 -Opeter peter
     echo 'CREATE EXTENSION hstore' | sudo -u postgres psql peter
     echo 'CREATE EXTENSION btree_gist' | sudo -u postgres psql peter
     sudo -u postgres psql peter </usr/share/postgresql/9.1/contrib/postgis-1.5/postgis.sql
-    sudo -u postgres psql peter </usr/share/postgresql/9.1/contrib/postgis-1.5/postgis.sql
+    sudo -u postgres psql peter </usr/share/postgresql/9.1/contrib/postgis-1.5/spatial_ref_sys.sql
     echo 'GRANT ALL ON geometry_columns TO peter' | sudo -u postgres psql peter
     echo 'GRANT ALL ON spatial_ref_sys TO peter' | sudo -u postgres psql peter
 
+## importing data
 now you're ready to connect to your database:
 
     psql
 
-type \d to get an overview of the tables in your database.
+type \d to get an overview of the tables in your database. Type \q to get back to the shell.
 Now, run the importer on that file:
 
     osm-history-importer karlsruhe.osh.pbf
