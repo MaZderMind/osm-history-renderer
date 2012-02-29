@@ -7,6 +7,7 @@ of Debian 6.0.4 or Ubuntu 11.10, which is why we're pulling the mapnik2-libs fro
 
 ### on Debian 6.0.4
 first of all: [install sudo](http://www.ducea.com/2006/05/18/install-sudo-on-debian/) and create a sudoers file. In order to get pyton-mapnik2 running under debian stable, we need to upgrade gcc land libc6 as well.
+
     echo 'deb http://ftp.us.debian.org/debian testing main non-free contrib' | sudo tee /etc/apt/sources.list.d/testing.list
 
     echo 'Package: *
@@ -25,6 +26,7 @@ first of all: [install sudo](http://www.ducea.com/2006/05/18/install-sudo-on-deb
     sudo apt-get -t testing install python-mapnik2
 
 ### on Ubuntu 11.10
+
     echo 'deb http://de.archive.ubuntu.com/ubuntu/ precise main restricted universe multiverse
     deb-src http://de.archive.ubuntu.com/ubuntu/ precise main restricted universe multiverse' | sudo tee /etc/apt/sources.list.d/precise.list
     
