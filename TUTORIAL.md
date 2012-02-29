@@ -6,11 +6,23 @@ First off, you'll need a set of packages. The latest Version of the main OpenStr
 of Debian 6.0.4 or Ubuntu 11.10, which is why we're pulling the mapnik2-libs from the testing repositories.
 
 ### on Debian 6.0.4
-TODO: add pinning
-    sudo aptitude install postgresql postgresql-contrib postgresql-8.4-postgis postgis zlib1g-dev libexpat1 libexpat1-dev  \
+first of all: [install sudo](http://www.ducea.com/2006/05/18/install-sudo-on-debian/) and create a sudoers file. In order to get pyton-mapnik2 running under debian stable, we need to upgrade gcc land libc6 as well.
+    echo 'deb http://ftp.us.debian.org/debian testing main non-free contrib' | sudo tee /etc/apt/sources.list.d/testing.list
+
+    echo 'Package: *
+    Pin: release a=stable
+    Pin-Priority: 700
+
+    Package: *
+    Pin: release a=testing
+    Pin-Priority: 650' | sudo tee /etc/apt/preferences.d/pinning
+    
+    sudo apt-get install postgresql postgresql-contrib postgresql-8.4-postgis postgis zlib1g-dev libexpat1 libexpat1-dev  \
         libxml2 libxml2-dev libgeos-dev libprotobuf6 libprotobuf-dev protobuf-compiler libsparsehash-dev libboost-dev \
-        libgdal1-dev libproj-dev subversion git build-essential unzip python-mapnik python-dateutil python-psycopg2 \
+        libgdal1-dev libproj-dev subversion git build-essential unzip python-dateutil python-psycopg2 \
         graphicsmagick
+    
+    sudo apt-get -t testing install python-mapnik2
 
 ### on Ubuntu 11.10
     echo 'deb http://de.archive.ubuntu.com/ubuntu/ precise main restricted universe multiverse
