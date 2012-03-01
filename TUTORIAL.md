@@ -81,11 +81,11 @@ Next one will be the importer and renderer:
 Congratulations. You're now equipped with everything you need.
 
 ## cutting your area
- Most people will want to create their own extract before rendering, so we'll cover this step here, too. First, go to [GWDG](http://ftp5.gwdg.de/pub/misc/openstreetmap/osm-full-history-extracts/110919/pbf/) and find the extract that fits your desired area best. In this example we'll render the city of Karlsruhe, so we'll download the germany extract. If you can't find a matching extract, download the [full-planet pbf](http://ftp5.gwdg.de/pub/misc/openstreetmap/osm-full-history-extracts/full-planet-110919-1418.osh.pbf).
+ Most people will want to create their own extract before rendering, so we'll cover this step here, too. First, go to the [hosted extracts](http://osm.personalwerk.de/history-extracts/) and find the extract that fits your desired area best. In this example we'll render the city of Karlsruhe, so we'll download the germany extract. If you can't find a matching extract, download the [full-planet-full-history pbf](http://osm.personalwerk.de/full-experimental-pbf/).
  
     mkdir osm-data
     cd osm-data
-    wget http://ftp5.gwdg.de/pub/misc/openstreetmap/osm-full-history-extracts/110919/pbf/europe/germany.osh.pbf
+    wget http://osm.personalwerk.de/history-extracts/120213/pbf/europe/germany.osh.pbf
 
 next we'll create a splitter-config-file. Create a file named "splitter.config" which contains a single line:
 
