@@ -19,9 +19,9 @@ first of all: [install sudo](http://www.ducea.com/2006/05/18/install-sudo-on-deb
     Pin-Priority: 650' | sudo tee /etc/apt/preferences.d/pinning
     
     sudo apt-get install postgresql postgresql-contrib postgresql-8.4-postgis postgis zlib1g-dev libexpat1 libexpat1-dev  \
-        libxml2 libxml2-dev libgeos-dev libprotobuf6 libprotobuf-dev protobuf-compiler libsparsehash-dev libboost-dev \
-        libgdal1-dev libproj-dev subversion git build-essential unzip python-dateutil python-psycopg2 \
-        graphicsmagick
+        libxml2 libxml2-dev libgeos-dev libgeos++-dev libprotobuf6 libprotobuf-dev protobuf-compiler libsparsehash-dev \
+        libboost-dev libgdal1-dev libproj-dev subversion git build-essential unzip python-dateutil python-psycopg2 \
+        graphicsmagick doxygen graphviz
     
     sudo apt-get -t testing install python-mapnik2
 
@@ -43,7 +43,7 @@ first of all: [install sudo](http://www.ducea.com/2006/05/18/install-sudo-on-deb
     sudo apt-get install postgresql postgresql-contrib postgresql-9.1-postgis postgis zlib1g-dev libexpat1 libexpat1-dev  \
         libxml2 libxml2-dev libgeos-dev libprotobuf7 libprotobuf-dev protobuf-compiler libsparsehash-dev libboost-dev \
         libgdal1-dev libproj-dev subversion git build-essential unzip python-dateutil python-psycopg2 \
-        graphicsmagick
+        graphicsmagick doxygen graphviz
     
     sudo apt-get -t precise install python-mapnik2
 
@@ -57,12 +57,18 @@ First, get and build the osm-pbf lib:
     sudo make install
     cd ../..
 
+Second you'll need osmium:
+
+    git clone https://github.com/joto/osmium.git
+    cd osmium
+    make doc
+    sudo make install
+    cd ../..
+
 Next, get and build the splitter:
 
     git clone https://github.com/MaZderMind/osm-history-splitter.git
     cd osm-history-splitter
-    git submodule init
-    git submodule update
     make
     sudo make install
     cd ..
