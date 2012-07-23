@@ -12,8 +12,8 @@ CXXFLAGS += `getconf LFS_CFLAGS`
 #CXXFLAGS += -Wredundant-decls -Wdisabled-optimization
 #CXXFLAGS += -Wpadded -Winline
 
-# path to osmium
-CXXFLAGS += -I/usr/include/postgresql/
+# path to includes
+CXXFLAGS += -I/usr/include/postgresql/ -I/usr/include/libxml2/
 
 # compile & link against expat to have xml reading support
 LDFLAGS += -lexpat
