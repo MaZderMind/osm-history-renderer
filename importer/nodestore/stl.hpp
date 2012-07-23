@@ -44,7 +44,7 @@ public:
         timemap *tmap;
 
         if(it == m_nodemap.end()) {
-            if(Osmium::debug()) {
+            if(isPrintingDebugMessages()) {
                 std::cerr << "no timemap for node #" << id << ", creating new" << std::endl;
             }
 
@@ -55,13 +55,13 @@ public:
         }
 
         tmap->insert(timepair(t, info));
-        if(Osmium::debug()) {
+        if(isPrintingDebugMessages()) {
             std::cerr << "adding timepair for node #" << id << " v" << v << " at tstamp " << t << std::endl;
         }
     }
 
     timemap *lookup(osm_object_id_t id, bool &found) {
-        if(Osmium::debug()) {
+        if(isPrintingDebugMessages()) {
             std::cerr << "looking up timemap of node #" << id << std::endl;
         }
 
@@ -79,7 +79,7 @@ public:
     }
 
     Nodeinfo lookup(osm_object_id_t id, time_t t, bool &found) {
-        if(Osmium::debug()) {
+        if(isPrintingDebugMessages()) {
             std::cerr << "looking up information of node #" << id << " at tstamp " << t << std::endl;
         }
 

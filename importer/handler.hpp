@@ -11,6 +11,7 @@
 #include <osmium/osm/types.hpp>
 
 #include <geos/algorithm/InteriorPointArea.h>
+#include <geos/io/WKBWriter.h>
 
 #include "dbconn.hpp"
 #include "dbcopyconn.hpp"
@@ -47,14 +48,14 @@ private:
     geos::io::WKBWriter wkb;
 
     std::string m_dsn, m_prefix;
-    bool m_storeerrors, m_interior;
+    bool m_debug, m_storeerrors, m_interior;
 
 
     void write_node() {
         const shared_ptr<Osmium::OSM::Node const> cur = m_node_tracker.cur();
         const shared_ptr<Osmium::OSM::Node const> prev = m_node_tracker.prev();
 
-        if(Osmium::debug()) {
+        if(m_debug) {
             std::cout << "node n" << prev->id() << 'v' << prev->version() << " at tstamp " << prev->timestamp() << " (" << Timestamp::format(prev->timestamp()) << ")" << std::endl;
         }
 
@@ -75,7 +76,7 @@ private:
         double lon = prev->get_lon() * DEG_TO_RAD;
         int r = pj_transform(pj_4326, pj_900913, 1, 1, &lon, &lat, NULL);
         if(r != 0) {
-            if(Osmium::debug()) {
+            if(m_debug) {
                 std::cerr << "error transforming POINT(" << prev->get_lat() << " " << prev->get_lon() << ") from 4326 to 900913)" << std::endl;
             }
             return;
@@ -103,7 +104,7 @@ private:
         const shared_ptr<Osmium::OSM::Way const> cur = m_way_tracker.cur();
         const shared_ptr<Osmium::OSM::Way const> prev = m_way_tracker.prev();
 
-        if(Osmium::debug()) {
+        if(m_debug) {
             std::cout << "way w" << prev->id() << 'v' << prev->version() << " at tstamp " << prev->timestamp() << " (" << Timestamp::format(prev->timestamp()) << ")" << std::endl;
         }
 
@@ -158,7 +159,7 @@ private:
             int minor = 1;
             std::vector<time_t>::const_iterator end = minor_times->end();
             for(std::vector<time_t>::const_iterator it = minor_times->begin(); it != end; it++) {
-                if(Osmium::debug()) {
+                if(m_debug) {
                     std::cout << "minor way w" << prev->id() << 'v' << prev->version() << '.' << minor << " at tstamp " << *it << " (" << Timestamp::format(*it) << ")" << std::endl;
                 }
 
@@ -202,7 +203,7 @@ private:
         const Osmium::OSM::TagList &tags,
         const Osmium::OSM::WayNodeList &nodes
     ) {
-        if(Osmium::debug()) {
+        if(m_debug) {
             std::cerr << "forging geometry of way " << id << 'v' << version << '.' << minor << " at tstamp " << timestamp << std::endl;
         }
 
@@ -329,15 +330,25 @@ public:
         m_interior = shouldCalculateInterior;
     }
 
+    bool isPrintingDebugMessages() {
+        return m_debug;
+    }
+
+    void printDebugMessages(bool shouldPrintDebugMessages) {
+        m_debug = shouldPrintDebugMessages;
+        m_store->printDebugMessages(shouldPrintDebugMessages);
+        m_geom.printDebugMessages(shouldPrintDebugMessages);
+    }
+
 
 
     void init(Osmium::OSM::Meta& meta) {
-        if(Osmium::debug()) {
+        if(m_debug) {
             std::cerr << "connecting to database using dsn: " << m_dsn << std::endl;
         }
 
         m_general.open(m_dsn);
-        if(Osmium::debug()) {
+        if(m_debug) {
             std::cerr << "running scheme/00-before.sql" << std::endl;
         }
 
@@ -368,7 +379,7 @@ public:
         std::cerr << "closing polygon-table..." << std::endl;
         m_polygon.close();
 
-        if(Osmium::debug()) {
+        if(m_debug) {
             std::cerr << "running scheme/99-after.sql" << std::endl;
         }
 
@@ -378,7 +389,7 @@ public:
 
         m_general.execfile(sqlfile);
 
-        if(Osmium::debug()) {
+        if(m_debug) {
             std::cerr << "disconnecting from database" << std::endl;
         }
         m_general.close();

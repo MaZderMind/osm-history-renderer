@@ -13,10 +13,10 @@ private:
     Nodestore *m_nodestore;
     DbAdapter *m_adapter;
     bool m_isupdate;
-    bool m_showerrors;
+    bool m_debug, m_showerrors;
 
 protected:
-    GeomBuilder(Nodestore *nodestore, DbAdapter *adapter, bool isUpdate): m_nodestore(nodestore), m_adapter(adapter), m_isupdate(isUpdate), m_showerrors(false) {}
+    GeomBuilder(Nodestore *nodestore, DbAdapter *adapter, bool isUpdate): m_nodestore(nodestore), m_adapter(adapter), m_isupdate(isUpdate), m_debug(false), m_showerrors(false) {}
 
 public:
     geos::geom::Geometry* forWay(const Osmium::OSM::WayNodeList &nodes, time_t t, bool looksLikePolygon) {
@@ -40,7 +40,7 @@ public:
             if(!found)
                 continue;
 
-            if(Osmium::debug()) {
+            if(m_debug) {
                 std::cerr << "node #" << id << " at tstamp " << t << " references node at POINT(" << std::setprecision(8) << info.lat << ' ' << info.lon << ')' << std::endl;
             }
 
@@ -93,6 +93,20 @@ public:
         }
 
         return geom;
+    }
+
+    /**
+     * is this nodestore printing debug messages
+     */
+    bool isPrintingDebugMessages() {
+        return m_debug;
+    }
+
+    /**
+     * should this nodestore print debug messages
+     */
+    void printDebugMessages(bool shouldPrintDebugMessages) {
+        m_debug = shouldPrintDebugMessages;
     }
 };
 

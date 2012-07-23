@@ -15,6 +15,10 @@
 #include <unistd.h>
 
 #define OSMIUM_MAIN
+#define OSMIUM_WITH_PBF_INPUT
+#define OSMIUM_WITH_XML_INPUT
+#define OSMIUM_WITH_PBF_OUTPUT
+#define OSMIUM_WITH_XML_OUTPUT
 #include <osmium.hpp>
 
 /**
@@ -111,9 +115,6 @@ int main(int argc, char *argv[]) {
     // strip off the filename
     filename = argv[optind];
 
-    // initialize osmium
-    Osmium::init(printDebugMessages);
-
     // open the input-file
     Osmium::OSMFile infile(filename);
 
@@ -130,11 +131,12 @@ int main(int argc, char *argv[]) {
     if(prefix.size()) {
         handler.prefix(prefix);
     }
+    handler.printDebugMessages(printDebugMessages);
     handler.printStoreErrors(printStoreErrors);
     handler.calculateInterior(calculateInterior);
 
     // read the input-file to the handler
-    infile.read(handler);
+    Osmium::Input::read(infile, handler);
 
     return 0;
 }

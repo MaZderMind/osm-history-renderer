@@ -62,13 +62,27 @@ private:
      * because the ways may reference nodes that are not part of the
      * extract. Therefore this option may be switched on seperately
      */
-    bool m_storeerrors;
+    bool m_debug, m_storeerrors;
 
 public:
     /**
      * initialize a new nodestore
      */
     Nodestore() : nullinfo(), m_storeerrors(false) {}
+
+    /**
+     * is this nodestore printing debug messages
+     */
+    bool isPrintingDebugMessages() {
+        return m_debug;
+    }
+
+    /**
+     * should this nodestore print debug messages
+     */
+    void printDebugMessages(bool shouldPrintDebugMessages) {
+        m_debug = shouldPrintDebugMessages;
+    }
 
     /**
      * is this nodestore printing errors originating from store-misses
