@@ -158,7 +158,8 @@ def main():
         
         if(options.label):
             opts = ["mogrify", "-gravity", options.labelgravity, "-draw", "fill 'Black'; font-size 18; text 0,10 '%s'" % (date.strftime(options.label)), options.file]
-            os.spawnvp(os.P_WAIT, "gm", opts)
+            if(0 != os.spawnvp(os.P_WAIT, "gm", opts)):
+                print "error launching gm - is GraphicsMagick missing?"
         
         date = date + options.anistep
         i += 1
