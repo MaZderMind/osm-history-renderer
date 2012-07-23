@@ -356,6 +356,9 @@ public:
         if(!sqlfile)
             sqlfile.open("/usr/share/osm-history-importer/scheme/00-before.sql");
 
+        if(!sqlfile)
+            throw std::runtime_error("can't find 00-before.sql");
+
         m_general.execfile(sqlfile);
 
         m_point.open(m_dsn, m_prefix, "point");
@@ -386,6 +389,9 @@ public:
         std::ifstream sqlfile("scheme/99-after.sql");
         if(!sqlfile)
             sqlfile.open("/usr/share/osm-history-importer/scheme/99-after.sql");
+
+        if(!sqlfile)
+            throw std::runtime_error("can't find 99-after.sql");
 
         m_general.execfile(sqlfile);
 
