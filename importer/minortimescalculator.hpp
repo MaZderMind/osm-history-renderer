@@ -32,7 +32,7 @@ public:
         }
 
         std::sort(minor_times->begin(), minor_times->end());
-        std::unique(minor_times->begin(), minor_times->end());
+        minor_times->erase(std::unique(minor_times->begin(), minor_times->end()), minor_times->end());
 
         return minor_times;
     }
