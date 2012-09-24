@@ -70,12 +70,12 @@ public:
 
         // shorthands to the values of different keys, contributing to
         // the z-order calculation
-        const char *layer = tags.get_tag_by_key("layer");
-        const char *highway = tags.get_tag_by_key("highway");
-        const char *bridge = tags.get_tag_by_key("bridge");
-        const char *tunnel = tags.get_tag_by_key("tunnel");
-        const char *railway = tags.get_tag_by_key("railway");
-        const char *boundary = tags.get_tag_by_key("boundary");
+        const char *layer = tags.get_value_by_key("layer");
+        const char *highway = tags.get_value_by_key("highway");
+        const char *bridge = tags.get_value_by_key("bridge");
+        const char *tunnel = tags.get_value_by_key("tunnel");
+        const char *railway = tags.get_value_by_key("railway");
+        const char *boundary = tags.get_value_by_key("boundary");
 
         // if the way has a layer-tag
         if(layer) {

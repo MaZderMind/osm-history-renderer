@@ -20,6 +20,9 @@
 #define OSMIUM_WITH_PBF_OUTPUT
 #define OSMIUM_WITH_XML_OUTPUT
 #include <osmium.hpp>
+#include <osmium/geometry/geos.hpp>
+
+#include <geos/util/GEOSException.h>
 
 /**
  * include the importer-handler which contains the main importer-logic.

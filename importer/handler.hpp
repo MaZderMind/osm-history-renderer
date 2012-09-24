@@ -72,12 +72,12 @@ private:
             valid_to = valid_from;
         }
 
-        double lat = prev->get_lat() * DEG_TO_RAD;
-        double lon = prev->get_lon() * DEG_TO_RAD;
+        double lat = prev->lat() * DEG_TO_RAD;
+        double lon = prev->lon() * DEG_TO_RAD;
         int r = pj_transform(pj_4326, pj_900913, 1, 1, &lon, &lat, NULL);
         if(r != 0) {
             if(m_debug) {
-                std::cerr << "error transforming POINT(" << prev->get_lat() << " " << prev->get_lon() << ") from 4326 to 900913)" << std::endl;
+                std::cerr << "error transforming POINT(" << prev->lat() << " " << prev->lon() << ") from 4326 to 900913)" << std::endl;
             }
             return;
         }
