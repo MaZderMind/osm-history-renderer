@@ -10,7 +10,7 @@ The importer can be compiled with g++ or clang++. Both compilers are mentioned i
 
 ## Run it
 In order to run it, you'll need data-input. I'd suggest starting with a small extract as a basis. There are some [hosted extracts](http://osm.personalwerk.de/full-history-extracts/).
-All extracts have been created using my [OpenStreetMap History Splitter](https://github.com/MaZderMind/osm-history-splitter/), so if you want your own area, go and download the latest [Full-Experimental Dump](http://osm.personalwerk.de/full-experimental-pbf/) and split it yourself using the `--softcut` mode.
+All extracts have been created using my [OpenStreetMap History Splitter](https://github.com/MaZderMind/osm-history-splitter/), so if you want your own area, go and download the latest [Full-Experimental Dump](http://osm.personalwerk.de/full-experimental/) and split it yourself using the `--softcut` mode.
 
 After you have your data in place, use the importer to import the data:
 
