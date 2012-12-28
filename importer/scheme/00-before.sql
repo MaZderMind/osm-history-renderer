@@ -2,9 +2,7 @@
 
 DROP TABLE IF EXISTS hist_point CASCADE;
 CREATE TABLE hist_point (
-    -- optional 64bit support
-    -- id BIGINT,
-    id int,
+    id bigint,
     version smallint,
     visible boolean,
     valid_from timestamp without time zone,
@@ -31,9 +29,7 @@ SELECT AddGeometryColumn(
 
 DROP TABLE IF EXISTS hist_line CASCADE;
 CREATE TABLE hist_line (
-    -- optional 64bit support
-    -- id BIGINT,
-    id int,
+    id bigint,
     version smallint,
     minor smallint,
     visible boolean,
@@ -62,9 +58,7 @@ SELECT AddGeometryColumn(
 
 DROP TABLE IF EXISTS hist_polygon CASCADE;
 CREATE TABLE hist_polygon (
-    -- optional 64bit support
-    -- id BIGINT,
-    id int,
+    id bigint,
     version smallint,
     minor smallint,
     visible boolean,
