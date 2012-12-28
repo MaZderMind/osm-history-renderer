@@ -8,7 +8,6 @@ CXX = g++
 #CXX = clang++
 
 CXXFLAGS = -g -O3 -Wall -Wextra -pedantic
-CXXFLAGS += -I/osm/tools/osmium64/include/
 CXXFLAGS += `getconf LFS_CFLAGS`
 #CXXFLAGS += -Wredundant-decls -Wdisabled-optimization
 #CXXFLAGS += -Wpadded -Winline
