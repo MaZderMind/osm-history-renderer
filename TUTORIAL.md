@@ -2,8 +2,9 @@
 This is a complete tutorial which will guide you through creating your own history animation. It contains instructions for a fresh Debian 6.0.4 or a fresh Ubuntu 11.10 installation.
 
 ## installing the packages
-First off, you'll need a set of packages. The latest Version of the main OpenStreetMap.org-Style requires mapnik2 which is not in the stable releases
-of Debian 6.0.4 or Ubuntu 11.10, which is why we're pulling the mapnik2-libs from the testing repositories.
+First off, you'll need a set of packages. The latest Version of the main OpenStreetMap.org-Style requires mapnik2 which is not in the stable release
+of Debian 6.0, which is why we're pulling the mapnik2-libs from the testing repositories. If you're on  Ubuntu 12.10 you're lucky, as here everything
+you need is in the repos.
 
 ### on Debian 6.0.4
 first of all: [install sudo](http://www.ducea.com/2006/05/18/install-sudo-on-debian/) and create a sudoers file. In order to get pyton-mapnik2 running under debian stable, we need to upgrade gcc land libc6 as well.
@@ -21,31 +22,16 @@ first of all: [install sudo](http://www.ducea.com/2006/05/18/install-sudo-on-deb
     sudo apt-get install postgresql postgresql-contrib postgresql-8.4-postgis postgis zlib1g-dev libexpat1 libexpat1-dev  \
         libxml2 libxml2-dev libgeos-dev libgeos++-dev libprotobuf6 libprotobuf-dev protobuf-compiler libsparsehash-dev \
         libboost-dev libgdal1-dev libproj-dev subversion git build-essential unzip python-dateutil python-psycopg2 \
-        graphicsmagick doxygen graphviz
+        graphicsmagick doxygen graphviz clang
     
     sudo apt-get -t testing install python-mapnik2
 
-### on Ubuntu 11.10
-
-    echo 'deb http://de.archive.ubuntu.com/ubuntu/ precise main restricted universe multiverse
-    deb-src http://de.archive.ubuntu.com/ubuntu/ precise main restricted universe multiverse' | sudo tee /etc/apt/sources.list.d/precise.list
-    
-    echo 'Package: *
-    Pin: release v=11.10, l=Ubuntu
-    Pin-Priority: 700
-    
-    Package: *
-    Pin: release v=12.04, l=Ubuntu
-    Pin-Priority: 600' | sudo tee /etc/apt/preferences.d/pinning
-    
+### on Ubuntu 12.10
     sudo apt-get update
-    
-    sudo apt-get install postgresql postgresql-contrib postgresql-9.1-postgis postgis zlib1g-dev libexpat1 libexpat1-dev  \
+    sudo apt-get install postgresql-9.1 postgresql-contrib-9.1 postgresql-9.1-postgis postgis zlib1g-dev libexpat1 libexpat1-dev  \
         libxml2 libxml2-dev libgeos-dev libprotobuf7 libprotobuf-dev protobuf-compiler libsparsehash-dev libboost-dev \
         libgdal1-dev libproj-dev subversion git build-essential unzip python-dateutil python-psycopg2 \
-        graphicsmagick doxygen graphviz
-    
-    sudo apt-get -t precise install python-mapnik2
+        graphicsmagick doxygen graphviz python-mapnik2 clang
 
 ## getting and building the tools
 Next, you'll want to download and build the history-splitter and the history-renderer.
@@ -76,10 +62,7 @@ Next, get and build the splitter:
 Next one will be the importer and renderer:
 
     git clone https://github.com/MaZderMind/osm-history-renderer.git
-    cd osm-history-renderer
-    git submodule init
-    git submodule update
-    cd importer
+    cd osm-history-renderer/importer
     make
     sudo make install
     cd ../..
@@ -108,25 +91,25 @@ it will run for several minutes and create the karlsruhe-extract for you.
 next we'll get that data into the database. Oh wait: which database? We'll first have to setup our postgres database. It's best if you use your user-database (that's database-name = your unix username):
 
 ### on Debian 6.0.4
-    sudo -u postgres createuser peter
-    sudo -u postgres createdb -EUTF8 -Opeter peter
-    sudo -u postgres createlang plpgsql peter
-    sudo -u postgres psql peter </usr/share/postgresql/8.4/contrib/hstore.sql
-    sudo -u postgres psql peter </usr/share/postgresql/8.4/contrib/btree_gist.sql
-    sudo -u postgres psql peter </usr/share/postgresql/8.4/contrib/postgis-1.5/postgis.sql
-    sudo -u postgres psql peter </usr/share/postgresql/8.4/contrib/postgis-1.5/spatial_ref_sys.sql
-    echo 'GRANT ALL ON geometry_columns TO peter' | sudo -u postgres psql peter
-    echo 'GRANT ALL ON spatial_ref_sys TO peter' | sudo -u postgres psql peter
+    sudo -u postgres createuser $USER
+    sudo -u postgres createdb -EUTF8 -O$USER $USER
+    sudo -u postgres createlang plpgsql $USER
+    sudo -u postgres psql $USER </usr/share/postgresql/8.4/contrib/hstore.sql
+    sudo -u postgres psql $USER </usr/share/postgresql/8.4/contrib/btree_gist.sql
+    sudo -u postgres psql $USER </usr/share/postgresql/8.4/contrib/postgis-1.5/postgis.sql
+    sudo -u postgres psql $USER </usr/share/postgresql/8.4/contrib/postgis-1.5/spatial_ref_sys.sql
+    echo "GRANT ALL ON geometry_columns TO $USER" | sudo -u postgres psql $USER
+    echo "GRANT ALL ON spatial_ref_sys TO $USER" | sudo -u postgres psql $USER
 
-### on Ubuntu 11.10
-    sudo -u postgres createuser peter
-    sudo -u postgres createdb -EUTF8 -Opeter peter
-    echo 'CREATE EXTENSION hstore' | sudo -u postgres psql peter
-    echo 'CREATE EXTENSION btree_gist' | sudo -u postgres psql peter
-    sudo -u postgres psql peter </usr/share/postgresql/9.1/contrib/postgis-1.5/postgis.sql
-    sudo -u postgres psql peter </usr/share/postgresql/9.1/contrib/postgis-1.5/spatial_ref_sys.sql
-    echo 'GRANT ALL ON geometry_columns TO peter' | sudo -u postgres psql peter
-    echo 'GRANT ALL ON spatial_ref_sys TO peter' | sudo -u postgres psql peter
+### on Ubuntu 12.10
+    sudo -u postgres createuser $USER
+    sudo -u postgres createdb -EUTF8 -O$USER $USER
+    echo 'CREATE EXTENSION hstore' | sudo -u postgres psql $USER
+    echo 'CREATE EXTENSION btree_gist' | sudo -u postgres psql $USER
+    sudo -u postgres psql $USER </usr/share/postgresql/9.1/contrib/postgis-1.5/postgis.sql
+    sudo -u postgres psql $USER </usr/share/postgresql/9.1/contrib/postgis-1.5/spatial_ref_sys.sql
+    echo "GRANT ALL ON geometry_columns TO $USER" | sudo -u postgres psql $USER
+    echo "GRANT ALL ON spatial_ref_sys TO $USER" | sudo -u postgres psql $USER
 
 ## importing data
 now you're ready to connect to your database:
@@ -139,9 +122,10 @@ Now, run the importer on that file:
     osm-history-importer karlsruhe.osh.pbf
 
 It will walk through the file and create a neat history database of it, including valid-from, valid-to and minor-version fields and geometries of all nodes and ways.
+You cann call psql again to see the freshly created tables.
 
 ## getting the style
-now it's time to visualize that data. You can use any mapnik-style you want like the [openstreetmap.org-style](http://svn.openstreetmap.org/applications/rendering/mapnik/) or the [mapquest-style](https://github.com/MapQuest/MapQuest-Mapnik-Style). We'll choose the openstreetmap.org-style for this tutorial:
+now it's time to visualize that data. You can use any mapnik-style you want like the [openstreetmap.org-style](http://svn.openstreetmap.org/applications/rendering/mapnik/) or the [mapquest-style](https://github.com/MapQuest/MapQuest-Mapnik-Style) or, if you in Germany, you'll probably want to try out the [german style](http://www.openstreetmap.de/germanstyle.html). We'll choose the openstreetmap.org-style for this tutorial:
 
     svn co http://svn.openstreetmap.org/applications/rendering/mapnik/ osm-mapnik-style
     cd osm-mapnik-style
