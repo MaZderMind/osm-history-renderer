@@ -8,7 +8,10 @@ from optparse import OptionParser
 import sys, os, subprocess
 import cStringIO
 
-import mapnik
+try:
+    import mapnik2 as mapnik
+except:
+    import mapnik
 
 cairo_exists = True
 
