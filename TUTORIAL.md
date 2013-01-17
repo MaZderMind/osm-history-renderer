@@ -29,7 +29,7 @@ first of all: [install sudo](http://www.ducea.com/2006/05/18/install-sudo-on-deb
 ### on Ubuntu 12.10
     sudo apt-get update
     sudo apt-get install postgresql-9.1 postgresql-contrib-9.1 postgresql-9.1-postgis postgis zlib1g-dev libexpat1 libexpat1-dev  \
-        libxml2 libxml2-dev libgeos-dev libprotobuf7 libprotobuf-dev protobuf-compiler libsparsehash-dev libboost-dev \
+        libxml2 libxml2-dev libgeos-dev libgeos++-dev libprotobuf7 libprotobuf-dev protobuf-compiler libsparsehash-dev libboost-dev \
         libgdal1-dev libproj-dev subversion git build-essential unzip python-dateutil python-psycopg2 \
         graphicsmagick doxygen graphviz python-mapnik2 clang
 
@@ -74,7 +74,7 @@ Congratulations. You're now equipped with everything you need.
  
     mkdir osm-data
     cd osm-data
-    wget http://osm.personalwerk.de/history-extracts/120213/pbf/europe/germany.osh.pbf
+    wget http://osm.personalwerk.de/full-history-extracts/history_2012-10-13_13:35/europe/germany.osh.pbf
 
 next we'll create a splitter-config-file. Create a file named "splitter.config" which contains a single line:
 
