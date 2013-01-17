@@ -19,6 +19,7 @@
 
 #include "nodestore.hpp"
 #include "nodestore/stl.hpp"
+#include "nodestore/sparse.hpp"
 
 #include "entitytracker.hpp"
 #include "polygonidentifyer.hpp"
