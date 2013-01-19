@@ -46,7 +46,7 @@ int main(int argc, char *argv[]) {
         {"debug",               no_argument, 0, 'd'},
         {"store-errors",        no_argument, 0, 'e'},
         {"interior",            no_argument, 0, 'i'},
-        {"nodestore",           required_argument, 0, 's'},
+        {"nodestore",           required_argument, 0, 'S'},
         {"dsn",                 required_argument, 0, 'D'},
         {"prefix",              required_argument, 0, 'P'},
         {0, 0, 0, 0}
@@ -54,7 +54,7 @@ int main(int argc, char *argv[]) {
 
     // walk through the options
     while(1) {
-        int c = getopt_long(argc, argv, "hdeiDPs", long_options, 0);
+        int c = getopt_long(argc, argv, "hdeiS:D:P:", long_options, 0);
         if (c == -1)
             break;
 
@@ -82,7 +82,7 @@ int main(int argc, char *argv[]) {
                 break;
 
             // set the nodestore
-            case 's':
+            case 'S':
                 nodestore = optarg;
                 break;
 
