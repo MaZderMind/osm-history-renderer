@@ -27,6 +27,11 @@ public:
             Nodestore::timemap_cit lower = tmap->lower_bound(from);
             Nodestore::timemap_cit upper = to == 0 ? tmap->end() : tmap->upper_bound(to);
             for(Nodestore::timemap_cit it = lower; it != upper; it++) {
+                /*
+                 * lower_bound returns elements *not lower then* from, so it can return times == from
+                 * this results in minor with timestamps and information equal to the original way
+                 */
+                if(it->first == from) continue;
                 minor_times->push_back(it->first);
             }
         }
