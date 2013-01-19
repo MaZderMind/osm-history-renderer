@@ -49,7 +49,7 @@ private:
     geos::io::WKBWriter wkb;
 
     std::string m_dsn, m_prefix;
-    bool m_debug, m_storeerrors, m_interior;
+    bool m_debug, m_storeerrors, m_interior, m_keepLatLng;
 
 
     void write_node() {
@@ -76,7 +76,7 @@ private:
         double lat = prev->lat(), lon = prev->lon();
         m_store->record(prev->id(), prev->version(), prev->timestamp(), lon, lat);
 
-        Project::toMercator(&lat, &lon);
+        if(!m_keepLatLng) Project::toMercator(&lat, &lon);
 
         // SPEED: sum up 64k of data, before sending them to the database
         // SPEED: instead of stringstream, which does dynamic allocation, use a fixed buffer and snprintf
@@ -312,6 +312,15 @@ public:
 
     void calculateInterior(bool shouldCalculateInterior) {
         m_interior = shouldCalculateInterior;
+    }
+
+    bool isKeepingLatLng() {
+        return m_keepLatLng;
+    }
+
+    void keepLatLng(bool shouldKeepLatLng) {
+        m_keepLatLng = shouldKeepLatLng;
+        m_geom.keepLatLng(shouldKeepLatLng);
     }
 
     bool isPrintingDebugMessages() {

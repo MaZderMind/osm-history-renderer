@@ -35,10 +35,8 @@
 int main(int argc, char *argv[]) {
     // local variables for the options/switches on the commandline
     std::string filename, nodestore = "stl", dsn, prefix = "hist_";
-    bool printDebugMessages = false;
-    bool printStoreErrors = false;
-    bool calculateInterior = false;
-    bool showHelp = false;
+    bool printDebugMessages = false, printStoreErrors = false, calculateInterior = false;
+    bool showHelp = false, keepLatLng = false;
 
     // options configuration array for getopt
     static struct option long_options[] = {
@@ -46,6 +44,7 @@ int main(int argc, char *argv[]) {
         {"debug",               no_argument, 0, 'd'},
         {"store-errors",        no_argument, 0, 'e'},
         {"interior",            no_argument, 0, 'i'},
+        {"latlng",              no_argument, 0, 'l'},
         {"nodestore",           required_argument, 0, 'S'},
         {"dsn",                 required_argument, 0, 'D'},
         {"prefix",              required_argument, 0, 'P'},
@@ -54,7 +53,7 @@ int main(int argc, char *argv[]) {
 
     // walk through the options
     while(1) {
-        int c = getopt_long(argc, argv, "hdeiS:D:P:", long_options, 0);
+        int c = getopt_long(argc, argv, "hdeilS:D:P:", long_options, 0);
         if (c == -1)
             break;
 
@@ -79,6 +78,11 @@ int main(int argc, char *argv[]) {
             // calculate the interior-point ans store it in the database
             case 'i':
                 calculateInterior = true;
+                break;
+
+            // keep lat/lng ant don't transform it to mercator
+            case 'l':
+                keepLatLng = true;
                 break;
 
             // set the nodestore
@@ -113,6 +117,8 @@ int main(int argc, char *argv[]) {
             << "       because of incomplete reference in the input" << std::endl
             << "  -i|--interior" << std::endl
             << "       calculate the interior-point ans store it in the database" << std::endl
+            << "  -l|--latlng" << std::endl
+            << "       keep lat/lng ant don't transform to mercator" << std::endl
             << "  -s|--nodestore" << std::endl
             << "       set the nodestore type [defaults to '" << nodestore << "']" << std::endl
             << "       possible values: " << std::endl
@@ -152,6 +158,7 @@ int main(int argc, char *argv[]) {
     handler.printDebugMessages(printDebugMessages);
     handler.printStoreErrors(printStoreErrors);
     handler.calculateInterior(calculateInterior);
+    handler.keepLatLng(keepLatLng);
 
     // read the input-file to the handler
     Osmium::Input::read(infile, handler);

@@ -14,7 +14,7 @@ class GeomBuilder {
 private:
     Nodestore *m_nodestore;
     DbAdapter *m_adapter;
-    bool m_isupdate;
+    bool m_isupdate, m_keepLatLng;
     bool m_debug, m_showerrors;
 
 protected:
@@ -49,7 +49,7 @@ public:
             }
 
             // create a coordinate-object and add it to the vector
-            Project::toMercator(&lat, &lon);
+            if(!m_keepLatLng) Project::toMercator(&lat, &lon);
             c->push_back(geos::geom::Coordinate(lat, lon, DoubleNotANumber));
         }
 
@@ -98,6 +98,14 @@ public:
         }
 
         return geom;
+    }
+
+    bool isKeepingLatLng() {
+        return m_keepLatLng;
+    }
+
+    void keepLatLng(bool shouldKeepLatLng) {
+        m_keepLatLng = shouldKeepLatLng;
     }
 
     /**
