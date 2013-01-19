@@ -8,6 +8,8 @@
 #ifndef IMPORTER_GEOMBUILDER_HPP
 #define IMPORTER_GEOMBUILDER_HPP
 
+#include "project.hpp"
+
 class GeomBuilder {
 private:
     Nodestore *m_nodestore;
@@ -40,12 +42,15 @@ public:
             if(!found)
                 continue;
 
+            double lat = info.lat, lon = info.lon;
+
             if(m_debug) {
-                std::cerr << "node #" << id << " at tstamp " << t << " references node at POINT(" << std::setprecision(8) << info.lat << ' ' << info.lon << ')' << std::endl;
+                std::cerr << "node #" << id << " at tstamp " << t << " references node at POINT(" << std::setprecision(8) << lat << ' ' << lon << ')' << std::endl;
             }
 
             // create a coordinate-object and add it to the vector
-            c->push_back(geos::geom::Coordinate(info.lat, info.lon, DoubleNotANumber));
+            Project::toMercator(&lat, &lon);
+            c->push_back(geos::geom::Coordinate(lat, lon, DoubleNotANumber));
         }
 
         // if less then 2 nodes could be found in the store, no valid way
