@@ -28,6 +28,7 @@
 #include "timestamp.hpp"
 #include "geombuilder.hpp"
 #include "minortimescalculator.hpp"
+#include "sorttest.hpp"
 
 
 class ImportHandler : public Osmium::Handler::Base {
@@ -40,6 +41,7 @@ private:
     DbAdapter m_adapter;
     ImportGeomBuilder m_geom;
     ImportMinorTimesCalculator m_mtimes;
+    SortTest m_sorttest;
 
     DbConn m_general;
     DbCopyConn m_point, m_line, m_polygon;
@@ -282,6 +284,7 @@ public:
             m_adapter(),
             m_geom(m_store, &m_adapter),
             m_mtimes(m_store, &m_adapter),
+            m_sorttest(),
             wkb(),
             m_prefix("hist_") {
         //if(!(pj_900913 = pj_init_plus("+init=epsg:900913"))) {
@@ -405,6 +408,7 @@ public:
 
 
     void node(const shared_ptr<Osmium::OSM::Node const>& node) {
+        m_sorttest.test(node);
         m_node_tracker.feed(node);
 
         // we're always writing the one-off node
@@ -425,6 +429,7 @@ public:
     }
 
     void way(const shared_ptr<Osmium::OSM::Way const>& way) {
+        m_sorttest.test(way);
         m_way_tracker.feed(way);
 
         // we're always writing the one-off way
