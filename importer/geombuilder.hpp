@@ -42,15 +42,15 @@ public:
             if(!found)
                 continue;
 
-            double lat = info.lat, lon = info.lon;
+            double lon = info.lon, lat = info.lat;
 
             if(m_debug) {
-                std::cerr << "node #" << id << " at tstamp " << t << " references node at POINT(" << std::setprecision(8) << lat << ' ' << lon << ')' << std::endl;
+                std::cerr << "node #" << id << " at tstamp " << t << " references node at POINT(" << std::setprecision(8) << lon << ' ' << lat << ')' << std::endl;
             }
 
             // create a coordinate-object and add it to the vector
-            if(!m_keepLatLng) Project::toMercator(&lat, &lon);
-            c->push_back(geos::geom::Coordinate(lat, lon, DoubleNotANumber));
+            if(!m_keepLatLng) Project::toMercator(&lon, &lat);
+            c->push_back(geos::geom::Coordinate(lon, lat, DoubleNotANumber));
         }
 
         // if less then 2 nodes could be found in the store, no valid way

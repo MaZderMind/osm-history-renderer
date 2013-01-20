@@ -73,10 +73,10 @@ private:
             valid_to = valid_from;
         }
 
-        double lat = prev->lat(), lon = prev->lon();
+        double lon = prev->lon(), lat = prev->lat();
         m_store->record(prev->id(), prev->version(), prev->timestamp(), lon, lat);
 
-        if(!m_keepLatLng) Project::toMercator(&lat, &lon);
+        if(!m_keepLatLng) Project::toMercator(&lon, &lat);
 
         // SPEED: sum up 64k of data, before sending them to the database
         // SPEED: instead of stringstream, which does dynamic allocation, use a fixed buffer and snprintf

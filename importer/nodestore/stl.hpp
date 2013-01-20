@@ -38,7 +38,7 @@ public:
     }
 
     void record(osm_object_id_t id, osm_version_t v, time_t t, double lon, double lat) {
-        Nodeinfo info = {lon, lat};
+        Nodeinfo info = {lat, lon};
 
         nodemap_it it = m_nodemap.find(id);
         timemap *tmap;

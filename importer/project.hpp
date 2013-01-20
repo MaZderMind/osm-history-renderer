@@ -27,23 +27,22 @@ private:
         return the_instance;
     }
     
-    void _toMercator(double *lat, double *lon) {
+    void _toMercator(double *lon, double *lat) {
         std::cerr << "_toMercator" << std::endl;
-        double inlat = *lat, inlon = *lon;
-        *lat *= DEG_TO_RAD;
+        double inlon = *lon, inlat = *lat;
         *lon *= DEG_TO_RAD;
+        *lat *= DEG_TO_RAD;
 
         int r = pj_transform(pj_4326, pj_900913, 1, 1, lon, lat, NULL);
         if(r != 0) {
-            std::cerr << "error transforming POINT(" << inlat << " " << inlon << ") from 4326 to 900913)" << std::endl;
-            *lat = *lon = 0;
-
+            std::cerr << "error transforming POINT(" << inlon << " " << inlat << ") from 4326 to 900913)" << std::endl;
+            *lon = *lat = 0;
         }
     }
 
 public:
-    static void toMercator(double *lat, double *lon) {
-        Project::instance()._toMercator(lat, lon);
+    static void toMercator(double *lon, double *lat) {
+        Project::instance()._toMercator(lon, lat);
     }
 };
 
