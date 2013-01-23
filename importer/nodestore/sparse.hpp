@@ -26,19 +26,14 @@ private:
     /**
      * number of bytes already used in the currentMemoryBlock
      */
-    size_t currentMemoryBlockUsage;
-
-
-    /**
-     * sparse table, mapping node ids to their positions in a memory block
-     */
-    google::sparsetable< char* > idMap;
+    size_t currentMemoryBlockPosition;
 
 
     char* allocateNewMemoryBlock() {
         currentMemoryBlock = static_cast< char* >(malloc(BLOCK_SIZE));
-        currentMemoryBlockUsage = 0;
+        currentMemoryBlockPosition = 0;
         memoryBlocks.push_back(currentMemoryBlock);
+        return currentMemoryBlock;
     }
 
     void freeAllMemoryBlocks() {
@@ -65,6 +60,11 @@ private:
         uint32_t t;
 
         /**
+         * the version is not really required and only required for debugging output
+         */
+        uint32_t v;
+
+        /**
          * osmium handles lat/lon either as double (8 bytes) or as int32_t (4 byted). So we choose the smaller one.
          */
         int32_t lat;
@@ -75,9 +75,18 @@ private:
         int32_t lon;
     };
 
+    static const int nodeSeparatorSite = sizeof(((PackedNodeTimeinfo *)0)->t);
+
+    /**
+     * sparse table, mapping node ids to their positions in a memory block
+     */
+    google::sparsetable< PackedNodeTimeinfo* > idMap;
+
+    osm_object_id_t lastNodeId;
+
 
 public:
-    NodestoreSparse() : Nodestore(), memoryBlocks(), idMap() {
+    NodestoreSparse() : Nodestore(), memoryBlocks(), idMap(), lastNodeId() {
         allocateNewMemoryBlock();
     }
     ~NodestoreSparse() {
@@ -85,31 +94,126 @@ public:
     }
 
     void record(osm_object_id_t id, osm_version_t v, time_t t, double lon, double lat) {
-            if(isPrintingDebugMessages()) {
-                std::cerr << "no timemap for node #" << id << ", creating new" << std::endl;
-            }
-        if(isPrintingDebugMessages()) {
-            std::cerr << "adding timepair for node #" << id << " v" << v << " at tstamp " << t << std::endl;
+        // remember: sorting is guaranteed nodes, ways relations in ascending id and then version order
+        PackedNodeTimeinfo *infoPtr;
+
+        // test if there is enough space for another PackedNodeTimeinfo
+        if(currentMemoryBlockPosition + sizeof(PackedNodeTimeinfo) >= BLOCK_SIZE) {
+            std::cerr << "memory block is full, repaging is nyi" << std::endl;
+            throw new std::runtime_error("nyi");
         }
+
+        if(lastNodeId != id) {
+            // new node
+            if(currentMemoryBlockPosition > 0) {
+                if(isPrintingDebugMessages()) {
+                    std::cerr << "adding 0-separator of " << nodeSeparatorSite << " bytes after memory position " << currentMemoryBlockPosition << std::endl;
+                }
+                currentMemoryBlockPosition += nodeSeparatorSite;
+
+            }
+
+            // no memory segment for this node yet
+            infoPtr = reinterpret_cast< PackedNodeTimeinfo* >(currentMemoryBlock + currentMemoryBlockPosition);
+
+            if(isPrintingDebugMessages()) {
+                std::cerr << "assigning memory position " << infoPtr << " (offset: " << currentMemoryBlockPosition << ") to node id #" << id << std::endl;
+            }
+
+            idMap.resize(id+1);
+            idMap[id] = infoPtr;
+        }
+        else {
+            // no memory segment for this node yet
+            infoPtr = reinterpret_cast< PackedNodeTimeinfo* >(currentMemoryBlock + currentMemoryBlockPosition);
+        }
+
+        if(isPrintingDebugMessages()) {
+            std::cerr << "storing node id #" << id << "v" << v << " at memory position " << infoPtr << " (offset: " << currentMemoryBlockPosition << ")" << std::endl;
+        }
+
+        infoPtr->t = t;
+        infoPtr->v = v;
+        infoPtr->lat = Osmium::OSM::double_to_fix(lat);
+        infoPtr->lon = Osmium::OSM::double_to_fix(lon);
+
+
+        // mark end of memory for this node
+        infoPtr++;
+        infoPtr->t = 0;
+
+        currentMemoryBlockPosition += sizeof(PackedNodeTimeinfo);
+        lastNodeId = id;
     }
 
+    // actually we don't need the coordinates here, only the time stamps
+    // so we could return a simple time vector. it actually is only a timemap
+    // because this was more easy to implement in the stl store, but once we
+    // change the default from stl to sparse, we can change the return value, too
     timemap *lookup(osm_object_id_t id, bool &found) {
-        if(isPrintingDebugMessages()) {
-            std::cerr << "looking up timemap of node #" << id << std::endl;
-        }
+        if(!idMap.test(id)) {
            if(isPrintingStoreErrors()) {
                 std::cerr << "no timemap for node #" << id << ", skipping node" << std::endl;
             }
+
+            found = false;
+            return NULL;
+        }
+
+        PackedNodeTimeinfo *infoPtr = idMap[id];
+        timemap *tMap = new timemap(); // FIXME this one is never destroxed, switch to shared_ptr
+
+        if(isPrintingDebugMessages()) {
+            std::cerr << "acessing node id #" << id << " starting from memory position " << infoPtr << std::endl;
+        }
+
+        Nodeinfo info;
+        do {
+            if(isPrintingDebugMessages()) {
+                std::cerr << "found node id #" << id << "v" << infoPtr->v << " at memory position " << infoPtr << std::endl;
+            }
+            info.lat = Osmium::OSM::fix_to_double(infoPtr->lat);
+            info.lon = Osmium::OSM::fix_to_double(infoPtr->lon);
+            tMap->insert(timepair(infoPtr->t, info));
+        } while((++infoPtr)->t != 0);
+
+        found = true;
+        return tMap;
     }
 
     Nodeinfo lookup(osm_object_id_t id, time_t t, bool &found) {
-        if(isPrintingDebugMessages()) {
-            std::cerr << "looking up information of node #" << id << " at tstamp " << t << std::endl;
+        if(!idMap.test(id)) {
+           if(isPrintingStoreErrors()) {
+                std::cerr << "no timemap for node #" << id << ", skipping node" << std::endl;
+            }
+
+            found = false;
+            return nullinfo;
         }
 
-            if(isPrintingStoreErrors()) {
-                std::cerr << "reference to node #" << id << " at tstamp " << t << " which is before the youngest available version of that node, using first version" << std::endl;
+        PackedNodeTimeinfo *infoPtr = idMap[id];
+        if(isPrintingDebugMessages()) {
+            std::cerr << "acessing node id #" << id << " starting from memory position " << infoPtr << std::endl;
+        }
+
+        Nodeinfo info = nullinfo;
+        time_t infoTime = 0;
+
+        // find the oldest node-version younger then t
+        do {
+            if(infoPtr->t <= t && infoPtr->t >= infoTime) {
+                info.lat = Osmium::OSM::fix_to_double(infoPtr->lat);
+                info.lon = Osmium::OSM::fix_to_double(infoPtr->lon);
+                infoTime = infoPtr->t;
             }
+        } while((++infoPtr)->t != 0);
+
+        if(isPrintingDebugMessages()) {
+            std::cerr << "found node-info from t=" << infoTime << std::endl;
+        }
+
+        found = (infoTime > 0);
+        return info;
     }
 };
 
