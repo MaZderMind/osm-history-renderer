@@ -19,7 +19,7 @@ public:
             osm_object_id_t id = nodeit->ref();
 
             bool found = false;
-            Nodestore::timemap *tmap = m_nodestore->lookup(id, found);
+            Nodestore::timemap_ptr tmap = m_nodestore->lookup(id, found);
             if(!found) {
                 continue;
             }

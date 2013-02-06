@@ -2,6 +2,7 @@
 #define IMPORTER_NODESTORESPARSE_HPP
 
 #include <google/sparsetable>
+#include <memory>
 
 class NodestoreSparse : public Nodestore {
 private:
@@ -150,18 +151,18 @@ public:
     // so we could return a simple time vector. it actually is only a timemap
     // because this was more easy to implement in the stl store, but once we
     // change the default from stl to sparse, we can change the return value, too
-    timemap *lookup(osm_object_id_t id, bool &found) {
+    timemap_ptr lookup(osm_object_id_t id, bool &found) {
         if(!idMap.test(id)) {
            if(isPrintingStoreErrors()) {
                 std::cerr << "no timemap for node #" << id << ", skipping node" << std::endl;
             }
 
             found = false;
-            return NULL;
+            return timemap_ptr();
         }
 
         PackedNodeTimeinfo *infoPtr = idMap[id];
-        timemap *tMap = new timemap(); // FIXME this one is never destroxed, switch to shared_ptr
+        timemap_ptr tMap(new timemap());
 
         if(isPrintingDebugMessages()) {
             std::cerr << "acessing node id #" << id << " starting from memory position " << infoPtr << std::endl;

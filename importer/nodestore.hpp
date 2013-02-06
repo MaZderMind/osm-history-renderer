@@ -49,6 +49,11 @@ public:
      */
     typedef std::map< time_t, Nodeinfo >::const_iterator timemap_cit;
 
+    /**
+     * shared ptr to a timemap
+     */
+    typedef boost::shared_ptr< timemap > timemap_ptr;
+
 protected:
     /**
      * a Nodeinfo that equals null, returned in case of an error
@@ -106,7 +111,7 @@ public:
     /**
      * retrieve all information about a node, indexed by time
      */
-    virtual timemap *lookup(osm_object_id_t id, bool &found) = 0;
+    virtual timemap_ptr lookup(osm_object_id_t id, bool &found) = 0;
 
     /**
      * lookup the version of a node that was valid at time_t t

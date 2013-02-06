@@ -6,22 +6,22 @@ private:
     /**
      * a map between the node-id and its map of node-versions and -times (timemap)
      */
-    typedef std::map< osm_object_id_t, timemap* > nodemap;
+    typedef std::map< osm_object_id_t, timemap_ptr > nodemap;
 
     /**
      * a pair of node-id and pointer to timemap
      */
-    typedef std::pair< osm_object_id_t, timemap* > nodepair;
+    typedef std::pair< osm_object_id_t, timemap_ptr > nodepair;
 
     /**
      * an iterator over the nodemap
      */
-    typedef std::map< osm_object_id_t, timemap* >::iterator nodemap_it;
+    typedef std::map< osm_object_id_t, timemap_ptr >::iterator nodemap_it;
 
     /**
      * the const-version of this iterator
      */
-    typedef std::map< osm_object_id_t, timemap* >::const_iterator nodemap_cit;
+    typedef std::map< osm_object_id_t, timemap_ptr >::const_iterator nodemap_cit;
 
     /**
      * main-storage of this nodestore: an instance of nodemap
@@ -30,25 +30,20 @@ private:
 
 public:
     NodestoreStl() : Nodestore(), m_nodemap() {}
-    ~NodestoreStl() {
-        nodemap_cit end = m_nodemap.end();
-        for(nodemap_cit it = m_nodemap.begin(); it != end; ++it) {
-            delete it->second;
-        }
-    }
+    ~NodestoreStl() {}
 
     void record(osm_object_id_t id, osm_version_t v, time_t t, double lon, double lat) {
         Nodeinfo info = {lat, lon};
 
         nodemap_it it = m_nodemap.find(id);
-        timemap *tmap;
+        timemap_ptr tmap;
 
         if(it == m_nodemap.end()) {
             if(isPrintingDebugMessages()) {
                 std::cerr << "no timemap for node #" << id << ", creating new" << std::endl;
             }
 
-            tmap = new timemap();
+            tmap = timemap_ptr(new timemap());
             m_nodemap.insert(nodepair(id, tmap));
         } else {
             tmap = it->second;
@@ -60,7 +55,7 @@ public:
         }
     }
 
-    timemap *lookup(osm_object_id_t id, bool &found) {
+    timemap_ptr lookup(osm_object_id_t id, bool &found) {
         if(isPrintingDebugMessages()) {
             std::cerr << "looking up timemap of node #" << id << std::endl;
         }
@@ -71,7 +66,7 @@ public:
                 std::cerr << "no timemap for node #" << id << ", skipping node" << std::endl;
             }
             found = false;
-            return NULL;
+            return timemap_ptr();
         }
 
         found = true;
@@ -83,7 +78,7 @@ public:
             std::cerr << "looking up information of node #" << id << " at tstamp " << t << std::endl;
         }
 
-        timemap *tmap = lookup(id, found);
+        timemap_ptr tmap = lookup(id, found);
         if(!found) {
             return nullinfo;
         }
