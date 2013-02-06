@@ -28,7 +28,6 @@ private:
     }
     
     void _toMercator(double *lon, double *lat) {
-        std::cerr << "_toMercator" << std::endl;
         double inlon = *lon, inlat = *lat;
         *lon *= DEG_TO_RAD;
         *lat *= DEG_TO_RAD;
