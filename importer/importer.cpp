@@ -122,8 +122,8 @@ int main(int argc, char *argv[]) {
             << "  -s|--nodestore" << std::endl
             << "       set the nodestore type [defaults to '" << nodestore << "']" << std::endl
             << "       possible values: " << std::endl
-            << "          stl    (needs more memory but is more robust)" << std::endl
-            << "          sparse (needs much, much less memory but is very experimental)" << std::endl
+            << "          stl    (needs more memory but is more robust and a little faster)" << std::endl
+            << "          sparse (needs much, much less memory but is still experimental)" << std::endl
             << "  -D|--dsn" << std::endl
             << "       set the database dsn, check the postgres documentation for syntax" << std::endl
             << "  -P|--prefix" << std::endl
