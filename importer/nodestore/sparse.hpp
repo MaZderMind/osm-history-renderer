@@ -10,6 +10,8 @@ private:
      * Size of one allocated memory block
      */
     const static size_t BLOCK_SIZE = 512*1024*1024;
+    const static osm_object_id_t EST_MAX_NODE_ID = 2^31; // soon 2^32
+    const static osm_object_id_t NODE_BUFFER_STEPS = 2^16; // soon 2^32
 
     typedef std::vector< char* > memoryBlocks_t;
     typedef std::vector< char* >::const_iterator memoryBlocks_cit;
@@ -83,11 +85,12 @@ private:
      */
     google::sparsetable< PackedNodeTimeinfo* > idMap;
 
+    osm_object_id_t maxNodeId;
     osm_object_id_t lastNodeId;
 
 
 public:
-    NodestoreSparse() : Nodestore(), memoryBlocks(), idMap(), lastNodeId() {
+    NodestoreSparse() : Nodestore(), memoryBlocks(), idMap(EST_MAX_NODE_ID), maxNodeId(EST_MAX_NODE_ID), lastNodeId() {
         allocateNewMemoryBlock();
     }
     ~NodestoreSparse() {
@@ -121,7 +124,10 @@ public:
                 std::cerr << "assigning memory position " << infoPtr << " (offset: " << currentMemoryBlockPosition << ") to node id #" << id << std::endl;
             }
 
-            idMap.resize(id+1);
+            if(id > maxNodeId) {
+                idMap.resize(id + NODE_BUFFER_STEPS + 1);
+                maxNodeId = id + NODE_BUFFER_STEPS;
+            }
             idMap[id] = infoPtr;
         }
         else {
