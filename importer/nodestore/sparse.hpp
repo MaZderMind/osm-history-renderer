@@ -9,7 +9,7 @@ private:
     /**
      * Size of one allocated memory block
      */
-    const static size_t BLOCK_SIZE = 512*1024*1024;
+    const static size_t BLOCK_SIZE = 64 /*512*1024*1024*/;
     const static osm_object_id_t EST_MAX_NODE_ID = 2^31; // soon 2^32
     const static osm_object_id_t NODE_BUFFER_STEPS = 2^16; // soon 2^32
 
@@ -78,7 +78,7 @@ private:
         int32_t lon;
     };
 
-    static const int nodeSeparatorSite = sizeof(((PackedNodeTimeinfo *)0)->t);
+    static const int nodeSeparatorSize = sizeof(((PackedNodeTimeinfo *)0)->t);
 
     /**
      * sparse table, mapping node ids to their positions in a memory block
@@ -102,26 +102,45 @@ public:
         PackedNodeTimeinfo *infoPtr;
 
         // test if there is enough space for another PackedNodeTimeinfo
+        std::cerr << "NODE #" << id << "v" << v << std::endl;
+        std::cerr << "  currentMemoryBlock=" << (void*)currentMemoryBlock << std::endl;
+        std::cerr << "  currentMemoryBlockPosition=" << currentMemoryBlockPosition << std::endl;
+
         if(currentMemoryBlockPosition + sizeof(PackedNodeTimeinfo) >= BLOCK_SIZE) {
-            std::cerr << "memory block is full, repaging is nyi" << std::endl;
-            throw new std::runtime_error("nyi");
+            if(isPrintingDebugMessages()) {
+                std::cerr << "  -> memory block is full (pos " << currentMemoryBlockPosition << " + sizeof " << sizeof(PackedNodeTimeinfo) << " >= BLOCK_SIZE " << BLOCK_SIZE << ")" << std::endl;
+            }
+
+            if(lastNodeId != id) {
+                // a new node, just use a new memory segment
+                allocateNewMemoryBlock();
+                if(isPrintingDebugMessages()) {
+                    std::cerr << "  -> node " << id << " has not yet a memory position assigned, just allocating new memory block at " << (void*)currentMemoryBlock << std::endl;
+                }
+            }
+            else {
+                // same node as before, need to copy old versions into new memory block
+                if(isPrintingDebugMessages()) {
+                    std::cerr << "  -> node " << id << " already has not a memory position assigned (" << idMap[id] << "), need to copy versions over" << std::endl;
+                }
+                throw new std::runtime_error("nyi");
+            }
         }
 
         if(lastNodeId != id) {
             // new node
             if(currentMemoryBlockPosition > 0) {
                 if(isPrintingDebugMessages()) {
-                    std::cerr << "adding 0-separator of " << nodeSeparatorSite << " bytes after memory position " << currentMemoryBlockPosition << std::endl;
+                    std::cerr << "  -> adding 0-separator of " << nodeSeparatorSize << " at memory position " << currentMemoryBlock + currentMemoryBlockPosition << " (from bytes " << currentMemoryBlockPosition << " to " << currentMemoryBlockPosition+nodeSeparatorSize << ")" << std::endl;
                 }
-                currentMemoryBlockPosition += nodeSeparatorSite;
-
+                currentMemoryBlockPosition += nodeSeparatorSize;
             }
 
             // no memory segment for this node yet
             infoPtr = reinterpret_cast< PackedNodeTimeinfo* >(currentMemoryBlock + currentMemoryBlockPosition);
 
             if(isPrintingDebugMessages()) {
-                std::cerr << "assigning memory position " << infoPtr << " (offset: " << currentMemoryBlockPosition << ") to node id #" << id << std::endl;
+                std::cerr << "  -> assigning memory position " << infoPtr << " (offset: " << currentMemoryBlockPosition << ") to node id #" << id << std::endl;
             }
 
             if(id > maxNodeId) {
@@ -136,7 +155,7 @@ public:
         }
 
         if(isPrintingDebugMessages()) {
-            std::cerr << "storing node id #" << id << "v" << v << " at memory position " << infoPtr << " (offset: " << currentMemoryBlockPosition << ")" << std::endl;
+            std::cerr << "  -> storing " << sizeof(PackedNodeTimeinfo) << " bytes of data at memory position " << infoPtr << " (from bytes " << currentMemoryBlockPosition << " to " << currentMemoryBlockPosition+sizeof(PackedNodeTimeinfo) << ")" << std::endl;
         }
 
         infoPtr->t = t;
