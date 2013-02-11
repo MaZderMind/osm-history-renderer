@@ -34,17 +34,9 @@
  */
 int main(int argc, char *argv[]) {
     // local variables for the options/switches on the commandline
-<<<<<<< HEAD
-    std::string filename, dsn, prefix = "hist_";
-    bool printDebugMessages = false;
-    bool printStoreErrors = false;
-    bool calculateInterior = false;
-    bool showHelp = false;
-=======
     std::string filename, nodestore = "stl", dsn, prefix = "hist_";
     bool printDebugMessages = false, printStoreErrors = false, calculateInterior = false;
     bool showHelp = false, keepLatLng = false;
->>>>>>> sparse-nodestore
 
     // options configuration array for getopt
     static struct option long_options[] = {
@@ -52,11 +44,8 @@ int main(int argc, char *argv[]) {
         {"debug",               no_argument, 0, 'd'},
         {"store-errors",        no_argument, 0, 'e'},
         {"interior",            no_argument, 0, 'i'},
-<<<<<<< HEAD
-=======
         {"latlng",              no_argument, 0, 'l'},
         {"nodestore",           required_argument, 0, 'S'},
->>>>>>> sparse-nodestore
         {"dsn",                 required_argument, 0, 'D'},
         {"prefix",              required_argument, 0, 'P'},
         {0, 0, 0, 0}
@@ -64,11 +53,7 @@ int main(int argc, char *argv[]) {
 
     // walk through the options
     while(1) {
-<<<<<<< HEAD
-        int c = getopt_long(argc, argv, "hdeiDP", long_options, 0);
-=======
         int c = getopt_long(argc, argv, "hdeilS:D:P:", long_options, 0);
->>>>>>> sparse-nodestore
         if (c == -1)
             break;
 
@@ -95,8 +80,6 @@ int main(int argc, char *argv[]) {
                 calculateInterior = true;
                 break;
 
-<<<<<<< HEAD
-=======
             // keep lat/lng ant don't transform it to mercator
             case 'l':
                 keepLatLng = true;
@@ -107,7 +90,6 @@ int main(int argc, char *argv[]) {
                 nodestore = optarg;
                 break;
 
->>>>>>> sparse-nodestore
             // set the database dsn, check the postgres documentation for syntax
             case 'D':
                 dsn = optarg;
@@ -135,8 +117,6 @@ int main(int argc, char *argv[]) {
             << "       because of incomplete reference in the input" << std::endl
             << "  -i|--interior" << std::endl
             << "       calculate the interior-point ans store it in the database" << std::endl
-<<<<<<< HEAD
-=======
             << "  -l|--latlng" << std::endl
             << "       keep lat/lng ant don't transform to mercator" << std::endl
             << "  -s|--nodestore" << std::endl
@@ -144,7 +124,6 @@ int main(int argc, char *argv[]) {
             << "       possible values: " << std::endl
             << "          stl    (needs more memory but is more robust and a little faster)" << std::endl
             << "          sparse (needs much, much less memory but is still experimental)" << std::endl
->>>>>>> sparse-nodestore
             << "  -D|--dsn" << std::endl
             << "       set the database dsn, check the postgres documentation for syntax" << std::endl
             << "  -P|--prefix" << std::endl
@@ -160,10 +139,14 @@ int main(int argc, char *argv[]) {
     Osmium::OSMFile infile(filename);
 
     // create an instance of the import-handler
-    Nodestore *nodestore = new NodestoreStl();
+    Nodestore *store;
+    if(nodestore == "sparse")
+        store = new NodestoreSparse();
+    else
+        store = new NodestoreStl();
 
     // create an instance of the import-handler
-    ImportHandler handler(nodestore);
+    ImportHandler handler(store);
 
     // copy relevant settings to the handler
     if(dsn.size()) {
