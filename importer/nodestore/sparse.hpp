@@ -1,3 +1,43 @@
+/**
+ * The sparse nodestore is  is the newer one. It's build on top of the the Google Sparsetable
+ * and a custom memory block management. It's much, much more space efficient but it seems to
+ * take slightly time on startup and it also contains more custom code, so more potential for
+ * bugs. Sooner or later Sparse will become the defaul node-store, as it's your only option
+ * to import larger extracts or even a whole planet.
+ *
+ * It used two main memory areas: a sparsetable and one or more malloc'ed memory blocks.
+ * Each memory block is BLOCK_SIZE bytes big. Each node-version is stored as a PackedNodeTimeinfo
+ * struct (currently 16 bytes) in the memory block. The versions of two nodes are separated using
+ * a 4-byte long marker containing only 0 bytes.
+ *
+ * The sparsetable mapps the node-ids to those memory positions. To fetch all Versions of a node,
+ * the code follows the pointer in the sparsetable to the first version of the node and count
+ * check all memory locations until the 0 marker.
+ *
+ *   +-----------------------+--------+--------------
+ *   | n1v1 n1v2 n1v4 n1v5 0 | n2v1 0 | n3n1 n3n2 ...
+ *   +-----------------------+--------+--------------
+ *     ^                       ^        ^
+ *     |                       |        |
+ * n1--/                       |        |
+ * n2--------------------------/        |
+ * n3-----------------------------------/
+ *
+ * To fill this struct, the input is required to be in sorted order (by type, id and version),
+ * which is guaranteed by the caller.
+ *
+ * The first memory block is allocated on startup and filled, until no more node-version fit
+ * into it. Then a new memory block is allocated.
+ *
+ *   When the current node-id has not been seen before, nothing more is needed: the node is just
+ *   placed into the new block and the pointer into this block is stored in the sparsetable.
+ *
+ *   When the current node-id already has a pointer in the sparsetable, all versions of the node
+ *   are copied into the new block. The sparsetable-pointer is updated to the destination-location
+ *   in the new memory block. new versions can now be appended into the new block. the space in
+ *   the old block is not reused.
+ */
+
 #ifndef IMPORTER_NODESTORESPARSE_HPP
 #define IMPORTER_NODESTORESPARSE_HPP
 
