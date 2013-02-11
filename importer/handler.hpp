@@ -4,7 +4,6 @@
 #include <fstream>
 
 #include <libpq-fe.h>
-#include <proj_api.h>
 
 #include <osmium.hpp>
 #include <osmium/handler/progress.hpp>
@@ -27,6 +26,8 @@
 #include "timestamp.hpp"
 #include "geombuilder.hpp"
 #include "minortimescalculator.hpp"
+#include "sorttest.hpp"
+#include "project.hpp"
 
 
 class ImportHandler : public Osmium::Handler::Base {
@@ -39,16 +40,15 @@ private:
     DbAdapter m_adapter;
     ImportGeomBuilder m_geom;
     ImportMinorTimesCalculator m_mtimes;
+    SortTest m_sorttest;
 
     DbConn m_general;
     DbCopyConn m_point, m_line, m_polygon;
 
-    projPJ pj_900913, pj_4326;
-
     geos::io::WKBWriter wkb;
 
     std::string m_dsn, m_prefix;
-    bool m_debug, m_storeerrors, m_interior;
+    bool m_debug, m_storeerrors, m_interior, m_keepLatLng;
 
 
     void write_node() {
@@ -72,17 +72,10 @@ private:
             valid_to = valid_from;
         }
 
-        double lat = prev->lat() * DEG_TO_RAD;
-        double lon = prev->lon() * DEG_TO_RAD;
-        int r = pj_transform(pj_4326, pj_900913, 1, 1, &lon, &lat, NULL);
-        if(r != 0) {
-            if(m_debug) {
-                std::cerr << "error transforming POINT(" << prev->lat() << " " << prev->lon() << ") from 4326 to 900913)" << std::endl;
-            }
-            return;
-        }
-
+        double lon = prev->lon(), lat = prev->lat();
         m_store->record(prev->id(), prev->version(), prev->timestamp(), lon, lat);
+
+        if(!m_keepLatLng) Project::toMercator(&lon, &lat);
 
         // SPEED: sum up 64k of data, before sending them to the database
         // SPEED: instead of stringstream, which does dynamic allocation, use a fixed buffer and snprintf
@@ -281,21 +274,11 @@ public:
             m_adapter(),
             m_geom(m_store, &m_adapter),
             m_mtimes(m_store, &m_adapter),
+            m_sorttest(),
             wkb(),
-            m_prefix("hist_") {
-        //if(!(pj_900913 = pj_init_plus("+init=epsg:900913"))) {
-        if(!(pj_900913 = pj_init_plus("+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +no_defs"))) {
-            throw std::runtime_error("can't initialize proj4 with 900913");
-        }
-        if(!(pj_4326 = pj_init_plus("+init=epsg:4326"))) {
-            throw std::runtime_error("can't initialize proj4 with 4326");
-        }
-    }
+            m_prefix("hist_") {}
 
-    ~ImportHandler() {
-        pj_free(pj_900913);
-        pj_free(pj_4326);
-    }
+    ~ImportHandler() {}
 
     std::string dsn() {
         return m_dsn;
@@ -328,6 +311,15 @@ public:
 
     void calculateInterior(bool shouldCalculateInterior) {
         m_interior = shouldCalculateInterior;
+    }
+
+    bool isKeepingLatLng() {
+        return m_keepLatLng;
+    }
+
+    void keepLatLng(bool shouldKeepLatLng) {
+        m_keepLatLng = shouldKeepLatLng;
+        m_geom.keepLatLng(shouldKeepLatLng);
     }
 
     bool isPrintingDebugMessages() {
@@ -404,6 +396,7 @@ public:
 
 
     void node(const shared_ptr<Osmium::OSM::Node const>& node) {
+        m_sorttest.test(node);
         m_node_tracker.feed(node);
 
         // we're always writing the one-off node
@@ -424,6 +417,7 @@ public:
     }
 
     void way(const shared_ptr<Osmium::OSM::Way const>& way) {
+        m_sorttest.test(way);
         m_way_tracker.feed(way);
 
         // we're always writing the one-off way

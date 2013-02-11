@@ -124,6 +124,8 @@ Now, run the importer on that file:
 It will walk through the file and create a neat history database of it, including valid-from, valid-to and minor-version fields and geometries of all nodes and ways.
 You cann call psql again to see the freshly created tables.
 
+If you get short on RAM (especially if your extract is somehow bigger then a city), add ``--nodestore sparse`` to your command. check the README on the details about the sparse nodestore.
+
 ## getting the style
 now it's time to visualize that data. You can use any mapnik-style you want like the [openstreetmap.org-style](http://svn.openstreetmap.org/applications/rendering/mapnik/) or the [mapquest-style](https://github.com/MapQuest/MapQuest-Mapnik-Style) or, if you in Germany, you'll probably want to try out the [german style](http://www.openstreetmap.de/germanstyle.html). We'll choose the openstreetmap.org-style for this tutorial:
 

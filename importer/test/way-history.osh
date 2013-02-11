@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<osm version="0.6" generator="My Brain">
+    <node id="1" lon="10"  lat="20"  version="1" visible="true" timestamp="2010-01-01T10:00:00Z" user="me" uid="1000" changeset="100">
+        <tag k="description" v="diese node lag deutlich vor dem weg und war daher nie teil der way-geometrie" />
+    </node>
+    <node id="1" lon="11" lat="21" version="2" visible="true" timestamp="2012-01-01T10:00:00Z" user="me" uid="1000" changeset="101" />
+
+    <node id="2" lon="-10" lat="-10" version="1" visible="true" timestamp="2012-01-01T10:00:00Z" user="me" uid="1000" changeset="100" />
+    <node id="2" lon="-100" lat="-100" version="2" visible="true" timestamp="2013-01-01T10:00:00Z" user="me" uid="1000" changeset="100" />
+    <node id="2" lon="-120" lat="-120" version="3" visible="true" timestamp="2013-03-01T10:00:00Z" user="me" uid="1000" changeset="100" />
+
+    <way id="10" version="1" visible="true" timestamp="2012-01-01T10:00:00Z" user="me" uid="1000" changeset="100">
+        <nd ref="1"/>
+        <nd ref="2"/>
+    </way>
+</osm>

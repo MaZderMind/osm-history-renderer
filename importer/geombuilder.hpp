@@ -8,11 +8,13 @@
 #ifndef IMPORTER_GEOMBUILDER_HPP
 #define IMPORTER_GEOMBUILDER_HPP
 
+#include "project.hpp"
+
 class GeomBuilder {
 private:
     Nodestore *m_nodestore;
     DbAdapter *m_adapter;
-    bool m_isupdate;
+    bool m_isupdate, m_keepLatLng;
     bool m_debug, m_showerrors;
 
 protected:
@@ -40,12 +42,15 @@ public:
             if(!found)
                 continue;
 
+            double lon = info.lon, lat = info.lat;
+
             if(m_debug) {
-                std::cerr << "node #" << id << " at tstamp " << t << " references node at POINT(" << std::setprecision(8) << info.lat << ' ' << info.lon << ')' << std::endl;
+                std::cerr << "node #" << id << " at tstamp " << t << " references node at POINT(" << std::setprecision(8) << lon << ' ' << lat << ')' << std::endl;
             }
 
             // create a coordinate-object and add it to the vector
-            c->push_back(geos::geom::Coordinate(info.lat, info.lon, DoubleNotANumber));
+            if(!m_keepLatLng) Project::toMercator(&lon, &lat);
+            c->push_back(geos::geom::Coordinate(lon, lat, DoubleNotANumber));
         }
 
         // if less then 2 nodes could be found in the store, no valid way
@@ -93,6 +98,14 @@ public:
         }
 
         return geom;
+    }
+
+    bool isKeepingLatLng() {
+        return m_keepLatLng;
+    }
+
+    void keepLatLng(bool shouldKeepLatLng) {
+        m_keepLatLng = shouldKeepLatLng;
     }
 
     /**

@@ -18,7 +18,7 @@ After you have your data in place, use the importer to import the data:
 
 You can specify some options at the command line:
 
-    ./osm-history-importer --debug --prefix "hist_" --dsn "host='172.16.0.73' dbname='histtest'" gau-odernheim.osh.pbf
+    ./osm-history-importer --nodestore sparse--debug --prefix "hist_" --dsn "host='172.16.0.73' dbname='histtest'" gau-odernheim.osh.pbf
 
 See the [libpq documentation](http://www.postgresql.org/docs/8.1/static/libpq.html#LIBPQ-CONNECT) for a detailed descriptions of the dsn parameters. Beware: the importer does *not* honor relations right now, so no multipolygon-areas or routes in the database.
 
@@ -42,6 +42,22 @@ So let's see how your town evolved over time - let's make an animation:
     ./render-animation.py --style ~/osm-mapnik-style/osm-mapnik2.xml --bbox 8.177700,49.771700,8.205600,49.791600
 
 This will leave you with an set of .png files, one for each month since the first node was placed in your area. If you want render-animation.py to assemble a real video for you, use `--type mp4`. This will create a lossless mp4 for you. Use render-animation.py `-h` to get information over the wide range of control, the script gives to you.
+
+## Nodestores
+The Importer comes with two nodestores: stl and sparse.
+
+The Stl-Nodestore is the default one. It's build on top of the the [STL-Template](http://de.wikipedia.org/wiki/Standard_Template_Library) [std::map](http://www.cplusplus.com/reference/map/map/). Currently it seems, that it's faster then the spase nodestore, but it's only capable of importing very small extracts, because it's not very memory efficient.
+
+The Sparse-Nodestore is the newer one. It's build on top of the the [Google Sparsetable](http://google-sparsehash.googlecode.com/svn/trunk/doc/sparsetable.html) and a custom memory block management. It's much, much more space efficient but it seems to take slightly time on startup and it also contains more custom code, so more potential for bugs. Sooner or later sparse will become the defaul node-store, as it's your only option to import larger extracts or even a whole planet.
+
+## Space & Time Requirements
+I imported [rheinland-pfalz.osh.pbf](http://osm.personalwerk.de/full-history-extracts/history_2012-10-13_13:35/europe/germany/rheinland-pfalz.osh.pbf) (308M) with the sparse nodestore. It took around 1.2 GB of RAM from which apparently ~700M was taken by the nodestore and 400M by the pbf reader. Process Runtime was around 30 Minutes. The generated Tables on disk took ~14 GB including indexes.
+
+## Granularity
+The MinorTimesCalculator calculates for which timestamps a minor way version is needed. This is the place that determines the granularity of your database on the time axis.
+
+By default it stores data to the split second. When a node is moved two times within a second (or two nodes of the same way), one minor version is generated. If the node timestamps differ, for each timestamp a minor version is generated. Worst case you'll have a full way geometry for each and every second.
+In future it will be possible to reduce the granularity so, say, a day, so at worst you'll have a full way geometry per day. This should reduce the database size drasticaly.
 
 
 ## Speeeeed

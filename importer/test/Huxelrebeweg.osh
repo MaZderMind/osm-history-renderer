@@ -1,0 +1,136 @@
+<?xml version="1.0"?>
+<osm version="0.6" generator="Way-with-fistory-fetcher" copyright="OpenStreetMap and contributors" attribution="http://www.openstreetmap.org/copyright" license="http://opendatacommons.org/licenses/odbl/1-0/">
+  <node id="292010029" lat="49.9645234" lon="8.2885198" changeset="454926" user="lanzahn" uid="56443" visible="true" timestamp="2008-08-29T12:15:19Z" version="1"/>
+  <node id="292010029" lat="49.9645289" lon="8.2886018" changeset="1784085" user="HStrupp" uid="21310" visible="true" timestamp="2009-07-09T21:06:21Z" version="2"/>
+  <node id="292010029" lat="49.9645777" lon="8.2885866" changeset="5598853" user="Notch" uid="164214" visible="true" timestamp="2010-08-26T12:51:19Z" version="3"/>
+  <node id="292010029" lat="49.9645577" lon="8.2885156" changeset="13020947" user="Notch" uid="164214" visible="true" timestamp="2012-09-07T09:57:44Z" version="4"/>
+  <node id="292010029" lat="49.9645471" lon="8.2884542" changeset="13022108" user="Notch" uid="164214" visible="true" timestamp="2012-09-07T12:02:18Z" version="5"/>
+  <node id="415588239" lat="49.964543" lon="8.28599" changeset="1496535" user="thomas1904" uid="18407" visible="true" timestamp="2009-06-12T14:34:56Z" version="2"/>
+  <node id="415588239" lat="49.9645694" lon="8.2859228" changeset="13020947" user="Notch" uid="164214" visible="true" timestamp="2012-09-07T09:57:44Z" version="3"/>
+  <node id="415588239" lat="49.9645647" lon="8.2860049" changeset="14818632" user="Notch" uid="164214" visible="true" timestamp="2013-01-28T08:14:36Z" version="4"/>
+  <node id="415588244" changeset="10858632" user="hmpfgnrrr" uid="242551" visible="false" timestamp="2012-03-03T15:00:32Z" version="2"/>
+  <node id="415588245" changeset="10858632" user="hmpfgnrrr" uid="242551" visible="false" timestamp="2012-03-03T15:00:32Z" version="2"/>
+  <node id="415588246" changeset="10858632" user="hmpfgnrrr" uid="242551" visible="false" timestamp="2012-03-03T15:00:32Z" version="2"/>
+  <node id="415588247" changeset="10858632" user="hmpfgnrrr" uid="242551" visible="false" timestamp="2012-03-03T15:00:32Z" version="2"/>
+  <node id="415588248" changeset="10858632" user="hmpfgnrrr" uid="242551" visible="false" timestamp="2012-03-03T15:00:32Z" version="2"/>
+  <node id="415588249" changeset="10858632" user="hmpfgnrrr" uid="242551" visible="false" timestamp="2012-03-03T15:00:32Z" version="2"/>
+  <node id="415588250" changeset="10858632" user="hmpfgnrrr" uid="242551" visible="false" timestamp="2012-03-03T15:00:32Z" version="2"/>
+  <node id="415588251" lat="49.9643915" lon="8.2864285" changeset="5578090" user="Notch" uid="164214" visible="true" timestamp="2010-08-24T09:57:10Z" version="2"/>
+  <node id="415588251" lat="49.9644468" lon="8.2864386" changeset="5598853" user="Notch" uid="164214" visible="true" timestamp="2010-08-26T12:51:48Z" version="3"/>
+  <node id="415588251" lat="49.9644328" lon="8.2865058" changeset="14818632" user="Notch" uid="164214" visible="true" timestamp="2013-01-28T08:14:36Z" version="4"/>
+  <node id="415588252" lat="49.9643752" lon="8.2869068" changeset="5578090" user="Notch" uid="164214" visible="true" timestamp="2010-08-24T09:57:08Z" version="2"/>
+  <node id="415588252" lat="49.9644272" lon="8.286927" changeset="5598853" user="Notch" uid="164214" visible="true" timestamp="2010-08-26T12:50:39Z" version="3"/>
+  <node id="415588252" lat="49.9644272" lon="8.2869341" changeset="13052757" user="Notch" uid="164214" visible="true" timestamp="2012-09-10T06:36:28Z" version="4"/>
+  <node id="415588253" lat="49.9643868" lon="8.2875212" changeset="5578090" user="Notch" uid="164214" visible="true" timestamp="2010-08-24T09:57:10Z" version="2"/>
+  <node id="415588253" lat="49.9644388" lon="8.2875263" changeset="5598853" user="Notch" uid="164214" visible="true" timestamp="2010-08-26T12:49:25Z" version="3"/>
+  <node id="415588253" lat="49.9644354" lon="8.2874981" changeset="13021737" user="Notch" uid="164214" visible="true" timestamp="2012-09-07T11:26:50Z" version="4"/>
+  <node id="415588254" changeset="10858632" user="hmpfgnrrr" uid="242551" visible="false" timestamp="2012-03-03T15:00:32Z" version="2"/>
+  <node id="415588255" changeset="10858632" user="hmpfgnrrr" uid="242551" visible="false" timestamp="2012-03-03T15:00:32Z" version="2"/>
+  <node id="459049475" lat="49.9661607" lon="8.2846365" changeset="2077741" user="BikeMap" uid="70621" visible="true" timestamp="2009-08-08T18:09:37Z" version="1"/>
+  <node id="459049475" lat="49.9662095" lon="8.2846416" changeset="5598853" user="Notch" uid="164214" visible="true" timestamp="2010-08-26T12:51:24Z" version="2"/>
+  <node id="459049475" lat="49.9662135" lon="8.2846617" changeset="12218578" user="rab" uid="36894" visible="true" timestamp="2012-07-14T15:28:52Z" version="3"/>
+  <node id="459049475" lat="49.9662135" lon="8.2846318" changeset="13021737" user="Notch" uid="164214" visible="true" timestamp="2012-09-07T11:26:50Z" version="4"/>
+  <node id="698118808" lat="49.9645144" lon="8.2884641" changeset="4435704" user="Oberf&#xF6;rster" uid="263596" visible="true" timestamp="2010-04-16T02:21:26Z" version="1"/>
+  <node id="698118808" lat="49.9645392" lon="8.2883757" changeset="13020947" user="Notch" uid="164214" visible="true" timestamp="2012-09-07T09:57:45Z" version="2"/>
+  <node id="698118808" lat="49.9645313" lon="8.2883184" changeset="13022108" user="Notch" uid="164214" visible="true" timestamp="2012-09-07T12:02:18Z" version="3"/>
+  <node id="1657551762" lat="49.9646885" lon="8.2855753" changeset="10858632" user="hmpfgnrrr" uid="242551" visible="true" timestamp="2012-03-03T15:00:13Z" version="1"/>
+  <node id="1657551762" lat="49.9647438" lon="8.285477" changeset="13021737" user="Notch" uid="164214" visible="true" timestamp="2012-09-07T11:26:50Z" version="2"/>
+  <node id="1657551762" lat="49.964712" lon="8.2855521" changeset="14818632" user="Notch" uid="164214" visible="true" timestamp="2013-01-28T08:14:27Z" version="3"/>
+  <node id="1657551766" lat="49.965012" lon="8.2853794" changeset="10858632" user="hmpfgnrrr" uid="242551" visible="true" timestamp="2012-03-03T15:00:13Z" version="1"/>
+  <node id="1657551766" lat="49.9650416" lon="8.2853557" changeset="13021737" user="Notch" uid="164214" visible="true" timestamp="2012-09-07T11:26:50Z" version="2"/>
+  <node id="1657551766" lat="49.9650378" lon="8.2853853" changeset="14818632" user="Notch" uid="164214" visible="true" timestamp="2013-01-28T08:14:27Z" version="3"/>
+  <node id="1657551782" lat="49.96528" lon="8.285246" changeset="10858632" user="hmpfgnrrr" uid="242551" visible="true" timestamp="2012-03-03T15:00:14Z" version="1"/>
+  <node id="1657551785" lat="49.9653337" lon="8.2850405" changeset="10858632" user="hmpfgnrrr" uid="242551" visible="true" timestamp="2012-03-03T15:00:14Z" version="1"/>
+  <node id="1657551787" lat="49.9655392" lon="8.2848475" changeset="10858632" user="hmpfgnrrr" uid="242551" visible="true" timestamp="2012-03-03T15:00:14Z" version="1"/>
+  <node id="1657551787" lat="49.9655336" lon="8.2848064" changeset="13021737" user="Notch" uid="164214" visible="true" timestamp="2012-09-07T11:26:50Z" version="2"/>
+  <node id="1657551787" lat="49.9655311" lon="8.2848637" changeset="14818632" user="Notch" uid="164214" visible="true" timestamp="2013-01-28T08:14:27Z" version="3"/>
+  <node id="2131943359" lat="49.96545" lon="8.2849931" changeset="14818632" user="Notch" uid="164214" visible="true" timestamp="2013-01-28T08:14:26Z" version="1"/>
+  <way id="38723468" visible="true" timestamp="2009-08-08T18:09:37Z" user="BikeMap" uid="70621" version="1" changeset="2077741">
+    <nd ref="459049475"/>
+    <nd ref="415588244"/>
+    <nd ref="415588245"/>
+    <nd ref="415588246"/>
+    <nd ref="415588247"/>
+    <nd ref="415588248"/>
+    <nd ref="415588249"/>
+    <nd ref="415588250"/>
+    <nd ref="415588239"/>
+    <nd ref="415588251"/>
+    <nd ref="415588252"/>
+    <nd ref="415588253"/>
+    <nd ref="415588254"/>
+    <nd ref="415588255"/>
+    <nd ref="292010029"/>
+    <tag k="highway" v="residential"/>
+    <tag k="name" v="Huxelrebenweg"/>
+  </way>
+  <way id="38723468" visible="true" timestamp="2010-04-16T02:21:27Z" user="Oberf&#xF6;rster" uid="263596" version="2" changeset="4435704">
+    <nd ref="459049475"/>
+    <nd ref="415588244"/>
+    <nd ref="415588245"/>
+    <nd ref="415588246"/>
+    <nd ref="415588247"/>
+    <nd ref="415588248"/>
+    <nd ref="415588249"/>
+    <nd ref="415588250"/>
+    <nd ref="415588239"/>
+    <nd ref="415588251"/>
+    <nd ref="415588252"/>
+    <nd ref="415588253"/>
+    <nd ref="415588254"/>
+    <nd ref="415588255"/>
+    <nd ref="698118808"/>
+    <nd ref="292010029"/>
+    <tag k="highway" v="residential"/>
+    <tag k="name" v="Huxelrebenweg"/>
+  </way>
+  <way id="38723468" visible="true" timestamp="2012-03-03T15:00:21Z" user="hmpfgnrrr" uid="242551" version="3" changeset="10858632">
+    <nd ref="459049475"/>
+    <nd ref="1657551787"/>
+    <nd ref="1657551785"/>
+    <nd ref="1657551782"/>
+    <nd ref="1657551766"/>
+    <nd ref="1657551762"/>
+    <nd ref="415588239"/>
+    <nd ref="415588251"/>
+    <nd ref="415588252"/>
+    <nd ref="415588253"/>
+    <nd ref="698118808"/>
+    <nd ref="292010029"/>
+    <tag k="highway" v="residential"/>
+    <tag k="name" v="Huxelrebenweg"/>
+  </way>
+  <way id="38723468" visible="true" timestamp="2012-12-08T08:27:55Z" user="Tronikon" uid="123364" version="4" changeset="14196860">
+    <nd ref="459049475"/>
+    <nd ref="1657551787"/>
+    <nd ref="1657551785"/>
+    <nd ref="1657551782"/>
+    <nd ref="1657551766"/>
+    <nd ref="1657551762"/>
+    <nd ref="415588239"/>
+    <nd ref="415588251"/>
+    <nd ref="415588252"/>
+    <nd ref="415588253"/>
+    <nd ref="698118808"/>
+    <nd ref="292010029"/>
+    <tag k="highway" v="living_street"/>
+    <tag k="name" v="Huxelrebenweg"/>
+  </way>
+  <way id="38723468" visible="true" timestamp="2013-01-28T08:14:26Z" user="Notch" uid="164214" version="5" changeset="14818632">
+    <nd ref="459049475"/>
+    <nd ref="1657551787"/>
+    <nd ref="2131943359"/>
+    <nd ref="1657551785"/>
+    <nd ref="1657551782"/>
+    <nd ref="1657551766"/>
+    <nd ref="1657551762"/>
+    <nd ref="415588239"/>
+    <nd ref="415588251"/>
+    <nd ref="415588252"/>
+    <nd ref="415588253"/>
+    <nd ref="698118808"/>
+    <nd ref="292010029"/>
+    <tag k="highway" v="living_street"/>
+    <tag k="name" v="Huxelrebenweg"/>
+  </way>
+</osm>
