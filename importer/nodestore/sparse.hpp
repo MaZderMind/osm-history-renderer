@@ -133,7 +133,7 @@ public:
 
                 PackedNodeTimeinfo* srcPtr = idMap[id];
                 PackedNodeTimeinfo* dstPtr = reinterpret_cast< PackedNodeTimeinfo* >(currentMemoryBlock + currentMemoryBlockPosition);
-                
+
                 if(isPrintingDebugMessages()) {
                     std::cerr << "  -> copying node versions from old position (" << idMap[id] << ") to new position (" << (void*)currentMemoryBlock << ", offset " << currentMemoryBlockPosition << ")" << std::endl;
                     std::cerr << "  -> re-assigning memory position " << dstPtr << " (offset: " << currentMemoryBlockPosition << ") to node id #" << id << std::endl;
