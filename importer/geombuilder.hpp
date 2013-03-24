@@ -49,7 +49,10 @@ public:
             }
 
             // create a coordinate-object and add it to the vector
-            if(!m_keepLatLng) Project::toMercator(&lon, &lat);
+            if(!m_keepLatLng) {
+                if(!Project::toMercator(&lon, &lat))
+                    continue;
+            }
             c->push_back(geos::geom::Coordinate(lon, lat, DoubleNotANumber));
         }
 

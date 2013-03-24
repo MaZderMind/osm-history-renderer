@@ -27,7 +27,7 @@ private:
         return the_instance;
     }
     
-    void _toMercator(double *lon, double *lat) {
+    bool _toMercator(double *lon, double *lat) {
         double inlon = *lon, inlat = *lat;
         *lon *= DEG_TO_RAD;
         *lat *= DEG_TO_RAD;
@@ -36,12 +36,14 @@ private:
         if(r != 0) {
             std::cerr << "error transforming POINT(" << inlon << " " << inlat << ") from 4326 to 900913)" << std::endl;
             *lon = *lat = 0;
+            return false;
         }
+        return true;
     }
 
 public:
-    static void toMercator(double *lon, double *lat) {
-        Project::instance()._toMercator(lon, lat);
+    static bool toMercator(double *lon, double *lat) {
+        return Project::instance()._toMercator(lon, lat);
     }
 };
 
