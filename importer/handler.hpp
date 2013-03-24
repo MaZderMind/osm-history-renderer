@@ -400,6 +400,9 @@ public:
 
 
     void node(const shared_ptr<Osmium::OSM::Node const>& node) {
+        if(!node->position().defined())
+            return
+
         m_sorttest.test(node);
         m_node_tracker.feed(node);
 
