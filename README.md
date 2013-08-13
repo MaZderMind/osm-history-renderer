@@ -84,7 +84,7 @@ Currently I'm thinking of some ways to improve memory usage. I don't think the v
 I'm not someone who doesn't like to write documentation - I just don't like to write it twice. So once the code runs smoothly and is cleaned up, I'll update and rewrite the documentation. If you're stuck while playing around in this early stage, please just drop me a mail and I'll help you out.
 
 ## Contact
-If you have any questions just ask at osm@mazdermind.de or via the Github messaging system.
+If you have any questions just ask at osm@mazdermind.de.
 
 Peter
 
