@@ -88,6 +88,8 @@ private:
             prev->id() << '\t' <<
             prev->version() << '\t' <<
             (prev->visible() ? 't' : 'f') << '\t' <<
+            prev->uid() << '\t' <<
+            prev->user() << '\t' <<
             valid_from << '\t' <<
             valid_to << '\t' <<
             HStore::format(prev->tags()) << '\t' <<
@@ -144,6 +146,8 @@ private:
             prev->version(),
             0 /*minor*/,
             prev->visible(),
+            prev->uid(),
+            prev->user(),
             prev->timestamp(),
             valid_from,
             valid_to,
@@ -176,6 +180,8 @@ private:
                     prev->version(),
                     minor,
                     true,
+                    prev->uid(),  // should use uid/user infor from node-changwe resulting in this ninor version here
+                    prev->user(), // ...
                     *it,
                     valid_from,
                     valid_to,
@@ -194,6 +200,8 @@ private:
         osm_version_t version,
         osm_version_t minor,
         bool visible,
+        osm_user_id_t user_id,
+        const char* user_name,
         time_t timestamp,
         time_t valid_from,
         time_t valid_to,
@@ -221,6 +229,8 @@ private:
             version << '\t' <<
             minor << '\t' <<
             (visible ? 't' : 'f') << '\t' <<
+            user_id << '\t' <<
+            user_name << '\t' <<
             Timestamp::formatDb(valid_from) << '\t' <<
             Timestamp::formatDb(valid_to) << '\t' <<
             HStore::format(tags) << '\t' <<
