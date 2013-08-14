@@ -12,8 +12,23 @@ protected:
     MinorTimesCalculator(Nodestore *nodestore, DbAdapter *adapter, bool isUpdate): m_nodestore(nodestore), m_adapter(adapter), m_isupdate(isUpdate), m_showerrors(false) {}
 
 public:
-    std::vector<time_t> *forWay(const Osmium::OSM::WayNodeList &nodes, time_t from, time_t to) {
-        std::vector<time_t> *minor_times = new std::vector<time_t>();
+    struct MinorTimesInfo {
+        time_t t;
+        osm_user_id_t uid;
+
+        bool operator<(const MinorTimesInfo& a) const
+        {
+            return t < a.t;
+        }
+
+        bool operator==(const MinorTimesInfo& a) const
+        {
+            return t == a.t;
+        }
+    };
+
+    std::vector<MinorTimesInfo> *forWay(const Osmium::OSM::WayNodeList &nodes, time_t from, time_t to) {
+        std::vector<MinorTimesInfo> *minor_times = new std::vector<MinorTimesInfo>();
 
         for(Osmium::OSM::WayNodeList::const_iterator nodeit = nodes.begin(); nodeit != nodes.end(); nodeit++) {
             osm_object_id_t id = nodeit->ref();
@@ -32,7 +47,8 @@ public:
                  * this results in minor with timestamps and information equal to the original way
                  */
                 if(it->first == from) continue;
-                minor_times->push_back(it->first);
+                MinorTimesInfo info = {it->first, it->second.uid};
+                minor_times->push_back(info);
             }
         }
 
@@ -42,7 +58,7 @@ public:
         return minor_times;
     }
 
-    std::vector<time_t> *forWay(const Osmium::OSM::WayNodeList &nodes, time_t from) {
+    std::vector<MinorTimesInfo> *forWay(const Osmium::OSM::WayNodeList &nodes, time_t from) {
         return forWay(nodes, from, 0);
     }
 };

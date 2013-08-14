@@ -27,6 +27,7 @@ public:
     struct Nodeinfo {
         double lat;
         double lon;
+        osm_user_id_t uid;
     };
 
     /**
@@ -75,6 +76,8 @@ public:
      */
     Nodestore() : nullinfo(), m_storeerrors(false) {}
 
+    virtual ~Nodestore() {}
+
     /**
      * is this nodestore printing debug messages
      */
@@ -106,7 +109,7 @@ public:
     /**
      * record information about a node
      */
-    virtual void record(osm_object_id_t id, osm_version_t v, time_t t, double lon, double lat) = 0;
+    virtual void record(osm_object_id_t id, osm_user_id_t uid, time_t t, double lon, double lat) = 0;
 
     /**
      * retrieve all information about a node, indexed by time

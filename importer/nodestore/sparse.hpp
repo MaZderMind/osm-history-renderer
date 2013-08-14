@@ -11,8 +11,8 @@
  * a 4-byte long marker containing only 0 bytes.
  *
  * The sparsetable mapps the node-ids to those memory positions. To fetch all Versions of a node,
- * the code follows the pointer in the sparsetable to the first version of the node and count
- * check all memory locations until the 0 marker.
+ * the code follows the pointer in the sparsetable to the first version of the node and checks
+ * all memory locations until the 0 marker.
  *
  *   +-----------------------+--------+--------------
  *   | n1v1 n1v2 n1v4 n1v5 0 | n2v1 0 | n3n1 n3n2 ...
@@ -104,9 +104,9 @@ private:
         uint32_t t;
 
         /**
-         * the version is not really required and only required for debugging output
+         * user-id used for assigning usernames and ids to minor ways
          */
-        uint32_t v;
+        osm_user_id_t uid;
 
         /**
          * osmium handles lat/lon either as double (8 bytes) or as int32_t (4 byted). So we choose the smaller one.
@@ -138,7 +138,7 @@ public:
         freeAllMemoryBlocks();
     }
 
-    void record(osm_object_id_t id, osm_version_t v, time_t t, double lon, double lat) {
+    void record(osm_object_id_t id, osm_user_id_t uid, time_t t, double lon, double lat) {
         // remember: sorting is guaranteed nodes, ways relations in ascending id and then version order
         PackedNodeTimeinfo *infoPtr;
 
@@ -182,19 +182,19 @@ public:
 
                 do {
                     if(isPrintingDebugMessages()) {
-                        std::cerr << "    -> copying node id #" << id << "v" << srcPtr->v << " from " << srcPtr << " to " << dstPtr << " (offset " << currentMemoryBlockPosition << ")" << std::endl;
+                        std::cerr << "    -> copying node id #" << id << " from " << srcPtr << " to " << dstPtr << " (offset " << currentMemoryBlockPosition << ")" << std::endl;
                     }
 
                     // can to this in one line (without memcpy)?
                     //memcpy(dstPtr+currentMemoryBlockPosition, srcPtr, sizeof(PackedNodeTimeinfo));
                     dstPtr->t = srcPtr->t;
-                    dstPtr->v = srcPtr->v;
+                    dstPtr->uid = srcPtr->uid;
                     dstPtr->lat = srcPtr->lat;
                     dstPtr->lon = srcPtr->lon;
 
                     currentMemoryBlockPosition += sizeof(PackedNodeTimeinfo);
                     if(currentMemoryBlockPosition >= BLOCK_SIZE) {
-                        std::cerr << "  -> node #" << id << " has " << srcPtr->v << " or more versions, which don't fit into a block size of " << BLOCK_SIZE << ". It's very unlikely that this ever happens, but you could try to increase the BLOCK_SIZE..." << std::endl;
+                        std::cerr << "  -> node #" << id << " has more versions then could fit into a block size of " << BLOCK_SIZE << ". It's very unlikely that this ever happens, but you could try to increase the BLOCK_SIZE..." << std::endl;
                         throw new std::runtime_error("node does not fit into BLOCK_SIZE");
                     }
                     dstPtr = reinterpret_cast< PackedNodeTimeinfo* >(currentMemoryBlock + currentMemoryBlockPosition);
@@ -234,7 +234,7 @@ public:
         }
 
         infoPtr->t = t;
-        infoPtr->v = v;
+        infoPtr->uid = uid;
         infoPtr->lat = Osmium::OSM::double_to_fix(lat);
         infoPtr->lon = Osmium::OSM::double_to_fix(lon);
 
@@ -275,10 +275,11 @@ public:
         Nodeinfo info;
         do {
             if(isPrintingDebugMessages()) {
-                std::cerr << "  -> found node id #" << id << "v" << infoPtr->v << " at memory position " << infoPtr << " (node-offset " << ((char*)infoPtr-(char*)basePtr) << ")" << std::endl;
+                std::cerr << "  -> found node id #" << id << "at memory position " << infoPtr << " (node-offset " << ((char*)infoPtr-(char*)basePtr) << ")" << std::endl;
             }
             info.lat = Osmium::OSM::fix_to_double(infoPtr->lat);
             info.lon = Osmium::OSM::fix_to_double(infoPtr->lon);
+            info.uid = infoPtr->uid;
             tMap->insert(timepair(infoPtr->t, info));
         } while((++infoPtr)->t != 0);
 
@@ -315,12 +316,13 @@ public:
         // find the oldest node-version younger then t
         do {
             if(isPrintingDebugMessages()) {
-                std::cerr << "  -> probing node id #" << id << "v" << infoPtr->v << " at " << infoPtr->t << " (" << Timestamp::format(infoPtr->t) << ") at memory position " << infoPtr << " (node-offset " << ((char*)infoPtr-(char*)basePtr) << ")" << std::endl;
+                std::cerr << "  -> probing node id #" << id << " at " << infoPtr->t << " (" << Timestamp::format(infoPtr->t) << ") at memory position " << infoPtr << " (node-offset " << ((char*)infoPtr-(char*)basePtr) << ")" << std::endl;
             }
 
             if(infoPtr->t <= t && infoPtr->t > infoTime) {
                 info.lat = Osmium::OSM::fix_to_double(infoPtr->lat);
                 info.lon = Osmium::OSM::fix_to_double(infoPtr->lon);
+                info.uid = infoPtr->uid;
                 infoTime = infoPtr->t;
 
                 if(isPrintingDebugMessages()) {
@@ -332,6 +334,7 @@ public:
         if(infoTime == 0) {
             info.lat = Osmium::OSM::fix_to_double(basePtr->lat);
             info.lon = Osmium::OSM::fix_to_double(basePtr->lon);
+            info.uid = basePtr->uid;
             infoTime = basePtr->t;
 
             if(isPrintingDebugMessages()) {

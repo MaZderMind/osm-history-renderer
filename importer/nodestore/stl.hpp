@@ -32,8 +32,8 @@ public:
     NodestoreStl() : Nodestore(), m_nodemap() {}
     ~NodestoreStl() {}
 
-    void record(osm_object_id_t id, osm_version_t v, time_t t, double lon, double lat) {
-        Nodeinfo info = {lat, lon};
+    void record(osm_object_id_t id, osm_user_id_t uid, time_t t, double lon, double lat) {
+        Nodeinfo info = {lat, lon, uid};
 
         nodemap_it it = m_nodemap.find(id);
         timemap_ptr tmap;
@@ -51,7 +51,7 @@ public:
 
         tmap->insert(timepair(t, info));
         if(isPrintingDebugMessages()) {
-            std::cerr << "adding timepair for node #" << id << " v" << v << " at tstamp " << t << std::endl;
+            std::cerr << "adding timepair for node #" << id << " at tstamp " << t << std::endl;
         }
     }
 
