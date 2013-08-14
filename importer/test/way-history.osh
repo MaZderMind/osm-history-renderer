@@ -3,14 +3,26 @@
     <node id="1" lon="10"  lat="20"  version="1" visible="true" timestamp="2010-01-01T10:00:00Z" user="me" uid="1000" changeset="100">
         <tag k="description" v="diese node lag deutlich vor dem weg und war daher nie teil der way-geometrie" />
     </node>
-    <node id="1" lon="11" lat="21" version="2" visible="true" timestamp="2012-01-01T10:00:00Z" user="me" uid="1000" changeset="101" />
+    <node id="1" lon="30" lat="40" version="2" visible="true" timestamp="2012-01-01T10:00:00Z" user="me" uid="1000" changeset="101">
+        <tag k="description" v="diese node ist teil des ursprünglichen weges" />
+    </node>
 
-    <node id="2" lon="-10" lat="-10" version="1" visible="true" timestamp="2012-01-01T10:00:00Z" user="me" uid="1000" changeset="100" />
-    <node id="2" lon="-100" lat="-100" version="2" visible="true" timestamp="2013-01-01T10:00:00Z" user="me" uid="1000" changeset="100" />
-    <node id="2" lon="-120" lat="-120" version="3" visible="true" timestamp="2013-03-01T10:00:00Z" user="me" uid="1000" changeset="100" />
+    <node id="2" lon="-10" lat="-10" version="1" visible="true" timestamp="2012-01-01T10:00:00Z" user="me" uid="1000" changeset="101">
+        <tag k="description" v="diese node ist ebenfalls teil des ursprünglichen weges" />
+    </node>
+    <node id="2" lon="-20" lat="-20" version="2" visible="true" timestamp="2013-01-01T10:00:00Z" user="someone" uid="1001" changeset="102">
+        <tag k="description" v="diese node erzeugt eine minor-version des weges" />
+    </node>
+    <node id="2" lon="-30" lat="-30" version="3" visible="true" timestamp="2013-03-01T10:00:00Z" user="someone changed his name" uid="1001" changeset="103">
+        <tag k="description" v="diese node erzeugt eine weitere minor-version des weges" />
+    </node>
+    <node id="2" lon="-40" lat="-40" version="5" visible="true" timestamp="2013-04-01T10:00:00Z" user="someone else" uid="1002" changeset="104">
+        <tag k="description" v="diese node erzeugt eine dritte minor-version des weges" />
+    </node>
 
     <way id="10" version="1" visible="true" timestamp="2012-01-01T10:00:00Z" user="me" uid="1000" changeset="100">
         <nd ref="1"/>
         <nd ref="2"/>
+        <tag k="description" v="diese way sollte eine haupt und drei minor-versionen haben" />
     </way>
 </osm>
