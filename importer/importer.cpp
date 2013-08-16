@@ -158,5 +158,7 @@ int main(int argc, char *argv[]) {
     // read the input-file to the handler
     Osmium::Input::read(infile, handler);
 
+    delete store;
+
     return 0;
 }

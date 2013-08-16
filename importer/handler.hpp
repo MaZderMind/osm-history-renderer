@@ -51,6 +51,9 @@ private:
     std::string m_dsn, m_prefix;
     bool m_debug, m_storeerrors, m_interior, m_keepLatLng;
 
+    std::map<osm_user_id_t, std::string> m_username_map;
+    typedef std::pair<osm_user_id_t, std::string> username_pair_t;
+
 
     void write_node() {
         const shared_ptr<Osmium::OSM::Node const> cur = m_node_tracker.cur();
@@ -74,7 +77,8 @@ private:
         }
 
         double lon = prev->lon(), lat = prev->lat();
-        m_store->record(prev->id(), prev->version(), prev->timestamp(), lon, lat);
+        m_store->record(prev->id(), prev->uid(), prev->timestamp(), lon, lat);
+        m_username_map.insert( username_pair_t(prev->uid(), std::string(prev->user()) ) );
 
         if(!m_keepLatLng) {
             if(!Project::toMercator(&lon, &lat))
@@ -88,6 +92,8 @@ private:
             prev->id() << '\t' <<
             prev->version() << '\t' <<
             (prev->visible() ? 't' : 'f') << '\t' <<
+            prev->uid() << '\t' <<
+            prev->user() << '\t' <<
             valid_from << '\t' <<
             valid_to << '\t' <<
             HStore::format(prev->tags()) << '\t' <<
@@ -108,7 +114,7 @@ private:
         time_t valid_from = prev->timestamp();
         time_t valid_to = 0;
 
-        std::vector<time_t> *minor_times = NULL;
+        std::vector<MinorTimesCalculator::MinorTimesInfo> *minor_times = NULL;
         if(prev->visible()) {
             if(m_way_tracker.cur_is_same_entity()) {
                 if(prev->timestamp() > cur->timestamp()) {
@@ -125,7 +131,7 @@ private:
 
         // if there are minor ways, it's the timestamp of the first minor way
         if(minor_times && minor_times->size() > 0) {
-            valid_to = *minor_times->begin();
+            valid_to = (*minor_times->begin()).t;
         }
 
         // if this is another version of the same entity, the end-timestamp of the previous entity is the timestamp of the current one
@@ -144,6 +150,8 @@ private:
             prev->version(),
             0 /*minor*/,
             prev->visible(),
+            prev->uid(),
+            prev->user(),
             prev->timestamp(),
             valid_from,
             valid_to,
@@ -154,13 +162,13 @@ private:
         if(minor_times) {
             // write the minor way versions of prev between prev & cur
             int minor = 1;
-            std::vector<time_t>::const_iterator end = minor_times->end();
-            for(std::vector<time_t>::const_iterator it = minor_times->begin(); it != end; it++) {
+            std::vector<MinorTimesCalculator::MinorTimesInfo>::const_iterator end = minor_times->end();
+            for(std::vector<MinorTimesCalculator::MinorTimesInfo>::const_iterator it = minor_times->begin(); it != end; it++) {
                 if(m_debug) {
-                    std::cout << "minor way w" << prev->id() << 'v' << prev->version() << '.' << minor << " at tstamp " << *it << " (" << Timestamp::format(*it) << ")" << std::endl;
+                    std::cout << "minor way w" << prev->id() << 'v' << prev->version() << '.' << minor << " at tstamp " << (*it).t << " (" << Timestamp::format( (*it).t ) << ")" << std::endl;
                 }
 
-                valid_from = *it;
+                valid_from = (*it).t;
                 if(it == end-1) {
                     if(m_way_tracker.cur_is_same_entity()) {
                         valid_to = cur->timestamp();
@@ -168,15 +176,21 @@ private:
                         valid_to = 0;
                     }
                 } else {
-                    valid_to = *(it+1);
+                    valid_to = ( *(it+1) ).t;
                 }
+
+                time_t t = (*it).t;
+                osm_user_id_t uid = (*it).uid;
+                const char* user = m_username_map[ uid ].c_str();
 
                 write_way_to_db(
                     prev->id(),
                     prev->version(),
                     minor,
                     true,
-                    *it,
+                    uid,
+                    user,
+                    t,
                     valid_from,
                     valid_to,
                     prev->tags(),
@@ -194,6 +208,8 @@ private:
         osm_version_t version,
         osm_version_t minor,
         bool visible,
+        osm_user_id_t user_id,
+        const char* user_name,
         time_t timestamp,
         time_t valid_from,
         time_t valid_to,
@@ -221,6 +237,8 @@ private:
             version << '\t' <<
             minor << '\t' <<
             (visible ? 't' : 'f') << '\t' <<
+            user_id << '\t' <<
+            user_name << '\t' <<
             Timestamp::formatDb(valid_from) << '\t' <<
             Timestamp::formatDb(valid_to) << '\t' <<
             HStore::format(tags) << '\t' <<
