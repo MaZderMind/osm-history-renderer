@@ -7,12 +7,7 @@
  * ways and relations.
  */
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <errno.h>
-
 #include <getopt.h>
-#include <unistd.h>
 
 #define OSMIUM_MAIN
 #define OSMIUM_WITH_PBF_INPUT
