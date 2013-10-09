@@ -133,6 +133,7 @@ def main():
     anitype = options.type
     anifile = options.file
     date = options.anistart
+    buildhtml = False
     
     if anitype == "html":
         buildhtml = True
@@ -170,7 +171,7 @@ def main():
     if anitype == "png":
         return
     
-    print "assemmbling animation"
+    print "assembling animation"
     opts = ["-r "+options.fps, "-i", tempdir+"/%010d.png"]
     if anitype == "gif":
         opts.extend(["-pix_fmt rgb24"])
