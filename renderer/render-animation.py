@@ -172,12 +172,12 @@ def main():
         return
     
     print "assembling animation"
-    opts = ["-r "+options.fps, "-i", tempdir+"/%010d.png"]
+    opts = ["-r", options.fps, "-i", tempdir+"/%010d.png"]
     if anitype == "gif":
         opts.extend(["-pix_fmt rgb24"])
     
     elif anitype == "mp4":
-        opts.extend(["-crf", "0"])
+        opts.extend(["-crf", "0", "-r", options.fps])
         # somehow the lossless setting is not applied(?)
     
     opts.append("%s.%s" % (anifile, anitype))
