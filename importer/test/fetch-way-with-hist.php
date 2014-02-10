@@ -7,7 +7,8 @@ $id = (int)$argv[1];
 
 $url = "http://www.openstreetmap.org/api/0.6/way/$id/history";
 fwrite(STDERR, "loading $url\n");
-$wayhist = DOMDocument::load($url);
+$wayhist = new DOMDocument();
+$wayhist->load($url);
 
 $nodeshist = array();
 foreach($wayhist->getElementsByTagName('way') as $way)
@@ -20,7 +21,8 @@ foreach($wayhist->getElementsByTagName('way') as $way)
 
 		$url = "http://www.openstreetmap.org/api/0.6/node/$ref/history";
 		fwrite(STDERR, "loading $url\n");
-		$nodeshist[$ref] = DOMDocument::load($url);
+		$nodeshist[$ref] = new DOMDocument();
+		$nodeshist[$ref]->load($url);
 	}
 }
 
