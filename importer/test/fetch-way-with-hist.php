@@ -51,3 +51,5 @@ foreach($wayhist->getElementsByTagName('way') as $way)
 
 $mergedoc->formatOutput = true;
 echo $mergedoc->saveXML();
+
+?>
