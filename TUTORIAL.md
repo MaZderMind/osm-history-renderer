@@ -164,12 +164,26 @@ The script will calculate the first time a node was placed in that area and rend
 to see the help information explaining various parameters and possibilities.
 
 ## example rendering
-
 [this example](http://mazdermind.github.com/osm-history-renderer/karlsruhe.html) example was created using that command-line:
 
      ./osm-history-renderer/renderer/render-animation.py --style ~/osm-mapnik-style/osm-mapnik2.xml \
          --bbox 8.3122,48.9731,8.5139,49.0744 --anistart=2006-09-01 --type html --file karlsruhe \
          --label "%d.%m.%Y" --label-gravity SouthEast
+
+
+## manual database queries (for statistics and such)
+The [render.py-script](https://github.com/MaZderMind/osm-history-renderer/blob/master/renderer/render.py#L242) creates Database-Views for each slice of time it renders. The View presents to the user (or programm) an osm2pgsql-compatible database layout of osm-objects as they were at thet point in time. You can do this, too, and you can use these views to to statistics and such. The Script generates its views like this:
+
+     CREATE OR REPLACE VIEW timeslice_point AS SELECT id AS osm_id, tags->'name' AS name, tags->'amenity' AS amenity,
+        geom AS way FROM hist_point WHERE '2000-01-01' BETWEEN valid_from AND COALESCE(valid_to, '9999-12-31');
+     
+     CREATE OR REPLACE VIEW timeslice_line AS SELECT id AS osm_id, tags->'name' AS name, tags->'amenity' AS amenity,
+        geom AS way FROM hist_line WHERE '2000-01-01' BETWEEN valid_from AND COALESCE(valid_to, '9999-12-31');
+     
+     CREATE OR REPLACE VIEW timeslice_polygon AS SELECT id AS osm_id, tags->'name' AS name, tags->'amenity' AS amenity,
+        geom AS way FROM hist_polygon WHERE '2000-01-01' BETWEEN valid_from AND COALESCE(valid_to, '9999-12-31');
+
+These Queries generate three views which represent the state of the osm-database (not considering objects removed or changed because of the licence-change) as it was on 2000-01-01. Of couse you can add more tagsas columns to be pulled out of the tags-hstore.
 
 ## like it?
 If you'd like to support this project, Flatter it:
