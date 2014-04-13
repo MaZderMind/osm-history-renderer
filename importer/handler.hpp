@@ -76,10 +76,18 @@ private:
             valid_to = valid_from;
         }
 
+        // some xml-writers write deleted nodes without corrdinates, some write 0/0 as coorinate
+        // default to 0/0 for those input nodes which dosn't carry corrdinates with them
+        double lon = 0, lat = 0;
+        if(prev->position().defined())
+        {
+            lon = prev->lon();
+            lat = prev->lat();
+        }
+
         // if this node is not-deleted (ie visible), write it to the nodestore
         // some osm-writers write invisible nodes with 0/0 coordinates which would screw up rendering, if not ignored in the nodestore
         // see https://github.com/MaZderMind/osm-history-renderer/issues/8
-        double lon = prev->lon(), lat = prev->lat();
         if(prev->visible())
         {
             m_store->record(prev->id(), prev->uid(), prev->timestamp(), lon, lat);
