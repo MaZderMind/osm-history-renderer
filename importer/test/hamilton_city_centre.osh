@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<osm version="0.6" generator="OpenStreetMap server" copyright="OpenStreetMap and contributors" attribution="http://www.openstreetmap.org/copyright" license="http://opendatacommons.org/licenses/odbl/1-0/">
+  <node id="2586215092" changeset="19525440" timestamp="2013-12-19T04:04:25Z" version="1" visible="true" user="Rhonda&#9;Hunt" uid="1847667" lat="43.2389399" lon="-79.8162208">
+    <tag k="addr:city" v="Hamilton"/>
+    <tag k="addr:postcode" v="L8P 1A1"/>
+    <tag k="addr:street" v="2 King St. West, Jackson Square Mall, Plaza Level"/>
+    <tag k="name" v="Everest College - Hamilton City Centre"/>
+    <tag k="url" v="www.everest.ca/hamilton_city_centre"/>
+  </node>
+  <node id="2586215092" changeset="19525462" timestamp="2013-12-19T04:08:01Z" version="2" visible="true" user="Rhonda&#9;Hunt" uid="1847667" lat="43.2389399" lon="-79.8162208">
+    <tag k="addr:city" v="Hamilton"/>
+    <tag k="addr:housenumber" v="Monday  to friday 8:00AM-6:00PM"/>
+    <tag k="addr:postcode" v="L8P 1A1"/>
+    <tag k="addr:street" v="2 King St. West, Jackson Square Mall, Plaza Level"/>
+    <tag k="brand" v="Everest College"/>
+    <tag k="name" v="Everest College - Hamilton City Centre"/>
+    <tag k="url" v="www.everest.ca/hamilton_city_centre"/>
+  </node>
+</osm>
