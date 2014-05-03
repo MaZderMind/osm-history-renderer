@@ -8,6 +8,7 @@
 #define IMPORTER_DBCONNECTION_HPP
 
 #include "dbconn.hpp"
+#include <boost/algorithm/string/replace.hpp>
 
 /**
  * Controls a COPY pipe into the database.
@@ -25,6 +26,12 @@ public:
      */
     ~DbCopyConn() {
         DbConn::close();
+    }
+
+    static std::string escape_string(const std::string &string) {
+        std::string copy = string;
+        boost::replace_all(copy, "\t", "\\t");
+        return copy;
     }
 
     /**

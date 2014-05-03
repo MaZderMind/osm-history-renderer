@@ -93,7 +93,7 @@ private:
             prev->version() << '\t' <<
             (prev->visible() ? 't' : 'f') << '\t' <<
             prev->uid() << '\t' <<
-            prev->user() << '\t' <<
+            DbCopyConn::escape_string(prev->user()) << '\t' <<
             valid_from << '\t' <<
             valid_to << '\t' <<
             HStore::format(prev->tags()) << '\t' <<
@@ -238,7 +238,7 @@ private:
             minor << '\t' <<
             (visible ? 't' : 'f') << '\t' <<
             user_id << '\t' <<
-            user_name << '\t' <<
+            DbCopyConn::escape_string(user_name) << '\t' <<
             Timestamp::formatDb(valid_from) << '\t' <<
             Timestamp::formatDb(valid_to) << '\t' <<
             HStore::format(tags) << '\t' <<
