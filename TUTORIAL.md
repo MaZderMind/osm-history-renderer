@@ -70,11 +70,11 @@ Next one will be the importer and renderer:
 Congratulations. You're now equipped with everything you need.
 
 ## cutting your area
- Most people will want to create their own extract before rendering, so we'll cover this step here, too. First, go to the [hosted extracts](http://osm.personalwerk.de/history-extracts/) and find the extract that fits your desired area best. In this example we'll render the city of Karlsruhe, so we'll download the germany extract. If you can't find a matching extract, download the [full-planet-full-history pbf](http://osm.personalwerk.de/full-experimental-pbf/).
+ Most people will want to create their own extract before rendering, so we'll cover this step here, too. First, go to the [hosted extracts](http://osm.personalwerk.de/full-history-extracts/) and find the extract that fits your desired area best. In this example we'll render the city of Karlsruhe, so we'll download the germany extract. If you can't find a matching extract, download the [full-planet-full-history pbf](http://planet.osm.org/planet/experimental/?C=N;O=A).
  
     mkdir osm-data
     cd osm-data
-    wget http://osm.personalwerk.de/full-history-extracts/history_2012-10-13_13:35/europe/germany.osh.pbf
+    wget http://osm.personalwerk.de/full-history-extracts/latest/europe/germany.osh.pbf
 
 next we'll create a splitter-config-file. Create a file named "splitter.config" which contains a single line:
 
