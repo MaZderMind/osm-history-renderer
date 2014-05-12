@@ -1,0 +1,233 @@
+<?xml version="1.0"?>
+<osm version="0.6" generator="Way-with-fistory-fetcher" copyright="OpenStreetMap and contributors" attribution="http://www.openstreetmap.org/copyright" license="http://opendatacommons.org/licenses/odbl/1-0/">
+  <node id="262809425" changeset="368750" timestamp="2008-05-08T14:10:55Z" version="1" visible="true" user="heckedotz" uid="33909" lat="49.4149992" lon="8.6725514">
+    <tag k="created_by" v="JOSM"/>
+  </node>
+  <node id="262809425" changeset="362915" timestamp="2008-07-01T16:00:15Z" version="2" visible="true" user="aikon" uid="44329" lat="49.4150524" lon="8.6725105">
+    <tag k="created_by" v="JOSM"/>
+  </node>
+  <node id="262809425" changeset="376678" timestamp="2008-07-03T08:08:14Z" version="3" visible="true" user="aikon" uid="44329" lat="49.4150597" lon="8.6725146">
+    <tag k="created_by" v="JOSM"/>
+  </node>
+  <node id="262809425" changeset="464818" timestamp="2008-07-11T23:54:14Z" version="4" visible="false" user="aikon" uid="44329">
+    <tag k="created_by" v="JOSM"/>
+  </node>
+  <node id="262809426" changeset="368750" timestamp="2008-05-08T14:10:55Z" version="1" visible="true" user="heckedotz" uid="33909" lat="49.4149992" lon="8.6714979">
+    <tag k="created_by" v="JOSM"/>
+  </node>
+  <node id="262809426" changeset="227255" timestamp="2008-06-19T14:21:32Z" version="2" visible="true" user="aikon" uid="44329" lat="49.4150033" lon="8.6713841">
+    <tag k="created_by" v="JOSM"/>
+  </node>
+  <node id="262809426" changeset="373327" timestamp="2008-07-02T17:24:00Z" version="3" visible="false" user="aikon" uid="44329">
+    <tag k="created_by" v="JOSM"/>
+  </node>
+  <node id="262809427" changeset="368750" timestamp="2008-05-08T14:10:55Z" version="1" visible="true" user="heckedotz" uid="33909" lat="49.4153021" lon="8.6714321">
+    <tag k="created_by" v="JOSM"/>
+  </node>
+  <node id="262809427" changeset="373327" timestamp="2008-07-02T17:24:00Z" version="2" visible="false" user="aikon" uid="44329">
+    <tag k="created_by" v="JOSM"/>
+  </node>
+  <node id="262809428" changeset="368750" timestamp="2008-05-08T14:10:56Z" version="1" visible="true" user="heckedotz" uid="33909" lat="49.4160263" lon="8.6715374">
+    <tag k="created_by" v="JOSM"/>
+  </node>
+  <node id="262809428" changeset="373327" timestamp="2008-07-02T17:24:00Z" version="2" visible="false" user="aikon" uid="44329">
+    <tag k="created_by" v="JOSM"/>
+  </node>
+  <node id="262809429" changeset="368750" timestamp="2008-05-08T14:10:56Z" version="1" visible="true" user="heckedotz" uid="33909" lat="49.4172641" lon="8.6712214">
+    <tag k="created_by" v="JOSM"/>
+  </node>
+  <node id="262809429" changeset="376678" timestamp="2008-07-03T10:38:20Z" version="2" visible="false" user="aikon" uid="44329">
+    <tag k="created_by" v="JOSM"/>
+  </node>
+  <node id="262809430" changeset="368750" timestamp="2008-05-08T14:10:56Z" version="1" visible="true" user="heckedotz" uid="33909" lat="49.4176854" lon="8.6710766">
+    <tag k="created_by" v="JOSM"/>
+  </node>
+  <node id="262809430" changeset="376678" timestamp="2008-07-03T10:38:20Z" version="2" visible="false" user="aikon" uid="44329">
+    <tag k="created_by" v="JOSM"/>
+  </node>
+  <node id="262809431" changeset="368750" timestamp="2008-05-08T14:10:56Z" version="1" visible="true" user="heckedotz" uid="33909" lat="49.4180673" lon="8.670405">
+    <tag k="created_by" v="JOSM"/>
+  </node>
+  <node id="262809431" changeset="362915" timestamp="2008-07-01T15:48:49Z" version="2" visible="true" user="aikon" uid="44329" lat="49.4180878" lon="8.6703956">
+    <tag k="created_by" v="JOSM"/>
+  </node>
+  <node id="262809431" changeset="376678" timestamp="2008-07-03T08:38:07Z" version="3" visible="true" user="aikon" uid="44329" lat="49.4181576" lon="8.6702858">
+    <tag k="created_by" v="JOSM"/>
+  </node>
+  <node id="262809431" changeset="376678" timestamp="2008-07-03T10:38:20Z" version="4" visible="false" user="aikon" uid="44329">
+    <tag k="created_by" v="JOSM"/>
+  </node>
+  <node id="262809432" changeset="368750" timestamp="2008-05-08T14:10:56Z" version="1" visible="true" user="heckedotz" uid="33909" lat="49.4184755" lon="8.6704445">
+    <tag k="created_by" v="JOSM"/>
+  </node>
+  <node id="262809432" changeset="227255" timestamp="2008-06-19T14:13:33Z" version="2" visible="true" user="aikon" uid="44329" lat="49.4188448" lon="8.6700795">
+    <tag k="created_by" v="JOSM"/>
+  </node>
+  <node id="262809432" changeset="376678" timestamp="2008-07-03T10:38:15Z" version="3" visible="true" user="aikon" uid="44329" lat="49.4188366" lon="8.6702028">
+    <tag k="created_by" v="JOSM"/>
+  </node>
+  <node id="262809432" changeset="263795" timestamp="2008-10-11T08:36:02Z" version="4" visible="true" user="xeen" uid="55945" lat="49.4188366" lon="8.6702028">
+    <tag k="created_by" v="JOSM"/>
+  </node>
+  <node id="262809432" changeset="1700271" timestamp="2009-07-01T13:12:35Z" version="5" visible="true" user="cpunk" uid="130980" lat="49.4187723" lon="8.6702882">
+    <tag k="created_by" v="JOSM"/>
+  </node>
+  <node id="262809432" changeset="8153338" timestamp="2011-05-15T15:42:16Z" version="6" visible="true" user="mahau" uid="160164" lat="49.4187988" lon="8.6702026"/>
+  <node id="262809432" changeset="16463526" timestamp="2013-06-07T23:02:13Z" version="7" visible="true" user="pitscheplatsch" uid="52626" lat="49.4188115" lon="8.6702309"/>
+  <node id="262809433" changeset="368750" timestamp="2008-05-08T14:10:56Z" version="1" visible="true" user="heckedotz" uid="33909" lat="49.4195947" lon="8.6696018">
+    <tag k="created_by" v="JOSM"/>
+  </node>
+  <node id="262809433" changeset="227255" timestamp="2008-06-19T14:13:33Z" version="2" visible="true" user="aikon" uid="44329" lat="49.4194704" lon="8.6697164">
+    <tag k="created_by" v="JOSM"/>
+  </node>
+  <node id="262809433" changeset="341224" timestamp="2008-06-29T23:15:52Z" version="3" visible="true" user="aikon" uid="44329" lat="49.4194664" lon="8.6696857">
+    <tag k="created_by" v="JOSM"/>
+  </node>
+  <node id="262809433" changeset="8153338" timestamp="2011-05-15T15:44:23Z" version="4" visible="true" user="mahau" uid="160164" lat="49.4194637" lon="8.6696593"/>
+  <node id="262809433" changeset="18038716" timestamp="2013-09-26T04:34:47Z" version="5" visible="true" user="changchun_1" uid="131968" lat="49.4194228" lon="8.6696871"/>
+  <node id="262809434" changeset="368750" timestamp="2008-05-08T14:10:57Z" version="1" visible="true" user="heckedotz" uid="33909" lat="49.4196869" lon="8.6694833">
+    <tag k="created_by" v="JOSM"/>
+  </node>
+  <node id="262809434" changeset="230438" timestamp="2008-06-20T17:35:55Z" version="2" visible="false" user="aikon" uid="44329">
+    <tag k="created_by" v="JOSM"/>
+  </node>
+  <node id="262809435" changeset="368750" timestamp="2008-05-08T14:10:57Z" version="1" visible="true" user="heckedotz" uid="33909" lat="49.4197001" lon="8.6687459">
+    <tag k="created_by" v="JOSM"/>
+  </node>
+  <node id="262809435" changeset="230438" timestamp="2008-06-20T17:35:54Z" version="2" visible="false" user="aikon" uid="44329">
+    <tag k="created_by" v="JOSM"/>
+  </node>
+  <node id="262809436" changeset="368750" timestamp="2008-05-08T14:10:57Z" version="1" visible="true" user="heckedotz" uid="33909" lat="49.4215435" lon="8.6682719">
+    <tag k="created_by" v="JOSM"/>
+  </node>
+  <node id="262809436" changeset="137568" timestamp="2008-06-12T07:41:35Z" version="2" visible="false" user="aikon" uid="44329">
+    <tag k="created_by" v="JOSM"/>
+  </node>
+  <node id="262809437" changeset="368750" timestamp="2008-05-08T14:10:57Z" version="1" visible="true" user="heckedotz" uid="33909" lat="49.4244141" lon="8.6662441">
+    <tag k="created_by" v="JOSM"/>
+  </node>
+  <node id="262809437" changeset="8153338" timestamp="2011-05-15T15:42:57Z" version="2" visible="true" user="mahau" uid="160164" lat="49.4244047" lon="8.6662152"/>
+  <node id="262809438" changeset="368750" timestamp="2008-05-08T14:10:57Z" version="1" visible="true" user="heckedotz" uid="33909" lat="49.4351589" lon="8.6587253">
+    <tag k="created_by" v="JOSM"/>
+  </node>
+  <node id="262809438" changeset="8153338" timestamp="2011-05-15T15:45:02Z" version="2" visible="true" user="mahau" uid="160164" lat="49.4351505" lon="8.658731"/>
+  <node id="262809439" changeset="368750" timestamp="2008-05-08T14:10:58Z" version="1" visible="true" user="heckedotz" uid="33909" lat="49.4368312" lon="8.6575271">
+    <tag k="created_by" v="JOSM"/>
+  </node>
+  <node id="262809439" changeset="258128" timestamp="2008-06-22T19:54:47Z" version="2" visible="true" user="aikon" uid="44329" lat="49.4367581" lon="8.6576395">
+    <tag k="created_by" v="JOSM"/>
+  </node>
+  <node id="262809439" changeset="8153338" timestamp="2011-05-15T15:42:04Z" version="3" visible="true" user="mahau" uid="160164" lat="49.4367549" lon="8.6576247"/>
+  <node id="262809441" changeset="368750" timestamp="2008-05-08T14:10:58Z" version="1" visible="true" user="heckedotz" uid="33909" lat="49.4168616" lon="8.6713649">
+    <tag k="created_by" v="JOSM"/>
+  </node>
+  <node id="262809441" changeset="373327" timestamp="2008-07-02T17:24:00Z" version="2" visible="false" user="aikon" uid="44329">
+    <tag k="created_by" v="JOSM"/>
+  </node>
+  <node id="267058028" changeset="532779" timestamp="2008-05-27T01:15:30Z" version="1" visible="true" user="sittich" uid="35331" lat="49.4255623" lon="8.6654237">
+    <tag k="created_by" v="JOSM"/>
+  </node>
+  <node id="267058028" changeset="593745" timestamp="2008-07-25T20:13:58Z" version="2" visible="true" user="aikon" uid="44329" lat="49.4254211" lon="8.6655151">
+    <tag k="created_by" v="JOSM"/>
+  </node>
+  <node id="267058028" changeset="8153338" timestamp="2011-05-15T15:44:52Z" version="3" visible="true" user="mahau" uid="160164" lat="49.4254065" lon="8.6655135"/>
+  <node id="267165375" changeset="341224" timestamp="2008-06-29T23:39:55Z" version="3" visible="true" user="aikon" uid="44329" lat="49.4214228" lon="8.668291">
+    <tag k="created_by" v="JOSM"/>
+  </node>
+  <node id="267165375" changeset="7062939" timestamp="2011-01-23T15:55:18Z" version="4" visible="true" user="mahau" uid="160164" lat="49.4214054" lon="8.6683129"/>
+  <node id="267165375" changeset="8153338" timestamp="2011-05-15T15:42:29Z" version="5" visible="true" user="mahau" uid="160164" lat="49.4213922" lon="8.6683151"/>
+  <node id="271325392" changeset="227255" timestamp="2008-06-19T14:13:25Z" version="1" visible="true" user="aikon" uid="44329" lat="49.4194073" lon="8.6697573"/>
+  <node id="271325392" changeset="376678" timestamp="2008-07-03T10:55:26Z" version="2" visible="true" user="aikon" uid="44329" lat="49.4193438" lon="8.6697703"/>
+  <node id="271325392" changeset="8153338" timestamp="2011-05-15T15:41:51Z" version="3" visible="true" user="mahau" uid="160164" lat="49.419342" lon="8.6697564"/>
+  <node id="271325392" changeset="10578011" timestamp="2012-02-03T18:55:53Z" version="4" visible="true" user="xeen" uid="55945" lat="49.419315" lon="8.6697823"/>
+  <node id="271325392" changeset="15540853" timestamp="2013-03-29T16:39:54Z" version="5" visible="true" user="Carsten G&#xFC;se" uid="60824" lat="49.4193434" lon="8.6697526"/>
+  <way id="24272326" changeset="368750" timestamp="2008-05-08T14:10:58Z" version="1" visible="true" user="heckedotz" uid="33909">
+    <nd ref="262809425"/>
+    <nd ref="262809426"/>
+    <nd ref="262809427"/>
+    <nd ref="262809428"/>
+    <nd ref="262809441"/>
+    <nd ref="262809429"/>
+    <nd ref="262809430"/>
+    <nd ref="262809431"/>
+    <nd ref="262809432"/>
+    <nd ref="262809433"/>
+    <nd ref="262809434"/>
+    <nd ref="262809435"/>
+    <nd ref="262809436"/>
+    <nd ref="262809437"/>
+    <nd ref="262809438"/>
+    <nd ref="262809439"/>
+    <tag k="created_by" v="JOSM"/>
+    <tag k="embankment" v="false"/>
+    <tag k="highway" v="track"/>
+    <tag k="surface" v="paved"/>
+    <tag k="tracktype" v="grade1"/>
+  </way>
+  <way id="24272326" changeset="532779" timestamp="2008-05-27T01:15:33Z" version="2" visible="true" user="sittich" uid="35331">
+    <nd ref="262809425"/>
+    <nd ref="262809426"/>
+    <nd ref="262809427"/>
+    <nd ref="262809428"/>
+    <nd ref="262809441"/>
+    <nd ref="262809429"/>
+    <nd ref="262809430"/>
+    <nd ref="262809431"/>
+    <nd ref="262809432"/>
+    <nd ref="262809433"/>
+    <nd ref="262809434"/>
+    <nd ref="262809435"/>
+    <nd ref="262809436"/>
+    <nd ref="262809437"/>
+    <nd ref="267058028"/>
+    <nd ref="262809438"/>
+    <nd ref="262809439"/>
+    <tag k="created_by" v="JOSM"/>
+    <tag k="embankment" v="false"/>
+    <tag k="highway" v="track"/>
+    <tag k="surface" v="paved"/>
+    <tag k="tracktype" v="grade1"/>
+  </way>
+  <way id="24272326" changeset="137568" timestamp="2008-06-12T07:41:20Z" version="3" visible="true" user="aikon" uid="44329">
+    <nd ref="262809425"/>
+    <nd ref="262809426"/>
+    <nd ref="262809427"/>
+    <nd ref="262809428"/>
+    <nd ref="262809441"/>
+    <nd ref="262809429"/>
+    <nd ref="262809430"/>
+    <nd ref="262809431"/>
+    <nd ref="262809432"/>
+    <nd ref="262809433"/>
+    <nd ref="262809434"/>
+    <nd ref="262809435"/>
+    <nd ref="267165375"/>
+    <nd ref="262809437"/>
+    <nd ref="267058028"/>
+    <nd ref="262809438"/>
+    <nd ref="262809439"/>
+    <tag k="created_by" v="JOSM"/>
+    <tag k="embankment" v="false"/>
+    <tag k="highway" v="track"/>
+    <tag k="surface" v="paved"/>
+    <tag k="tracktype" v="grade1"/>
+  </way>
+  <way id="24272326" changeset="227255" timestamp="2008-06-19T14:13:38Z" version="4" visible="true" user="aikon" uid="44329">
+    <nd ref="262809425"/>
+    <nd ref="262809426"/>
+    <nd ref="262809427"/>
+    <nd ref="262809428"/>
+    <nd ref="262809441"/>
+    <nd ref="262809429"/>
+    <nd ref="262809430"/>
+    <nd ref="262809431"/>
+    <nd ref="262809432"/>
+    <nd ref="271325392"/>
+    <nd ref="262809433"/>
+    <tag k="bicycle" v="yes"/>
+    <tag k="embankment" v="false"/>
+    <tag k="highway" v="footway"/>
+    <tag k="surface" v="paved"/>
+  </way>
+  <way id="24272326" changeset="230438" timestamp="2008-06-20T17:35:54Z" version="5" visible="false" user="aikon" uid="44329"/>
+</osm>
