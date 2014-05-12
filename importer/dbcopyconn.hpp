@@ -36,6 +36,7 @@ public:
 
     static std::string escape_string(const std::string &string) {
         std::string copy = string;
+        boost::replace_all(copy, "\\", "\\\\");
         boost::replace_all(copy, "\t", "\\t");
         return copy;
     }
