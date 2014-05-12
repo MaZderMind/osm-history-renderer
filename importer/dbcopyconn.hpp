@@ -7,8 +7,14 @@
 #ifndef IMPORTER_DBCONNECTION_HPP
 #define IMPORTER_DBCONNECTION_HPP
 
-#include "dbconn.hpp"
+#include <libpq-fe.h>
+#include <fstream>
+#include <stdexcept>
+#include <sstream>
+
 #include <boost/algorithm/string/replace.hpp>
+
+#include "dbconn.hpp"
 
 /**
  * Controls a COPY pipe into the database.

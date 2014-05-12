@@ -6,6 +6,8 @@
 #ifndef IMPORTER_DBCONN_HPP
 #define IMPORTER_DBCONN_HPP
 
+#include <libpq-fe.h>
+
 /**
  * Controls a connection to the database
  */
