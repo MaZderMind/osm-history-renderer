@@ -111,10 +111,15 @@ private:
             DbCopyConn::escape_string(prev->user()) << '\t' <<
             valid_from << '\t' <<
             valid_to << '\t' <<
-            HStore::format(prev->tags()) << '\t' <<
-            "SRID=900913;POINT(" << lon << ' ' << lat << ')' <<
-            '\n';
+            HStore::format(prev->tags()) << '\t';
 
+        if(prev->visible()) {
+            line << "SRID=900913;POINT(" << lon << ' ' << lat << ')';
+        } else {
+            line << "\\N";
+        }
+
+        line << '\n';
         m_point.copy(line.str());
     }
 
