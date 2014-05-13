@@ -25,6 +25,11 @@ private:
     /**
      * pointer to the current entity
      */
+    shared_ptr<TObject const> m_prev;
+
+    /**
+     * pointer to the current entity
+     */
     shared_ptr<TObject const> m_cur;
 
     /**
@@ -33,6 +38,13 @@ private:
     shared_ptr<TObject const> m_next;
 
 public:
+    /**
+     * get the pointer to the previous entity
+     */
+    const shared_ptr<TObject const> prev() {
+        return m_prev;
+    }
+
     /**
      * get the pointer to the current entity
      */
@@ -48,6 +60,13 @@ public:
     }
 
     /**
+     * returns if the tracker currently tracks a previous entity
+     */
+    bool has_prev() {
+        return m_prev;
+    }
+
+    /**
      * returns if the tracker currently tracks a current entity
      */
     bool has_cur() {
@@ -59,6 +78,14 @@ public:
      */
     bool has_next() {
         return m_next;
+    }
+
+    /**
+     * returns if the tracker currently tracks a "current" and a "previous"
+     * entity with the same id
+     */
+    bool prev_is_same_entity() {
+        return has_cur() && has_prev() && (cur()->id() == prev()->id());
     }
 
     /**
@@ -82,9 +109,11 @@ public:
     }
 
     /**
-     * make the next entity the current and delete the next entity
+     * copy the current entity to previous and the next entity to current.
+     * clear the next entity pointer
      */
     void swap() {
+        m_prev = m_cur;
         m_cur = m_next;
         m_next.reset();
     }
