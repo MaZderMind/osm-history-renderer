@@ -11,9 +11,15 @@
         <tag k="description" v="diese node ist ebenfalls teil des ursprünglichen weges" />
     </node>
 
+    <node id="3" lon="-10" lat="-30" version="1" visible="true" timestamp="2012-01-01T10:00:00Z" user="me" uid="1000" changeset="101">
+        <tag k="description" v="diese node ist ebenfalls teil des ursprünglichen weges" />
+    </node>
+
     <way id="10" version="1" visible="true" timestamp="2012-01-01T10:00:00Z" user="me" uid="1000" changeset="100">
         <nd ref="1"/>
         <nd ref="2"/>
+        <nd ref="3"/>
+        <nd ref="1"/>
         <tag k="description" v="diese way sollte eine haupt und eine minor-versionen haben und ein polygon sein" />
         <tag k="area" v="yes" />
     </way>
