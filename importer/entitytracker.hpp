@@ -1,19 +1,22 @@
 /**
- * The handler always needs to know what the previous node/way/relation
- * in the file looked like to answer questions like "what is the
- * valid_from date of the current entity" or "is this the last version
- * of that entity". The EntityTracker takes care of keeping the
- * current and the previous entity, free them as required and do basic
- * comparations.
+ * The handler always needs to know what the next node/way/relation
+ * in the file lookes like to answer questions like "what is the
+ * valid_to date of the current entity" or "is this the last version
+ * of that entity". It also sometimes needs to know hot the previous
+ * entity looks like to answer questions like "was this an area or a line
+ * before it got deleted". The EntityTracker takes care of keeping the
+ * previous, current and next entity, frees them as required and does
+ * basic comparations.
  */
 
 #ifndef IMPORTER_ENTITYTRACKER_HPP
 #define IMPORTER_ENTITYTRACKER_HPP
 
 /**
- * Tracks a previous and a current entity, provides a method to make the
- * current entity the previous one and manages freeing of the entities.
- * It is templated to allow nodes, ways and relations as child objects.
+ * Tracks the previous, the current and the next entity, provides
+ * a method to shift the entities into the next state and manages
+ * freeing of the entities. It is templated to allow nodes, ways
+ * and relations as child objects.
  */
 template <class TObject>
 class EntityTracker {
