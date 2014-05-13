@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<osm version="0.6" generator="My Brain">
+    <node id="1" lon="10"  lat="20"  version="1" visible="true" timestamp="2010-01-01T10:00:00Z" user="me" uid="1000" changeset="100">
+        <tag k="description" v="diese node lag deutlich vor dem weg und war daher nie teil der way-geometrie" />
+    </node>
+    <node id="1" version="2" visible="false" timestamp="2012-01-02T10:00:00Z" user="me" uid="1000" changeset="101" />
+</osm>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<osm version="0.6" generator="OpenStreetMap server" copyright="OpenStreetMap and contributors" attribution="http://www.openstreetmap.org/copyright" license="http://opendatacommons.org/licenses/odbl/1-0/">
+  <node id="1" changeset="9257" timestamp="2006-05-10T18:27:47Z" version="1" visible="false" user="τ12" uid="1298"/>
+  <node id="1" changeset="524633" timestamp="2009-04-14T15:42:57Z" version="3" visible="true" user="woodpeck" uid="5164" lat="2.0" lon="2.0"/>
+  <node id="1" changeset="1767082" timestamp="2009-07-07T22:44:41Z" version="4" visible="false" user="Ldp" uid="48796"/>
+  <node id="1" changeset="7920634" timestamp="2011-04-20T21:37:13Z" version="5" visible="true" user="max60watt" uid="134914" lat="51.249182" lon="9.4316934"/>
+  <node id="1" changeset="9035746" timestamp="2011-08-16T11:26:47Z" version="6" visible="true" user="elllit" uid="24852" lat="51.2492152" lon="9.4317166"/>
+  <node id="1" changeset="11784649" timestamp="2012-06-03T10:38:45Z" version="7" visible="false" user="dagasiv" uid="664402"/>
+  <node id="1" changeset="11987778" timestamp="2012-06-23T11:18:29Z" version="8" visible="true" user="dagasiv" uid="664402" lat="51.2492152" lon="9.4317166"/>
+  <node id="1" changeset="12315938" timestamp="2012-07-19T09:23:33Z" version="9" visible="true" user="esinfo" uid="742649" lat="51.249214" lon="9.431717">
+    <tag k="Prova" v="Prova"/>
+    <tag k="Test" v="Test"/>
+  </node>
+  <node id="1" changeset="13107839" timestamp="2012-09-14T14:12:55Z" version="10" visible="false" user="HHCacher" uid="190389"/>
+  <node id="1" changeset="14904762" timestamp="2013-02-04T02:26:57Z" version="11" visible="true" user="jlmw78" uid="800109" lat="-31.638757" lon="-60.693853">
+    <tag k="addr:housename" v="3390 Restó"/>
+    <tag k="addr:housenumber" v="3390"/>
+    <tag k="addr:postcode" v="3000"/>
+    <tag k="addr:street" v="Sarmiento"/>
+    <tag k="amenity" v="restaurant"/>
+    <tag k="name" v="3390 Restó"/>
+  </node>
+  <node id="1" changeset="19874312" timestamp="2014-01-08T00:33:48Z" version="12" visible="false" user="andrewsh" uid="71631"/>
+</osm>

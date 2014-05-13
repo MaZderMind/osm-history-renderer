@@ -1,26 +1,29 @@
 /**
- * The handler always needs to know what the previous node/way/relation
- * in the file looked like to answer questions like "what is the
- * valid_from date of the current entity" or "is this the last version
- * of that entity". The EntityTracker takes care of keeping the
- * current and the previous entity, free them as required and do basic
- * comparations.
+ * The handler always needs to know what the next node/way/relation
+ * in the file lookes like to answer questions like "what is the
+ * valid_to date of the current entity" or "is this the last version
+ * of that entity". It also sometimes needs to know hot the previous
+ * entity looks like to answer questions like "was this an area or a line
+ * before it got deleted". The EntityTracker takes care of keeping the
+ * previous, current and next entity, frees them as required and does
+ * basic comparations.
  */
 
 #ifndef IMPORTER_ENTITYTRACKER_HPP
 #define IMPORTER_ENTITYTRACKER_HPP
 
 /**
- * Tracks a previous and a current entity, provides a method to make the
- * current entity the previous one and manages freeing of the entities.
- * It is templated to allow nodes, ways and relations as child objects.
+ * Tracks the previous, the current and the next entity, provides
+ * a method to shift the entities into the next state and manages
+ * freeing of the entities. It is templated to allow nodes, ways
+ * and relations as child objects.
  */
 template <class TObject>
 class EntityTracker {
 
 private:
     /**
-     * pointer to the previous entity
+     * pointer to the current entity
      */
     shared_ptr<TObject const> m_prev;
 
@@ -28,6 +31,11 @@ private:
      * pointer to the current entity
      */
     shared_ptr<TObject const> m_cur;
+
+    /**
+     * pointer to the next entity
+     */
+    shared_ptr<TObject const> m_next;
 
 public:
     /**
@@ -45,6 +53,13 @@ public:
     }
 
     /**
+     * get the pointer to the next entity
+     */
+    const shared_ptr<TObject const> next() {
+        return m_next;
+    }
+
+    /**
      * returns if the tracker currently tracks a previous entity
      */
     bool has_prev() {
@@ -59,31 +74,48 @@ public:
     }
 
     /**
-     * returns if the tracker currently tracks a previous and a current
-     * entity with the same id
+     * returns if the tracker currently tracks a "next" entity
      */
-    bool cur_is_same_entity() {
-        return has_prev() && has_cur() && (prev()->id() == cur()->id());
+    bool has_next() {
+        return m_next;
     }
 
     /**
-     * feed in a new object as the current one
+     * returns if the tracker currently tracks a "current" and a "previous"
+     * entity with the same id
+     */
+    bool prev_is_same_entity() {
+        return has_cur() && has_prev() && (cur()->id() == prev()->id());
+    }
+
+    /**
+     * returns if the tracker currently tracks a "current" and a "next"
+     * entity with the same id
+     */
+    bool next_is_same_entity() {
+        return has_cur() && has_next() && (cur()->id() == next()->id());
+    }
+
+    /**
+     * feed in a new object as the next one
      *
-     * if a current one still exists, the program will abort with an
-     * assertation error, because the current enity needs to be swapped
+     * if a next one still exists, the program will abort with an
+     * assertation error, because the next enity needs to be swapped
      * away using the swap-method below, before feeding in a new one.
      */
     void feed(const shared_ptr<TObject const> obj) {
-        assert(!m_cur);
-        m_cur = obj;
+        assert(!m_next);
+        m_next = obj;
     }
 
     /**
-     * make the current entity the previous and delete the previous entity
+     * copy the current entity to previous and the next entity to current.
+     * clear the next entity pointer
      */
     void swap() {
         m_prev = m_cur;
-        m_cur.reset();
+        m_cur = m_next;
+        m_next.reset();
     }
 };
 
