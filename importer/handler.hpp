@@ -142,9 +142,11 @@ private:
                         std::cerr << "inverse timestamp-order in way " << cur->id() << " between v" << cur->version() << " and v" << next->version() << ", skipping minor ways" << std::endl;
                     }
                 } else {
+                    // collect minor ways between current and next
                     minor_times = m_mtimes.forWay(cur->nodes(), cur->timestamp(), next->timestamp());
                 }
             } else {
+                // collect minor ways between current and the end
                 minor_times = m_mtimes.forWay(cur->nodes(), cur->timestamp());
             }
         }
@@ -240,13 +242,16 @@ private:
             std::cerr << "forging geometry of way " << id << 'v' << version << '.' << minor << " at tstamp " << timestamp << std::endl;
         }
 
-        bool looksLikePolygon = PolygonIdentifyer::looksLikePolygon(tags);
-        geos::geom::Geometry* geom = m_geom.forWay(nodes, timestamp, looksLikePolygon);
-        if(!geom) {
-            if(m_storeerrors) {
-                std::cerr << "no valid geometry for way " << id << 'v' << version << '.' << minor << " at tstamp " << timestamp << std::endl;
+        geos::geom::Geometry* geom = NULL;
+        if(visible) {
+            bool looksLikePolygon = PolygonIdentifyer::looksLikePolygon(tags);
+            geom = m_geom.forWay(nodes, timestamp, looksLikePolygon);
+            if(!geom) {
+                if(m_debug) {
+                    std::cerr << "no valid geometry for way " << id << 'v' << version << '.' << minor << " at tstamp " << timestamp << std::endl;
+                }
+                return;
             }
-            return;
         }
 
         // SPEED: sum up 64k of data, before sending them to the database
@@ -264,7 +269,35 @@ private:
             HStore::format(tags) << '\t' <<
             ZOrderCalculator::calculateZOrder(tags) << '\t';
 
-        if(geom->getGeometryTypeId() == geos::geom::GEOS_POLYGON) {
+        if(geom == NULL) {
+            // this entity is deleted, we have no nd-refs and no tags from it to devide whether it once was a line or an areas
+            if(m_way_tracker.prev_is_same_entity()) {
+                // if we have a previous version of this way (which we should have or this way has already been deleted in its initial version)
+                // we can use the previous version to decide between line and area
+
+                const shared_ptr<Osmium::OSM::Way const> prev = m_way_tracker.prev();
+
+                bool looksLikePolygon = PolygonIdentifyer::looksLikePolygon(prev->tags());
+                geom = m_geom.forWay(prev->nodes(), prev->timestamp(), looksLikePolygon);
+
+                if(!geom) {
+                    if(m_debug) {
+                        std::cerr << "no valid geometry for way of " << prev->id() << 'v' << prev->version() << " which was consulted to determine if the deleted way " <<
+                            id << "v" << version << " once was an area or a line. skipping that double-deleted way." << std::endl;
+                    }
+                    return;
+                }
+
+                if(geom->getGeometryTypeId() == geos::geom::GEOS_POLYGON) {
+                    line << /*area*/ "0\t" << /* geom */ "\\N\t" << /* center */ "\\N\n";
+                    m_polygon.copy(line.str());
+                } else {
+                    line << /* geom */ "\\N\n";
+                    m_line.copy(line.str());
+                }
+            }
+        }
+        else if(geom->getGeometryTypeId() == geos::geom::GEOS_POLYGON) {
             const geos::geom::Polygon* poly = dynamic_cast<const geos::geom::Polygon*>(geom);
 
             // a polygon, polygon-meta to table
