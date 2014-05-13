@@ -56,44 +56,44 @@ private:
 
 
     void write_node() {
+        const shared_ptr<Osmium::OSM::Node const> next = m_node_tracker.next();
         const shared_ptr<Osmium::OSM::Node const> cur = m_node_tracker.cur();
-        const shared_ptr<Osmium::OSM::Node const> prev = m_node_tracker.prev();
 
         if(m_debug) {
-            std::cout << "node n" << prev->id() << 'v' << prev->version() << " at tstamp " << prev->timestamp() << " (" << Timestamp::format(prev->timestamp()) << ")" << std::endl;
+            std::cout << "node n" << cur->id() << 'v' << cur->version() << " at tstamp " << cur->timestamp() << " (" << Timestamp::format(cur->timestamp()) << ")" << std::endl;
         }
 
-        std::string valid_from(prev->timestamp_as_string());
+        std::string valid_from(cur->timestamp_as_string());
         std::string valid_to("\\N");
 
-        // if this is another version of the same entity, the end-timestamp of the previous entity is the timestamp of the current one
-        if(m_node_tracker.cur_is_same_entity()) {
-            valid_to = cur->timestamp_as_string();
+        // if this is another version of the same entity, the end-timestamp of the current entity is the timestamp of the next one
+        if(m_node_tracker.next_is_same_entity()) {
+            valid_to = next->timestamp_as_string();
         }
 
-        // if the prev version is deleted, it's end-timestamp is the same as its creation-timestamp
-        else if(!m_node_tracker.prev()->visible()) {
+        // if the current version is deleted, it's end-timestamp is the same as its creation-timestamp
+        else if(!cur->visible()) {
             valid_to = valid_from;
         }
 
         // some xml-writers write deleted nodes without corrdinates, some write 0/0 as coorinate
         // default to 0/0 for those input nodes which dosn't carry corrdinates with them
         double lon = 0, lat = 0;
-        if(prev->position().defined())
+        if(cur->position().defined())
         {
-            lon = prev->lon();
-            lat = prev->lat();
+            lon = cur->lon();
+            lat = cur->lat();
         }
 
         // if this node is not-deleted (ie visible), write it to the nodestore
         // some osm-writers write invisible nodes with 0/0 coordinates which would screw up rendering, if not ignored in the nodestore
         // see https://github.com/MaZderMind/osm-history-renderer/issues/8
-        if(prev->visible())
+        if(cur->visible())
         {
-            m_store->record(prev->id(), prev->uid(), prev->timestamp(), lon, lat);
+            m_store->record(cur->id(), cur->uid(), cur->timestamp(), lon, lat);
         }
 
-        m_username_map.insert( username_pair_t(prev->uid(), std::string(prev->user()) ) );
+        m_username_map.insert( username_pair_t(cur->uid(), std::string(cur->user()) ) );
 
         if(!m_keepLatLng) {
             if(!Project::toMercator(&lon, &lat))
@@ -104,16 +104,16 @@ private:
         // SPEED: instead of stringstream, which does dynamic allocation, use a fixed buffer and snprintf
         std::stringstream line;
         line << std::setprecision(8) <<
-            prev->id() << '\t' <<
-            prev->version() << '\t' <<
-            (prev->visible() ? 't' : 'f') << '\t' <<
-            prev->uid() << '\t' <<
-            DbCopyConn::escape_string(prev->user()) << '\t' <<
+            cur->id() << '\t' <<
+            cur->version() << '\t' <<
+            (cur->visible() ? 't' : 'f') << '\t' <<
+            cur->uid() << '\t' <<
+            DbCopyConn::escape_string(cur->user()) << '\t' <<
             valid_from << '\t' <<
             valid_to << '\t' <<
-            HStore::format(prev->tags()) << '\t';
+            HStore::format(cur->tags()) << '\t';
 
-        if(prev->visible()) {
+        if(cur->visible()) {
             line << "SRID=900913;POINT(" << lon << ' ' << lat << ')';
         } else {
             line << "\\N";
@@ -124,28 +124,28 @@ private:
     }
 
     void write_way() {
+        const shared_ptr<Osmium::OSM::Way const> next = m_way_tracker.next();
         const shared_ptr<Osmium::OSM::Way const> cur = m_way_tracker.cur();
-        const shared_ptr<Osmium::OSM::Way const> prev = m_way_tracker.prev();
 
         if(m_debug) {
-            std::cout << "way w" << prev->id() << 'v' << prev->version() << " at tstamp " << prev->timestamp() << " (" << Timestamp::format(prev->timestamp()) << ")" << std::endl;
+            std::cout << "way w" << cur->id() << 'v' << cur->version() << " at tstamp " << cur->timestamp() << " (" << Timestamp::format(cur->timestamp()) << ")" << std::endl;
         }
 
-        time_t valid_from = prev->timestamp();
+        time_t valid_from = cur->timestamp();
         time_t valid_to = 0;
 
         std::vector<MinorTimesCalculator::MinorTimesInfo> *minor_times = NULL;
-        if(prev->visible()) {
-            if(m_way_tracker.cur_is_same_entity()) {
-                if(prev->timestamp() > cur->timestamp()) {
+        if(cur->visible()) {
+            if(m_way_tracker.next_is_same_entity()) {
+                if(cur->timestamp() > next->timestamp()) {
                     if(m_storeerrors) {
-                        std::cerr << "inverse timestamp-order in way " << prev->id() << " between v" << prev->version() << " and v" << cur->version() << ", skipping minor ways" << std::endl;
+                        std::cerr << "inverse timestamp-order in way " << cur->id() << " between v" << cur->version() << " and v" << next->version() << ", skipping minor ways" << std::endl;
                     }
                 } else {
-                    minor_times = m_mtimes.forWay(prev->nodes(), prev->timestamp(), cur->timestamp());
+                    minor_times = m_mtimes.forWay(cur->nodes(), cur->timestamp(), next->timestamp());
                 }
             } else {
-                minor_times = m_mtimes.forWay(prev->nodes(), prev->timestamp());
+                minor_times = m_mtimes.forWay(cur->nodes(), cur->timestamp());
             }
         }
 
@@ -154,44 +154,44 @@ private:
             valid_to = (*minor_times->begin()).t;
         }
 
-        // if this is another version of the same entity, the end-timestamp of the previous entity is the timestamp of the current one
-        else if(m_way_tracker.cur_is_same_entity()) {
-            valid_to = cur->timestamp();
+        // if this is another version of the same entity, the end-timestamp of the current entity is the timestamp of the next one
+        else if(m_way_tracker.next_is_same_entity()) {
+            valid_to = next->timestamp();
         }
 
-        // if the prev version is deleted, it's end-timestamp is the same as its creation-timestamp
-        else if(!prev->visible()) {
+        // if the current version is deleted, it's end-timestamp is the same as its creation-timestamp
+        else if(!cur->visible()) {
             valid_to = valid_from;
         }
 
         // write the main way version
         write_way_to_db(
-            prev->id(),
-            prev->version(),
+            cur->id(),
+            cur->version(),
             0 /*minor*/,
-            prev->visible(),
-            prev->uid(),
-            prev->user(),
-            prev->timestamp(),
+            cur->visible(),
+            cur->uid(),
+            cur->user(),
+            cur->timestamp(),
             valid_from,
             valid_to,
-            prev->tags(),
-            prev->nodes()
+            cur->tags(),
+            cur->nodes()
         );
 
         if(minor_times) {
-            // write the minor way versions of prev between prev & cur
+            // write the minor way versions of current between current & next
             int minor = 1;
             std::vector<MinorTimesCalculator::MinorTimesInfo>::const_iterator end = minor_times->end();
             for(std::vector<MinorTimesCalculator::MinorTimesInfo>::const_iterator it = minor_times->begin(); it != end; it++) {
                 if(m_debug) {
-                    std::cout << "minor way w" << prev->id() << 'v' << prev->version() << '.' << minor << " at tstamp " << (*it).t << " (" << Timestamp::format( (*it).t ) << ")" << std::endl;
+                    std::cout << "minor way w" << cur->id() << 'v' << cur->version() << '.' << minor << " at tstamp " << (*it).t << " (" << Timestamp::format( (*it).t ) << ")" << std::endl;
                 }
 
                 valid_from = (*it).t;
                 if(it == end-1) {
-                    if(m_way_tracker.cur_is_same_entity()) {
-                        valid_to = cur->timestamp();
+                    if(m_way_tracker.next_is_same_entity()) {
+                        valid_to = next->timestamp();
                     } else {
                         valid_to = 0;
                     }
@@ -204,8 +204,8 @@ private:
                 const char* user = m_username_map[ uid ].c_str();
 
                 write_way_to_db(
-                    prev->id(),
-                    prev->version(),
+                    cur->id(),
+                    cur->version(),
                     minor,
                     true,
                     uid,
@@ -213,8 +213,8 @@ private:
                     t,
                     valid_from,
                     valid_to,
-                    prev->tags(),
-                    prev->nodes()
+                    cur->tags(),
+                    cur->nodes()
                 );
 
                 minor++;
@@ -442,7 +442,7 @@ public:
         m_node_tracker.feed(node);
 
         // we're always writing the one-off node
-        if(m_node_tracker.has_prev()) {
+        if(m_node_tracker.has_cur()) {
             write_node();
         }
 
@@ -451,7 +451,7 @@ public:
     }
 
     void after_nodes() {
-        if(m_node_tracker.has_prev()) {
+        if(m_node_tracker.has_cur()) {
             write_node();
         }
 
@@ -463,7 +463,7 @@ public:
         m_way_tracker.feed(way);
 
         // we're always writing the one-off way
-        if(m_way_tracker.has_prev()) {
+        if(m_way_tracker.has_cur()) {
             write_way();
         }
 
@@ -472,7 +472,7 @@ public:
     }
 
     void after_ways() {
-        if(m_way_tracker.has_prev()) {
+        if(m_way_tracker.has_cur()) {
             write_way();
         }
 
