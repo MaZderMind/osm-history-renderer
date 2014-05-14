@@ -40,6 +40,7 @@ int main(int argc, char *argv[]) {
         {"store-errors",        no_argument, 0, 'e'},
         {"interior",            no_argument, 0, 'i'},
         {"latlng",              no_argument, 0, 'l'},
+        {"latlon",              no_argument, 0, 'l'},
         {"nodestore",           required_argument, 0, 'S'},
         {"dsn",                 required_argument, 0, 'D'},
         {"prefix",              required_argument, 0, 'P'},
