@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<osm version="0.6" generator="My Brain">
+    <node id="1" lon="30" lat="40" version="2" visible="true" timestamp="2012-01-01T10:00:00Z" user="me" uid="1000" changeset="101">
+        <tag k="description" v="diese node ist teil des ursprünglichen weges" />
+    </node>
+
+    <node id="2" lon="-10" lat="-10" version="1" visible="true" timestamp="2012-01-01T10:00:00Z" user="me" uid="1000" changeset="101">
+        <tag k="description" v="diese node ist ebenfalls teil des ursprünglichen weges" />
+    </node>
+    <node id="2" lon="-20" lat="-20" version="2" visible="true" timestamp="2013-01-01T10:00:00Z" user="someone" uid="1001" changeset="102">
+        <tag k="description" v="diese node erzeugt eine minor-version des weges" />
+    </node>
+
+    <node id="3" lon="-20" lat="-20" version="1" visible="true" timestamp="2013-01-01T10:00:00Z" user="me" uid="1000" changeset="101">
+        <tag k="description" v="diese node ist auch teil des ursprünglichen weges" />
+    </node>
+
+    <way id="10" version="1" visible="true" timestamp="2012-01-01T10:00:00Z" user="me" uid="1000" changeset="100">
+        <nd ref="1"/>
+        <nd ref="2"/>
+        <nd ref="3"/>
+        <nd ref="1"/>
+        <tag k="description" v="diese way sollte eine haupt und eine minor-versionen haben" />
+    </way>
+    <way id="10" version="2" visible="true" timestamp="2014-01-01T10:00:00Z" user="me" uid="1000" changeset="100">
+        <nd ref="1"/>
+        <nd ref="2"/>
+        <nd ref="3"/>
+        <nd ref="1"/>
+        <tag k="description" v="diese way sollte eine haupt und eine minor-versionen haben und eine area sein" />
+        <tag k="area" v="yes" />
+    </way>
+    <way id="10" version="3" visible="true" timestamp="2015-01-01T10:00:00Z" user="me" uid="1000" changeset="100">
+        <nd ref="1"/>
+        <nd ref="2"/>
+        <nd ref="3"/>
+        <nd ref="1"/>
+        <tag k="description" v="diese way sollte eine haupt und eine minor-versionen haben und keine area mehr sein" />
+    </way>
+</osm>
