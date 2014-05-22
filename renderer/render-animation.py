@@ -121,11 +121,15 @@ def main():
     
     options.anistep = relativedelta(**args)
     
-    print "rendering animation from %s to %s in %s steps from bbox %s in style %s to %s in size %ux%u\n" % (options.anistart, options.aniend, options.anistep, options.bbox, options.style, options.file, options.size[0], options.size[1])
+    print "rendering animation from %s to %s in %s steps from bbox %s in style %s to '%s' in size %ux%u\n" % (options.anistart, options.aniend, options.anistep, options.bbox, options.style, options.file, options.size[0], options.size[1])
     
     anifile = options.file
     date = options.anistart
     buildhtml = False
+    
+    if os.path.exists(anifile) or os.path.exists(anifile+".html"):
+        print "the output-folder %s or the output-file output-folder %s exists. remove or rename both of them or give another target-name with the --file option" % (anifile, anifile+".html")
+        sys.exit(0)
     
     os.mkdir(anifile)
     
