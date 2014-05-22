@@ -81,6 +81,7 @@ The importer currently stores lat and lon for each and every node, indexed by no
  3. Make it fast
 
 Currently I'm thinking of some ways to improve memory usage. I don't think the version is really needed so we may save 4 bytes per node. Lat/Lon is stored as double which could be shrinked using a fixed-length storage and varints. I'm thinking about using protobuffers or sqlite as node-stores but some benchmarks would be needed. If you have another idea, don't hesitate to drop me an email.
+Take a look at the [Wiki-Page](https://wiki.openstreetmap.org/wiki/OSM_History_Renderer) for some notes about memory usage of different imports.
 
 ## Documentation
 I'm not someone who doesn't like to write documentation - I just don't like to write it twice. So once the code runs smoothly and is cleaned up, I'll update and rewrite the documentation. If you're stuck while playing around in this early stage, please just drop me a mail and I'll help you out.

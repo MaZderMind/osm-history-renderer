@@ -198,3 +198,4 @@ If you'd like to support this project, Flatter it:
 ## system requirements
 This tutorial was tested on a Debian 6.0.3 i386 box with 1 GB of RAM and a single Core. Rendering was not really fast but it worked.
 Most memory was used while splitting the germany.osh.pbf. It did fill up the whole RAM plus 1/2 of the SWAP but it ran pretty smoothly.
+Take a look at the [Wiki-Page](https://wiki.openstreetmap.org/wiki/OSM_History_Renderer) for some notes about memory usage of different imports.
