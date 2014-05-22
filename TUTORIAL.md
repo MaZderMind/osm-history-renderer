@@ -49,7 +49,7 @@ Second you'll need osmium:
     cd osmium
     make doc
     sudo make install
-    cd ../..
+    cd ..
 
 Next, get and build the splitter:
 
