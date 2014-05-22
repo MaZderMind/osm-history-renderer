@@ -167,9 +167,8 @@ to see the help information explaining various parameters and possibilities.
 [this example](http://mazdermind.github.com/osm-history-renderer/karlsruhe.html) example was created using that command-line:
 
      ./osm-history-renderer/renderer/render-animation.py --style ~/osm-mapnik-style/osm-mapnik2.xml \
-         --bbox 8.3122,48.9731,8.5139,49.0744 --anistart=2006-09-01 --type html --file karlsruhe \
+         --bbox 8.3122,48.9731,8.5139,49.0744 --anistart=2006-09-01 --file karlsruhe \
          --label "%d.%m.%Y" --label-gravity SouthEast
-
 
 ## manual database queries (for statistics and such)
 The [render.py-script](https://github.com/MaZderMind/osm-history-renderer/blob/master/renderer/render.py#L242) creates Database-Views for each slice of time it renders. The View presents to the user (or programm) an osm2pgsql-compatible database layout of osm-objects as they were at thet point in time. You can do this, too, and you can use these views to to statistics and such. The Script generates its views like this:
@@ -184,6 +183,12 @@ The [render.py-script](https://github.com/MaZderMind/osm-history-renderer/blob/m
         geom AS way FROM hist_polygon WHERE '2000-01-01' BETWEEN valid_from AND COALESCE(valid_to, '9999-12-31');
 
 These Queries generate three views which represent the state of the osm-database (not considering objects removed or changed because of the licence-change) as it was on 2000-01-01. Of couse you can add more tagsas columns to be pulled out of the tags-hstore.
+
+## generating video-sequences
+If you require a video-file, for example to upload it to youtube, you can use ffmpeg to generate an animation from the png-sequence that ```render-animation.py``` generates for you. A good tool for that is [ffmpeg](http://www.ffmpeg.org/). Some example code that could get you started follows, but I'm no specialist in video encoding, so you might [have to google](https://www.google.de/search?q=ffmpeg+from+png+files) for other resources.
+
+     ffmpeg -r 10 -f image2 -i animap/%010d.png -crf 0 lossless-h264.mp4
+
 
 ## like it?
 If you'd like to support this project, Flatter it:

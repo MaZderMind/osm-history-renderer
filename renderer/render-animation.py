@@ -18,9 +18,6 @@ def main():
     parser.add_option("-f", "--file", action="store", type="string", dest="file", default="animap", 
                       help="path to the destination file without the file extension [default: %default]")
     
-    parser.add_option("-t", "--type", action="store", type="string", dest="type", default="html", 
-                      help="file type to render (supports: html (html-player with png images), png (only the png images), gif (animated gif) and every other format supported by ffmpeg (eg. mp4) [default: %default]")
-    
     parser.add_option("-x", "--size", action="store", type="string", dest="size", default="800x600", 
                       help="requested sizeof the resulting image in pixels, format is <width>x<height> [default: %default]")
     
@@ -64,10 +61,6 @@ def main():
     
     parser.add_option("-G", "--label-gravity", action="store", type="string", dest="labelgravity", default="South", 
                       help="when a label is added tothe image, where should it be added? [default: %default]")
-    
-    
-    parser.add_option("-K", "--keep", action="store_true", dest="keep", 
-                      help="keep the generated PNGs after assembling the animation")
     
     
     parser.add_option("-D", "--db", action="store", type="string", dest="dsn", default="", 
@@ -128,31 +121,20 @@ def main():
     
     options.anistep = relativedelta(**args)
     
-    print "rendering animation from %s to %s in %s steps from bbox %s in style %s to file %s which is of type %s in size %ux%u\n" % (options.anistart, options.aniend, options.anistep, options.bbox, options.style, options.file, options.type, options.size[0], options.size[1])
+    print "rendering animation from %s to %s in %s steps from bbox %s in style %s to %s in size %ux%u\n" % (options.anistart, options.aniend, options.anistep, options.bbox, options.style, options.file, options.size[0], options.size[1])
     
-    anitype = options.type
     anifile = options.file
     date = options.anistart
     buildhtml = False
     
-    if anitype == "html":
-        buildhtml = True
-        anitype = "png"
-    
-    if anitype == "png":
-        os.mkdir(anifile)
-    else:
-        tempdir = tempfile.mkdtemp()
+    os.mkdir(anifile)
     
     i = 0
     while date < options.aniend:
         
         options.date = date.strftime("%Y-%m-%d %H:%M:%S")
         options.type = "png"
-        if anitype == "png":
-            options.file = "%s/%010d" % (anifile, i)
-        else:
-            options.file = "%s/%010d" % (tempdir, i)
+        options.file = "%s/%010d" % (anifile, i)
         
         print date
         render.render(options)
@@ -165,29 +147,7 @@ def main():
         date = date + options.anistep
         i += 1
     
-    if buildhtml:
-        do_buildhtml(anifile, i, options.fps, options.size[0], options.size[1])
-    
-    if anitype == "png":
-        return
-    
-    print "assembling animation"
-    opts = ["-r", options.fps, "-i", tempdir+"/%010d.png"]
-    if anitype == "gif":
-        opts.extend(["-pix_fmt rgb24"])
-    
-    elif anitype == "mp4":
-        opts.extend(["-crf", "0", "-r", options.fps])
-        # somehow the lossless setting is not applied(?)
-    
-    opts.append("%s.%s" % (anifile, anitype))
-    
-    os.spawnvp(os.P_WAIT, "ffmpeg", opts)
-    
-    if options.keep:
-        print "PNGs are kept in", tempdir
-    elif tempdir:
-        shutil.rmtree(tempdir)
+    do_buildhtml(anifile, i, options.fps, options.size[0], options.size[1])
 
 
 
