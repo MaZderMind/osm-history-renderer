@@ -111,6 +111,7 @@ next we'll get that data into the database. Oh wait: which database? We'll first
     echo "GRANT ALL ON geometry_columns TO $USER" | sudo -u postgres psql $USER
     echo "GRANT ALL ON spatial_ref_sys TO $USER" | sudo -u postgres psql $USER
 
+Note that the location of the sql files might vary with your system. If these two lines return an error, check the directory structure on your machine.
 You might also have to make your database aware of the 900913 projection used by the importer - many versions of PostGIS are aware of this projection out of the box, but if during import you get an error message saying "invalid SRID" then get https://github.com/openstreetmap/osm2pgsql/blob/master/900913.sql and apply by running
 
     sudo -u postgres psql $USER -f 900913.sql
