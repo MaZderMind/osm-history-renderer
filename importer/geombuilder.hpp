@@ -16,23 +16,29 @@ private:
     DbAdapter *m_adapter;
     bool m_isupdate, m_keepLatLng;
     bool m_debug, m_showerrors;
+    geos::geom::GeometryFactory* geos_factory() {
+        static std::unique_ptr<const geos::geom::PrecisionModel> precision_model{new geos::geom::PrecisionModel};
+        static std::unique_ptr<geos::geom::GeometryFactory> factory{new geos::geom::GeometryFactory(precision_model.get(), -1)};
+        return factory.get();
+    }
 
 protected:
     GeomBuilder(Nodestore *nodestore, DbAdapter *adapter, bool isUpdate): m_nodestore(nodestore), m_adapter(adapter), m_isupdate(isUpdate), m_debug(false), m_showerrors(false) {}
 
 public:
-    geos::geom::Geometry* forWay(const Osmium::OSM::WayNodeList &nodes, time_t t, bool looksLikePolygon) {
+
+    geos::geom::Geometry* forWay(const osmium::WayNodeList &nodes, time_t t, bool looksLikePolygon) {
         // shorthand to the geometry factory
-        geos::geom::GeometryFactory *f = Osmium::Geometry::geos_geometry_factory();
+        //geos::geom::GeometryFactory *f = Osmium::Geometry::geos_geometry_factory();
 
         // pointer to coordinate vector
         std::vector<geos::geom::Coordinate> *c = new std::vector<geos::geom::Coordinate>();
 
         // iterate over all nodes
-        Osmium::OSM::WayNodeList::const_iterator end = nodes.end();
-        for(Osmium::OSM::WayNodeList::const_iterator it = nodes.begin(); it != end; ++it) {
+        osmium::WayNodeList::const_iterator end = nodes.end();
+        for(osmium::WayNodeList::const_iterator it = nodes.begin(); it != end; ++it) {
             // the id
-            osm_object_id_t id = it->ref();
+            osmium::object_id_type id = it->ref();
 
             // was the node found in the store?
             bool found;
@@ -75,16 +81,16 @@ public:
             // at least 3 *different* coordinates
             if(looksLikePolygon && c->front() == c->back() && c->size() >= 4) {
                 // build a polygon
-                geom = f->createPolygon(
-                    f->createLinearRing(
-                        f->getCoordinateSequenceFactory()->create(c)
+                geom = geos_factory()->createPolygon(
+                    geos_factory()->createLinearRing(
+                        geos_factory()->getCoordinateSequenceFactory()->create(c)
                     ),
                     NULL
                 );
             } else {
                 // build a linestring
-                geom = f->createLineString(
-                    f->getCoordinateSequenceFactory()->create(c)
+                geom = geos_factory()->createLineString(
+                    geos_factory()->getCoordinateSequenceFactory()->create(c)
                 );
             }
         } catch(geos::util::GEOSException e) {

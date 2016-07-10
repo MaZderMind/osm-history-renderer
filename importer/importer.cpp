@@ -14,10 +14,8 @@
 #define OSMIUM_WITH_XML_INPUT
 #define OSMIUM_WITH_PBF_OUTPUT
 #define OSMIUM_WITH_XML_OUTPUT
-#include <osmium.hpp>
-#include <osmium/geometry/geos.hpp>
-
-#include <geos/util/GEOSException.h>
+#include <osmium/osm.hpp>
+#include <osmium/io/any_input.hpp>
 
 /**
  * include the importer-handler which contains the main importer-logic.
@@ -115,7 +113,7 @@ int main(int argc, char *argv[]) {
             << "       calculate the interior-point ans store it in the database" << std::endl
             << "  -l|--latlng" << std::endl
             << "       keep lat/lng ant don't transform to mercator" << std::endl
-            << "  -s|--nodestore" << std::endl
+            << "  -S|--nodestore" << std::endl
             << "       set the nodestore type [defaults to '" << nodestore << "']" << std::endl
             << "       possible values: " << std::endl
             << "          stl    (needs more memory but is more robust and a little faster)" << std::endl
@@ -132,7 +130,7 @@ int main(int argc, char *argv[]) {
     filename = argv[optind];
 
     // open the input-file
-    Osmium::OSMFile infile(filename);
+    osmium::io::File infile(filename);
 
     // create an instance of the import-handler
     Nodestore *store;
@@ -141,23 +139,31 @@ int main(int argc, char *argv[]) {
     else
         store = new NodestoreStl();
 
-    // create an instance of the import-handler
-    ImportHandler handler(store);
+    {
+        // create an instance of the import-handler
+        ImportHandler handler(store);
 
-    // copy relevant settings to the handler
-    if(dsn.size()) {
-        handler.dsn(dsn);
-    }
-    if(prefix.size()) {
-        handler.prefix(prefix);
-    }
-    handler.printDebugMessages(printDebugMessages);
-    handler.printStoreErrors(printStoreErrors);
-    handler.calculateInterior(calculateInterior);
-    handler.keepLatLng(keepLatLng);
+        // copy relevant settings to the handler
+        if(dsn.size() > 0) {
+            handler.dsn(dsn);
+        }
+        if(prefix.size()) {
+            handler.prefix(prefix);
+        }
+        handler.printDebugMessages(printDebugMessages);
+        handler.printStoreErrors(printStoreErrors);
+        handler.calculateInterior(calculateInterior);
+        handler.keepLatLng(keepLatLng);
+        // need to call init manualy
+        handler.init();
 
-    // read the input-file to the handler
-    Osmium::Input::read(infile, handler);
+        // read the input-file to the handler
+        osmium::io::Reader reader(infile);
+        osmium::apply(reader, handler);
+        // need to call final manualy
+        handler.final();
+        reader.close();
+    }
 
     delete store;
 

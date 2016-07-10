@@ -26,9 +26,14 @@ private:
         // SPEED: instead of stringstream, which does dynamic allocation, use a fixed buffer
         std::stringstream escaped;
 
+        if (str == NULL) {
+            return escaped.str();
+        }
+
         // iterate over all chars, one by one
         for(int i = 0; ; i++) {
             // the current char
+            //std::cout << i << std::endl;
             char c = str[i];
 
             // look for special cases
@@ -61,23 +66,24 @@ public:
     /**
      * format a taglist as external hstore noration
      */
-    static std::string format(const Osmium::OSM::TagList& tags) {
+    static std::string format(const osmium::TagList& tags) {
         // SPEED: instead of stringstream, which does dynamic allocation, use a fixed buffer
         std::stringstream hstore;
+        // first separator is empty string
+        const char* separator = "";
 
         // iterate over all tags
-        for(Osmium::OSM::TagList::const_iterator it = tags.begin(); it != tags.end(); ++it) {
+        for(auto it = tags.begin(); it != tags.end(); ++it) {
             // escape key and value
+            //std::cout << it->key() << ":" << it->value() << std::endl;
+
             std::string k = escape(it->key());
             std::string v = escape(it->value());
 
             // add to string representation
-            hstore << '"' << k << "\"=>\"" << v << '"';
-
+            hstore << separator << '"' << k << "\"=>\"" << v << '"';
             // if necessary, add a delimiter
-            if(it+1 != tags.end()) {
-                hstore << ',';
-            }
+            separator = ",";
         }
 
         // return the generated string

@@ -13,6 +13,20 @@
 #define IMPORTER_ENTITYTRACKER_HPP
 
 /**
+ * Dummy object to wrap object reference.
+ */
+template <class TObject>
+class ObjectWrapper {
+    const TObject& object;
+public:
+    ObjectWrapper(const TObject& object) : object(object) {}
+
+    const TObject& obj() {
+        return object;
+    }
+};
+
+/**
  * Tracks the previous, the current and the next entity, provides
  * a method to shift the entities into the next state and manages
  * freeing of the entities. It is templated to allow nodes, ways
@@ -23,40 +37,46 @@ class EntityTracker {
 
 private:
     /**
-     * pointer to the current entity
+     * object of the current entity
      */
-    shared_ptr<TObject const> m_prev;
+    ObjectWrapper<TObject> *m_prev;
 
     /**
-     * pointer to the current entity
+     * object of the current entity
      */
-    shared_ptr<TObject const> m_cur;
+    ObjectWrapper<TObject> *m_cur;
 
     /**
-     * pointer to the next entity
+     * object of the next entity
      */
-    shared_ptr<TObject const> m_next;
+    ObjectWrapper<TObject> *m_next;
 
 public:
-    /**
-     * get the pointer to the previous entity
-     */
-    const shared_ptr<TObject const> prev() {
-        return m_prev;
+    EntityTracker() {
+        m_prev = nullptr;
+        m_cur = nullptr;
+        m_next = nullptr;
     }
 
     /**
-     * get the pointer to the current entity
+     * get the reference to the previous entity
      */
-    const shared_ptr<TObject const> cur() {
-        return m_cur;
+    const TObject& prev() {
+        return m_prev->obj();
     }
 
     /**
-     * get the pointer to the next entity
+     * get the reference to the current entity
      */
-    const shared_ptr<TObject const> next() {
-        return m_next;
+    const TObject& cur() {
+        return m_cur->obj();
+    }
+
+    /**
+     * get the reference to the next entity
+     */
+    const TObject& next() {
+        return m_next->obj();
     }
 
     /**
@@ -85,7 +105,7 @@ public:
      * entity with the same id
      */
     bool prev_is_same_entity() {
-        return has_cur() && has_prev() && (cur()->id() == prev()->id());
+        return has_cur() && has_prev() && (cur().id() == prev().id());
     }
 
     /**
@@ -93,7 +113,7 @@ public:
      * entity with the same id
      */
     bool next_is_same_entity() {
-        return has_cur() && has_next() && (cur()->id() == next()->id());
+        return has_cur() && has_next() && (cur().id() == next().id());
     }
 
     /**
@@ -103,9 +123,9 @@ public:
      * assertation error, because the next enity needs to be swapped
      * away using the swap-method below, before feeding in a new one.
      */
-    void feed(const shared_ptr<TObject const> obj) {
+    void feed(const TObject& obj) {
         assert(!m_next);
-        m_next = obj;
+        m_next = new ObjectWrapper<TObject>(obj);
     }
 
     /**
@@ -115,7 +135,7 @@ public:
     void swap() {
         m_prev = m_cur;
         m_cur = m_next;
-        m_next.reset();
+        m_next = nullptr;
     }
 };
 

@@ -51,8 +51,8 @@ private:
      * Size of one allocated memory block
      */
     const static size_t BLOCK_SIZE = 512*1024*1024;
-    const static osm_object_id_t EST_MAX_NODE_ID = 2^31; // soon 2^32
-    const static osm_object_id_t NODE_BUFFER_STEPS = 2^16; // soon 2^32
+    const static osmium::object_id_type EST_MAX_NODE_ID = 2^31; // soon 2^32
+    const static osmium::object_id_type NODE_BUFFER_STEPS = 2^16; // soon 2^32
 
     typedef std::vector< char* > memoryBlocks_t;
     typedef std::vector< char* >::const_iterator memoryBlocks_cit;
@@ -106,7 +106,7 @@ private:
         /**
          * user-id used for assigning usernames and ids to minor ways
          */
-        osm_user_id_t uid;
+        osmium::user_id_type uid;
 
         /**
          * osmium handles lat/lon either as double (8 bytes) or as int32_t (4 byted). So we choose the smaller one.
@@ -126,8 +126,8 @@ private:
      */
     google::sparsetable< PackedNodeTimeinfo* > idMap;
 
-    osm_object_id_t maxNodeId;
-    osm_object_id_t lastNodeId;
+    osmium::object_id_type maxNodeId;
+    osmium::object_id_type lastNodeId;
 
 
 public:
@@ -138,7 +138,7 @@ public:
         freeAllMemoryBlocks();
     }
 
-    void record(osm_object_id_t id, osm_user_id_t uid, time_t t, double lon, double lat) {
+    void record(osmium::object_id_type id, osmium::user_id_type uid, time_t t, double lon, double lat) {
         // remember: sorting is guaranteed nodes, ways relations in ascending id and then version order
         PackedNodeTimeinfo *infoPtr;
 
@@ -235,8 +235,8 @@ public:
 
         infoPtr->t = t;
         infoPtr->uid = uid;
-        infoPtr->lat = Osmium::OSM::double_to_fix(lat);
-        infoPtr->lon = Osmium::OSM::double_to_fix(lon);
+        infoPtr->lat = osmium::Location::double_to_fix(lat);
+        infoPtr->lon = osmium::Location::double_to_fix(lon);
 
 
         // mark end of memory for this node
@@ -251,7 +251,7 @@ public:
     // so we could return a simple time vector. it actually is only a timemap
     // because this was more easy to implement in the stl store, but once we
     // change the default from stl to sparse, we can change the return value, too
-    timemap_ptr lookup(osm_object_id_t id, bool &found) {
+    timemap_ptr lookup(osmium::object_id_type id, bool &found) {
         if(isPrintingStoreErrors()) {
             std::cout << "lookup for timemap of node #" << id << std::endl;
         }
@@ -277,8 +277,8 @@ public:
             if(isPrintingDebugMessages()) {
                 std::cerr << "  -> found node id #" << id << "at memory position " << infoPtr << " (node-offset " << ((char*)infoPtr-(char*)basePtr) << ")" << std::endl;
             }
-            info.lat = Osmium::OSM::fix_to_double(infoPtr->lat);
-            info.lon = Osmium::OSM::fix_to_double(infoPtr->lon);
+            info.lat = osmium::Location::fix_to_double(infoPtr->lat);
+            info.lon = osmium::Location::fix_to_double(infoPtr->lon);
             info.uid = infoPtr->uid;
             tMap->insert(timepair(infoPtr->t, info));
         } while((++infoPtr)->t != 0);
@@ -291,7 +291,7 @@ public:
         return tMap;
     }
 
-    Nodeinfo lookup(osm_object_id_t id, time_t t, bool &found) {
+    Nodeinfo lookup(osmium::object_id_type id, time_t t, bool &found) {
         if(isPrintingStoreErrors()) {
             std::cout << "lookup for coords of oldest node #" << id << " younger-or-equal then " << t << " (" << Timestamp::format(t) << ")" << std::endl;
         }
@@ -320,8 +320,8 @@ public:
             }
 
             if(infoPtr->t <= t && infoPtr->t > infoTime) {
-                info.lat = Osmium::OSM::fix_to_double(infoPtr->lat);
-                info.lon = Osmium::OSM::fix_to_double(infoPtr->lon);
+                info.lat = osmium::Location::fix_to_double(infoPtr->lat);
+                info.lon = osmium::Location::fix_to_double(infoPtr->lon);
                 info.uid = infoPtr->uid;
                 infoTime = infoPtr->t;
 
@@ -332,8 +332,8 @@ public:
         } while((++infoPtr)->t != 0);
 
         if(infoTime == 0) {
-            info.lat = Osmium::OSM::fix_to_double(basePtr->lat);
-            info.lon = Osmium::OSM::fix_to_double(basePtr->lon);
+            info.lat = osmium::Location::fix_to_double(basePtr->lat);
+            info.lon = osmium::Location::fix_to_double(basePtr->lon);
             info.uid = basePtr->uid;
             infoTime = basePtr->t;
 
