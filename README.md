@@ -1,5 +1,5 @@
 # Unmaintained
-The osm-history-splitter is currently unmaintained and searches for a new Maintainer.
+The osm-history-renderer is currently unmaintained and searches for a new Maintainer.
 
 ===
 
