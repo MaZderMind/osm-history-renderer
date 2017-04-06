@@ -6,22 +6,22 @@ private:
     /**
      * a map between the node-id and its map of node-versions and -times (timemap)
      */
-    typedef std::map< osm_object_id_t, timemap_ptr > nodemap;
+    typedef std::map< osmium::object_id_type, timemap_ptr > nodemap;
 
     /**
      * a pair of node-id and pointer to timemap
      */
-    typedef std::pair< osm_object_id_t, timemap_ptr > nodepair;
+    typedef std::pair< osmium::object_id_type, timemap_ptr > nodepair;
 
     /**
      * an iterator over the nodemap
      */
-    typedef std::map< osm_object_id_t, timemap_ptr >::iterator nodemap_it;
+    typedef std::map< osmium::object_id_type, timemap_ptr >::iterator nodemap_it;
 
     /**
      * the const-version of this iterator
      */
-    typedef std::map< osm_object_id_t, timemap_ptr >::const_iterator nodemap_cit;
+    typedef std::map< osmium::object_id_type, timemap_ptr >::const_iterator nodemap_cit;
 
     /**
      * main-storage of this nodestore: an instance of nodemap
@@ -32,7 +32,7 @@ public:
     NodestoreStl() : Nodestore(), m_nodemap() {}
     ~NodestoreStl() {}
 
-    void record(osm_object_id_t id, osm_user_id_t uid, time_t t, double lon, double lat) {
+    void record(osmium::object_id_type id, osmium::user_id_type uid, time_t t, double lon, double lat) {
         Nodeinfo info = {lat, lon, uid};
 
         nodemap_it it = m_nodemap.find(id);
@@ -55,7 +55,7 @@ public:
         }
     }
 
-    timemap_ptr lookup(osm_object_id_t id, bool &found) {
+    timemap_ptr lookup(osmium::object_id_type id, bool &found) {
         if(isPrintingDebugMessages()) {
             std::cerr << "looking up timemap of node #" << id << std::endl;
         }
@@ -73,7 +73,7 @@ public:
         return nit->second;
     }
 
-    Nodeinfo lookup(osm_object_id_t id, time_t t, bool &found) {
+    Nodeinfo lookup(osmium::object_id_type id, time_t t, bool &found) {
         if(isPrintingDebugMessages()) {
             std::cerr << "looking up information of node #" << id << " at tstamp " << t << std::endl;
         }

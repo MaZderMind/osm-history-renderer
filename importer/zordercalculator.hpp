@@ -59,7 +59,7 @@ public:
     /**
      * calculates the z-order of a highway
      */
-    static long int calculateZOrder(const Osmium::OSM::TagList& tags) {
+    static long int calculateZOrder(const osmium::TagList& tags) {
         // the calculated z-order
         long int z_order = 0;
 

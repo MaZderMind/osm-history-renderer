@@ -14,7 +14,7 @@ protected:
 public:
     struct MinorTimesInfo {
         time_t t;
-        osm_user_id_t uid;
+        osmium::user_id_type uid;
 
         bool operator<(const MinorTimesInfo& a) const
         {
@@ -27,11 +27,11 @@ public:
         }
     };
 
-    std::vector<MinorTimesInfo> *forWay(const Osmium::OSM::WayNodeList &nodes, time_t from, time_t to) {
+    std::vector<MinorTimesInfo> *forWay(const osmium::WayNodeList &nodes, time_t from, time_t to) {
         std::vector<MinorTimesInfo> *minor_times = new std::vector<MinorTimesInfo>();
 
-        for(Osmium::OSM::WayNodeList::const_iterator nodeit = nodes.begin(); nodeit != nodes.end(); nodeit++) {
-            osm_object_id_t id = nodeit->ref();
+        for(osmium::WayNodeList::const_iterator nodeit = nodes.begin(); nodeit != nodes.end(); nodeit++) {
+            osmium::object_id_type id = nodeit->ref();
 
             bool found = false;
             Nodestore::timemap_ptr tmap = m_nodestore->lookup(id, found);
@@ -58,7 +58,7 @@ public:
         return minor_times;
     }
 
-    std::vector<MinorTimesInfo> *forWay(const Osmium::OSM::WayNodeList &nodes, time_t from) {
+    std::vector<MinorTimesInfo> *forWay(const osmium::WayNodeList &nodes, time_t from) {
         return forWay(nodes, from, 0);
     }
 };

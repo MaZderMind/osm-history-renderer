@@ -50,9 +50,9 @@ public:
      * checks the TagList against a list to decide if they look like the
      * way could potentially be a polygon.
      */
-    static bool looksLikePolygon(const Osmium::OSM::TagList& tags) {
+    static bool looksLikePolygon(const osmium::TagList& tags) {
         // iterate over all tags
-        for(Osmium::OSM::TagList::const_iterator it = tags.begin(); it != tags.end(); ++it) {
+        for(osmium::TagList::const_iterator it = tags.begin(); it != tags.end(); ++it) {
 
             // iterate over all known polygon-tags
             for(int i = 0; polygons[i] != 0; i++) {
