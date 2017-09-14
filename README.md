@@ -4,7 +4,7 @@ The osm-history-renderer is currently unmaintained and searches for a new Mainta
 ===
 
 # OpenStreetMap History Renderer & Tools
-This Repository contains an experimental, work-in-progress (as everything in the OSM universe, i think ;)) history renderer. It is able to import a history excerpt (or a full history dump) of OpenStreetMap data and create an image from a specified region for a specific point in time. You may want to see berlin as it was in 2008? No Problem! The importer is written against [Jochen Topfs](https://github.com/joto) great osmium framework which provides history-capable readers for xml and pbf. If you want ot try it, check out the [Tutorial](https://github.com/MaZderMind/osm-history-renderer/blob/master/TUTORIAL.md).
+This Repository contains an experimental, work-in-progress (as everything in the OSM universe, i think ;)) history renderer. It is able to import a history excerpt (or a full history dump) of OpenStreetMap data and create an image from a specified region for a specific point in time. You may want to see berlin as it was in 2008? No Problem! The importer is written against [Jochen Topfs](https://github.com/joto) great osmium framework which provides history-capable readers for xml and pbf. If you want ot try it, check out the [Tutorial](https://github.com/MaZderMind/osm-history-renderer/blob/master/TUTORIAL.md). An example of what can be accomplished with this tool and a little post-processing can be seen here: https://www.youtube.com/watch?v=-ZCI4wHOkAk ("10 años de ediciones Chile OpenStreetMap Time Lapse")
 
 If you'd like to support this project, Flatter it:
 
