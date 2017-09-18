@@ -1,23 +1,18 @@
-# Unmaintained
-The osm-history-renderer is currently unmaintained and searches for a new Maintainer.
+This is a clone of https://github.com/MaZderMind/osm-history-renderer, and its reason for living is that the original is unmaintained. 
 
 ===
 
 # OpenStreetMap History Renderer & Tools
-This Repository contains an experimental, work-in-progress (as everything in the OSM universe, i think ;)) history renderer. It is able to import a history excerpt (or a full history dump) of OpenStreetMap data and create an image from a specified region for a specific point in time. You may want to see berlin as it was in 2008? No Problem! The importer is written against [Jochen Topfs](https://github.com/joto) great osmium framework which provides history-capable readers for xml and pbf. If you want ot try it, check out the [Tutorial](https://github.com/MaZderMind/osm-history-renderer/blob/master/TUTORIAL.md). An example of what can be accomplished with this tool and a little post-processing can be seen here: https://www.youtube.com/watch?v=-ZCI4wHOkAk ("10 años de ediciones Chile OpenStreetMap Time Lapse")
-
-If you'd like to support this project, Flatter it:
-
-[![Flattr this git repo](http://api.flattr.com/button/flattr-badge-large.png)](https://flattr.com/submit/auto?user_id=MaZderMind&url=https://github.com/MaZderMind/osm-history-renderer&title=osm-history-renderer&language=en_GB&tags=github&category=software) 
+This Repository contains an experimental, work-in-progress (as everything in the OSM universe, i think ;)) history renderer. It is able to import a history excerpt (or a full history dump) of OpenStreetMap data and create an image from a specified region for a specific point in time. You may want to see berlin as it was in 2008? No Problem! The importer is written against [Jochen Topfs](https://github.com/joto) great osmium framework which provides history-capable readers for xml and pbf. If you want ot try it, check out the [Tutorial](https://github.com/schaiba/osm-history-renderer/blob/master/TUTORIAL.md). An example of what can be accomplished with this tool and a little post-processing can be seen here: https://www.youtube.com/watch?v=-ZCI4wHOkAk ("10 años de ediciones Chile OpenStreetMap Time Lapse")
 
 ## Build it
 The importer can be compiled with g++ or clang++. Both compilers are mentioned in the Makefile, so just uncomment whichever suites your needs best. Build it using make and then run it als described below.
 
 ## Run it
 In order to run it, you'll need data-input. I'd suggest starting with a small extract as a basis. There are some [hosted extracts](http://osm.personalwerk.de/full-history-extracts/).
-All extracts have been created using my [OpenStreetMap History Splitter](https://github.com/MaZderMind/osm-history-splitter/), so if you want your own area, go and download the latest [Full-Experimental Dump](http://osm.personalwerk.de/full-experimental/) and split it yourself using the `--softcut` mode.
+All extracts have been created using my [OpenStreetMap History Splitter](https://github.com/schaiba/osm-history-splitter/), so if you want your own area, go and download the latest [Full-Experimental Dump](http://osm.personalwerk.de/full-experimental/) and split it yourself using the `--softcut` mode.
 
-Next you'll going to need a postgres-database with `postgis`, `hstore` and `btree_gist` installed. Check out the [Tutorial](https://github.com/MaZderMind/osm-history-renderer/blob/master/TUTORIAL.md) for details.
+Next you'll going to need a postgres-database with `postgis`, `hstore` and `btree_gist` installed. Check out the [Tutorial](https://github.com/schaiba/osm-history-renderer/blob/master/TUTORIAL.md) for details.
 
 After you have your data in place, use the importer to import the data:
 
@@ -57,26 +52,12 @@ The Stl-Nodestore is the default one. It's build on top of the the [STL-Template
 
 The Sparse-Nodestore is the newer one. It's build on top of the the [Google Sparsetable](http://google-sparsehash.googlecode.com/svn/trunk/doc/sparsetable.html) and a custom memory block management. It's much, much more space efficient but it seems to take slightly time on startup and it also contains more custom code, so more potential for bugs. Sooner or later sparse will become the defaul node-store, as it's your only option to import larger extracts or even a whole planet.
 
-## Space & Time Requirements
-I imported [rheinland-pfalz.osh.pbf](http://osm.personalwerk.de/full-history-extracts/history_2012-10-13_13:35/europe/germany/rheinland-pfalz.osh.pbf) (308M) with the sparse nodestore. It took around 1.2 GB of RAM from which apparently ~700M was taken by the nodestore and 400M by the pbf reader. Process Runtime was around 30 Minutes. The generated Tables on disk took ~14 GB including indexes.
-
-## Granularity
+# Granularity
 The MinorTimesCalculator calculates for which timestamps a minor way version is needed. This is the place that determines the granularity of your database on the time axis.
 
 By default it stores data to the split second. When a node is moved two times within a second (or two nodes of the same way), one minor version is generated. If the node timestamps differ, for each timestamp a minor version is generated. Worst case you'll have a full way geometry for each and every second.
 In future it will be possible to reduce the granularity so, say, a day, so at worst you'll have a full way geometry per day. This should reduce the database size drasticaly.
 
-
-## Speeeeed
-Yep, the import is slow. I know and I haven't done much optimizing in the code. The Route I'm going is
-
- 1. No Tool
- 2. A Tool
- 3. A fast Tool
-
-And I'm currently working on 2. Some lines in the code have been annotated with `// SPEED`, which means that I know a speed improvement is possible here, but I haven't implemented it yet because I want to have a) running code as soon as possible and b) code, that makes it easy to change things around. Both is impossible with highly optimized code.
-
-Is the rendering slow? Who knows - I don't. I don't know how a combined spatial + date-time btree index performs on a huge dataset, if a simple geom index will be more efficient or if another database scheme is suited better, but as with the imorter there's no other way to learn about this other then trying.
 
 ## Memory usage
 The importer currently stores lat and lon for each and every node, indexed by node-id and node-timestamp inside two nested std::map instances. This is okay for smaller regions but there are ways to improve both, memory usage and speed. The roadmap is here very similar to the one mentioned above:
@@ -92,7 +73,5 @@ Take a look at the [Wiki-Page](https://wiki.openstreetmap.org/wiki/OSM_History_R
 I'm not someone who doesn't like to write documentation - I just don't like to write it twice. So once the code runs smoothly and is cleaned up, I'll update and rewrite the documentation. If you're stuck while playing around in this early stage, please just drop me a mail and I'll help you out.
 
 ## Contact
-If you have any questions just ask at osm@mazdermind.de.
-
-Peter
+If you have any questions just ask at schaiba@gmail.com .
 
