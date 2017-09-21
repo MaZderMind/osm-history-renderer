@@ -85,7 +85,7 @@ public:
         // execute the command
         PGresult *res = PQexec(conn, cmd.c_str());
 
-        // check, that the query succeeded
+        // check that the query succeeded
         ExecStatusType status = PQresultStatus(res);
         if(status != PGRES_COMMAND_OK && status != PGRES_TUPLES_OK)
         {
