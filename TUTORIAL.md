@@ -16,10 +16,11 @@ Get and build the splitter:
     make
     sudo make install
     cd ..
+*NOTE : The splitter is old and unmaintained. Use osmium-tool, available in your repositories, for this.*
 
 Next one will be the importer and renderer:
 
-    git clone https://github.com/MaZderMind/osm-history-renderer.git
+    git clone https://github.com/schaiba/osm-history-renderer.git
     cd osm-history-renderer/importer
     make
     sudo make install
