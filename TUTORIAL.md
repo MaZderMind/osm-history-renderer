@@ -1,6 +1,6 @@
 # Getting started
 This is a complete tutorial which will guide you through creating your own history animation. It contains instructions for a fresh Debian 6.0.4 or a fresh Ubuntu 11.10 installation.
-
+UPDATE : Due to a bug in clang-3.8, you won't be able to compile this unless you have 3.9 or above. I will update this document for Ubuntu 16.04
 ## installing the packages
 First off, you'll need a set of packages. The latest Version of the main OpenStreetMap.org-Style requires mapnik2 which is not in the stable release
 of Debian 6.0, which is why we're pulling the mapnik2-libs from the testing repositories. If you're on  Ubuntu 12.10 you're lucky, as here everything
