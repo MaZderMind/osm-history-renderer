@@ -7,7 +7,7 @@
 #CXX = g++
 CXX = clang++
 
-CXXFLAGS = -g -O3 -Wall -Wextra -pedantic
+CXXFLAGS = -g -O2 -Wall -Wextra -pedantic -Wno-unused-private-field
 CXXFLAGS += `getconf LFS_CFLAGS`
 #CXXFLAGS += -Wredundant-decls -Wdisabled-optimization
 #CXXFLAGS += -Wpadded -Winline
