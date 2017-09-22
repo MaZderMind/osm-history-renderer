@@ -5,9 +5,7 @@ Due to a bug in clang-3.8, you won't be able to compile this unless you have 3.9
 ## installing the packages
 ### on Ubuntu 16.04
     sudo apt-get update
-    sudo apt-get install postgresql-9.5 postgresql-contrib-9.5 postgresql-9.5-postgis postgis zlib1g-dev libexpat1 libexpat1-dev libxml2 libxml2-dev libgeos-dev \
- libgeos++-dev libprotobuf* protobuf-compiler libsparsehash-dev libboost-dev libgdal1-dev libproj-dev subversion git build-essential unzip python-dateutil \
- python-psycopg2  graphicsmagick doxygen graphviz python-mapnik clang-3.9 libosmpbf-dev libosmium-dev
+    sudo apt-get install postgresql-9.5 postgresql-contrib-9.5 postgresql-9.5-postgis postgis zlib1g-dev libexpat1 libexpat1-dev libxml2 libxml2-dev libgeos-dev libgeos++-dev libprotobuf* protobuf-compiler libsparsehash-dev libboost-dev libgdal1-dev libproj-dev subversion git build-essential unzip python-dateutil python-psycopg2  graphicsmagick doxygen graphviz python-mapnik clang-3.9 libosmpbf-dev libosmium-dev
 ## getting and building the tools
 Next, you'll want to download and build the history-splitter and the history-renderer.
 
