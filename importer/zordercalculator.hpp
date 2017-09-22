@@ -66,7 +66,8 @@ public:
         // flag, signaling if this way should be additionally placed in
         // the lowzoom-line-table (osm2pgsql calls it "roads")
         // NOTE: this is curently not used
-        int lowzoom = false;
+        //int lowzoom = false;
+        //commenting out all occurences until further notice/use
 
         // shorthands to the values of different keys, contributing to
         // the z-order calculation
@@ -94,7 +95,7 @@ public:
 
                     // and copy over its offset & lowzoom value
                     z_order   += layers[i].offset;
-                    lowzoom   = layers[i].lowzoom;
+                    //lowzoom   = layers[i].lowzoom;
                     break;
                 }
             }
@@ -104,13 +105,13 @@ public:
         if(railway) {
             // raise its z-order by 5 and set the lowzoom flag
             z_order += 5;
-            lowzoom = true;
+            //lowzoom = true;
         }
 
         // if it has a boundary=administrative tag
         if(boundary && 0 == strcmp(boundary, "administrative")) {
             // set the lowzoom flag
-            lowzoom = true;
+            //lowzoom = true;
         }
 
         // if it has a bridge tag and it evaluates to true
