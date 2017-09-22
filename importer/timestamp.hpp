@@ -16,13 +16,13 @@ private:
     /**
      * length of ISO timestamp string yyyy-mm-ddThh:mm:ssZ\0
      */
-    static const int timestamp_length = 20 + 1;
+    static const int timestamp_length = 20 + 1;//FIXME, addition useless
 
     /**
      * The timestamp format for OSM timestamps in strftime(3) format.
      * This is the ISO-Format yyyy-mm-ddThh:mm:ssZ
      */
-    static const char *timestamp_format() {
+    static const char *timestamp_format() { //TODO  Use std::string all over maybe?
         static const char f[] = "%Y-%m-%dT%H:%M:%SZ";
         return f;
     }
@@ -50,7 +50,7 @@ public:
      * the timestamp 0 has a special meaning in the context of osm data.
      * in 1970 there was no osm. For a valid_to value, where this method
      * is used for, a timestamp of 0 is identical to "never" (as in: at
-     * least valid untill today) which is in the database represented as
+     * least valid until today) which is in the database represented as
      * NULL. In the copy pipe used to fill the database, this NULL is
      * represented as \N which is returned by this method for a timestamp
      * of 0. In any other cast, the result is identical to the result of

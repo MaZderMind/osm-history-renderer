@@ -1,7 +1,7 @@
 /**
  * osm-history-render importer - main file
  *
- * the importer reads through a pbf-file and writes its the content to a
+ * the importer reads through a pbf-file and writes the contents to a
  * postgresql database. While doing this, bits of the data is copied to
  * memory as a cache. This data is later used to build geometries for
  * ways and relations.
@@ -40,7 +40,7 @@ int main(int argc, char *argv[]) {
         {"store-errors",        no_argument, 0, 'e'},
         {"interior",            no_argument, 0, 'i'},
         {"latlng",              no_argument, 0, 'l'},
-        {"latlon",              no_argument, 0, 'l'},
+        {"latlon",              no_argument, 0, 'l'}, //TODO : check if dupes?
         {"nodestore",           required_argument, 0, 'S'},
         {"dsn",                 required_argument, 0, 'D'},
         {"prefix",              required_argument, 0, 'P'},
@@ -52,7 +52,7 @@ int main(int argc, char *argv[]) {
         int c = getopt_long(argc, argv, "hdeilS:D:P:", long_options, 0);
         if (c == -1)
             break;
-
+//TODO add some error msgs
         switch (c) {
             // show the help
             case 'h':

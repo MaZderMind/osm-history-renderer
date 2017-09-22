@@ -1,6 +1,6 @@
 /**
  * When roads of different priority overlap, they need to be painted in
- * the right order. This sould be controlled by the rendering style,
+ * the right order. This should be controlled by the rendering style,
  * but unfortunately the openstreetmap.org style and its variations
  * require a z-order being calculated by the importer. Because I'm no
  * reformer and I'd like to support "the" OpenStreetMap style, this class
@@ -14,7 +14,7 @@
  * Data to generate z-order column and lowzoom-table
  * This includes railways and administrative boundaries, too.
  *
- * borrowd from osm2pgsql:
+ * borrowed from osm2pgsql:
  *   http://trac.openstreetmap.org/browser/applications/utils/export/osm2pgsql/output-pgsql.c#L98
  */
 static struct {

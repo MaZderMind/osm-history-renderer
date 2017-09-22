@@ -2,9 +2,9 @@
  * The handler always needs to know what the next node/way/relation
  * in the file lookes like to answer questions like "what is the
  * valid_to date of the current entity" or "is this the last version
- * of that entity". It also sometimes needs to know hot the previous
+ * of that entity". It also sometimes needs to know how the previous
  * entity looks like to answer questions like "was this an area or a line
- * before it got deleted". The EntityTracker takes care of keeping the
+ * before it got deleted?". The EntityTracker takes care of keeping the
  * previous, current and next entity, frees them as required and does
  * basic comparations.
  */
@@ -104,7 +104,7 @@ public:
      * away using the swap-method below, before feeding in a new one.
      */
     void feed(const shared_ptr<TObject const> obj) {
-        assert(!m_next);
+        assert(!m_next); //TODO : use <boost/assert.hpp> for better messaging and options!
         m_next = obj;
     }
 

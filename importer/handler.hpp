@@ -421,7 +421,7 @@ public:
 
         std::ifstream sqlfile("scheme/00-before.sql");
         if(!sqlfile)
-            sqlfile.open("/usr/share/osm-history-importer/scheme/00-before.sql");
+            sqlfile.open("/usr/share/osm-history-importer/scheme/00-before.sql"); //TODO find a way to avoid hardcoding
 
         if(!sqlfile)
             throw std::runtime_error("can't find 00-before.sql");
@@ -455,7 +455,7 @@ public:
 
         std::ifstream sqlfile("scheme/99-after.sql");
         if(!sqlfile)
-            sqlfile.open("/usr/share/osm-history-importer/scheme/99-after.sql");
+            sqlfile.open("/usr/share/osm-history-importer/scheme/99-after.sql"); //TODO same as above
 
         if(!sqlfile)
             throw std::runtime_error("can't find 99-after.sql");

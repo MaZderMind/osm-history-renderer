@@ -29,13 +29,13 @@ public:
             (last_type == obj->type() && last_id == obj->id() && last_version > obj->version())
         ) {
             std::cerr
-                << "your file is not sorted correctly (by type, id and version):" << std::endl
+                << "Your file is not sorted correctly (by type, id and version):" << std::endl
                 << " " << typeToText(last_type) << " " << last_id << "v" << last_version << " comes before"
                 << " " << typeToText(obj->type()) << " " << obj->id() << "v" << obj->version() << std::endl << std::endl
                 << "The history importer is not able to work with unsorted files." << std::endl
                 << "You can use osmosis to sort the file. (see: http://wiki.openstreetmap.org/wiki/Osmosis/Detailed_Usage#--sort_.28--s.29)" << std::endl;
 
-            throw new std::runtime_error("file incorrectly sorted");
+            throw new std::runtime_error("File incorrectly sorted");
         }
 
         last_type = obj->type();

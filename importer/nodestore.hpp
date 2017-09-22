@@ -1,6 +1,6 @@
 /**
  * During the import and update process, nodes are read from the input
- * file. The corrdinates from those nodes are stored in-memory for very
+ * file. The coordinates from those nodes are stored in-memory for very
  * fast access. During the updated process, information of nodes may be
  * requested that is not contained in the input file. This is done using
  * the DbAdapter.
@@ -9,7 +9,7 @@
  * it's the main memory consumer and during the import the memory
  * consumption is quite high.
  *
- * Therefor Nodestore is an abstract class, with its main methods being
+ * Therefore Nodestore is an abstract class, with its main methods being
  * pure virtual.
  */
 
@@ -59,7 +59,7 @@ protected:
     /**
      * a Nodeinfo that equals null, returned in case of an error
      */
-    const Nodeinfo nullinfo;
+    const Nodeinfo nullinfo; //TODO initialize here?
 
 private:
     /**

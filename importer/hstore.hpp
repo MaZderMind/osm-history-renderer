@@ -20,14 +20,14 @@
 class HStore {
 private:
     /**
-     * escake a key or a value for using it in the quoted external notation
+     * escape a key or a value for using it in the quoted external notation
      */
     static std::string escape(const char* str) {
         // SPEED: instead of stringstream, which does dynamic allocation, use a fixed buffer
         std::stringstream escaped;
 
         // iterate over all chars, one by one
-        for(int i = 0; ; i++) {
+        for(int i = 0; ; i++) {   //TODO use std::regex or something like boost::regex or even raw string literals, this looks damn ugly first hand
             // the current char
             char c = str[i];
 
