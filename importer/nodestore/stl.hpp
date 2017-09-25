@@ -40,7 +40,7 @@ public:
 
         if(it == m_nodemap.end()) {
             if(isPrintingDebugMessages()) {
-                std::cerr << "no timemap for node #" << id << ", creating new" << std::endl;
+                std::cerr << "No timemap for node #" << id << ", creating new" << std::endl;
             }
 
             tmap = timemap_ptr(new timemap());
@@ -51,19 +51,19 @@ public:
 
         tmap->insert(timepair(t, info));
         if(isPrintingDebugMessages()) {
-            std::cerr << "adding timepair for node #" << id << " at tstamp " << t << std::endl;
+            std::cerr << "Adding timepair for node #" << id << " at timestamp " << t << std::endl;
         }
     }
 
     timemap_ptr lookup(osm_object_id_t id, bool &found) {
         if(isPrintingDebugMessages()) {
-            std::cerr << "looking up timemap of node #" << id << std::endl;
+            std::cerr << "Looking up timemap of node #" << id << std::endl;
         }
 
         nodemap_it nit = m_nodemap.find(id);
         if(nit == m_nodemap.end()) {
             if(isPrintingStoreErrors()) {
-                std::cerr << "no timemap for node #" << id << ", skipping node" << std::endl;
+                std::cerr << "No timemap for node #" << id << ", skipping node" << std::endl;
             }
             found = false;
             return timemap_ptr();
@@ -75,25 +75,25 @@ public:
 
     Nodeinfo lookup(osm_object_id_t id, time_t t, bool &found) {
         if(isPrintingDebugMessages()) {
-            std::cerr << "looking up information of node #" << id << " at tstamp " << t << std::endl;
+            std::cerr << "Looking up information of node #" << id << " at timestamp " << t << std::endl;
         }
 
         timemap_ptr tmap = lookup(id, found);
         if(!found) {
             return nullinfo;
         }
-        timemap_it tit = tmap->upper_bound(t);
+        timemap_it tmit = tmap->upper_bound(t);
 
-        if(tit == tmap->begin()) {
+        if(tmit == tmap->begin()) {
             if(isPrintingStoreErrors()) {
-                std::cerr << "reference to node #" << id << " at tstamp " << t << " which is before the youngest available version of that node, using first version" << std::endl;
+                std::cerr << "Reference to node #" << id << " at timestamp " << t << " which is before the newest available version of that node, using first version" << std::endl;
             }
         } else {
-            tit--;
+            tmit--;
         }
 
         found = true;
-        return tit->second;
+        return tmit->second;
     }
 };
 

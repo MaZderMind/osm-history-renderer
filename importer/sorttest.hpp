@@ -26,7 +26,7 @@ public:
         if(
             (last_type > obj->type()) ||
             (last_type == obj->type() && last_id > obj->id()) ||
-            (last_type == obj->type() && last_id == obj->id() && last_version > obj->version())
+            (last_type == obj->type() && last_id == obj->id() && last_version > obj->version()) //This can be redone better
         ) {
             std::cerr
                 << "Your file is not sorted correctly (by type, id and version):" << std::endl

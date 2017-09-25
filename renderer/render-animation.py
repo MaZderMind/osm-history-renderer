@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 #
 # render data from postgresql to an image or a pdf
 #
@@ -19,7 +19,7 @@ def main():
                       help="path to the destination file without the file extension [default: %default]")
     
     parser.add_option("-x", "--size", action="store", type="string", dest="size", default="800x600", 
-                      help="requested sizeof the resulting image in pixels, format is <width>x<height> [default: %default]")
+                      help="requested size of the resulting image in pixels, format is <width>x<height> [default: %default]")
     
     parser.add_option("-b", "--bbox", action="store", type="string", dest="bbox", default="-180,-85,180,85", 
                       help="the bounding box to render in the format l,b,r,t [default: %default]")
@@ -32,7 +32,7 @@ def main():
                       help="if this option is set, the render-script will create views in the database to enable rendering with 'normal' mapnik styles, written for osm2pgsql databases [default: %default]")
     
     parser.add_option("-p", "--view-prefix", action="store", type="string", dest="viewprefix", default="hist_view", 
-                      help="if thie -v/--view option is set, this script will one view for each osm2pgsql-table (point, line, polygon, roads) with this prefix (eg. hist_view_point)")
+                      help="if the -v/--view option is set, this script will create one view for each osm2pgsql-table (point, line, polygon, roads) with this prefix (eg. hist_view_point)")
     
     parser.add_option("-o", "--view-hstore", action="store_true", dest="viewhstore", default=False, 
                       help="if this option is set, the views will contain a single hstore-column called 'tags' containing all tags")
@@ -75,7 +75,7 @@ def main():
         try:
             options.size = map(int, options.size.split("x"))
         except ValueError, err:
-            print "invalid syntax in size argument"
+            print "Invalid syntax in size argument"
             print
             parser.print_help()
             sys.exit(1)
@@ -86,7 +86,7 @@ def main():
             if len(options.bbox) < 4:
                 raise ValueError
         except ValueError, err:
-            print "invalid syntax in bbox argument"
+            print "Invalid syntax in bbox argument"
             print
             parser.print_help()
             sys.exit(1)
@@ -100,7 +100,7 @@ def main():
         except ValueError:
             options.anistart = datetime.strptime(options.anistart, "%Y-%m-%d")
     else:
-        print "infering animation start date from database..."
+        print "Infering animation start date from database..."
         options.anistart = infer_anistart(options.dsn, options.dbprefix, options.bbox)
     
     if options.anistart is None:
@@ -121,14 +121,14 @@ def main():
     
     options.anistep = relativedelta(**args)
     
-    print "rendering animation from %s to %s in %s steps from bbox %s in style %s to '%s' in size %ux%u\n" % (options.anistart, options.aniend, options.anistep, options.bbox, options.style, options.file, options.size[0], options.size[1])
+    print "Rendering animation from %s to %s in %s steps from bbox %s in style %s to '%s' in size %ux%u\n" % (options.anistart, options.aniend, options.anistep, options.bbox, options.style, options.file, options.size[0], options.size[1])
     
     anifile = options.file
     date = options.anistart
     buildhtml = False
     
     if os.path.exists(anifile) or os.path.exists(anifile+".html"):
-        print "the output-folder %s or the output-file output-folder %s exists. remove or rename both of them or give another target-name with the --file option" % (anifile, anifile+".html")
+        print "The output-folder %s or the output-file output-folder %s exists. remove or rename both of them or give another target-name with the --file option" % (anifile, anifile+".html")
         sys.exit(0)
     
     os.mkdir(anifile)
@@ -146,7 +146,7 @@ def main():
         if(options.label):
             opts = ["mogrify", "-gravity", options.labelgravity, "-draw", "fill 'Black'; font-size 18; text 0,10 '%s'" % (date.strftime(options.label)), options.file]
             if(0 != os.spawnvp(os.P_WAIT, "gm", opts)):
-                print "error launching gm - is GraphicsMagick missing?"
+                print "Error launching gm - is GraphicsMagick missing?"
         
         date = date + options.anistep
         i += 1
@@ -165,9 +165,9 @@ def infer_anistart(dsn, prefix, bbox):
     cur.execute(sql)
     (min,) = cur.fetchone()
     if min is None:
-        print "unable to infer animation start date. does your database contain data in that area?"
+        print "Unable to infer animation start date. does your database contain data in that area?"
     else:
-        print "infered animation start date:", min.strftime("%Y-%m-%d %H:%M:%S")
+        print "Inferred animation start date:", min.strftime("%Y-%m-%d %H:%M:%S")
     
     cur.close()
     con.close()
