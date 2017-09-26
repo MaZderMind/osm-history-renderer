@@ -44,21 +44,20 @@ public:
             // show the error message, close the connection and throw out
             std::cerr << PQerrorMessage(conn) << std::endl;
             PQfinish(conn);
-            throw std::runtime_error("connection to database failed");
+            throw std::runtime_error("Connection to database failed");
         }
 
         // disable sync-commits
         //  see http://lists.openstreetmap.org/pipermail/dev/2011-December/023854.html
         PGresult *res = PQexec(conn, "SET synchronous_commit TO off;");
-
-        // check, that the query succeeded
+        // check that the query succeeded
         if(PQresultStatus(res) != PGRES_COMMAND_OK)
         {
             // show the error message, close the connection and throw out
             std::cerr << PQerrorMessage(conn) << std::endl;
             PQclear(res);
             PQfinish(conn);
-            throw std::runtime_error("setting synchronous_commit to off failed");
+            throw std::runtime_error("Setting synchronous_commit to off failed");
         }
 
         PQclear(res);
@@ -70,7 +69,6 @@ public:
     void close() {
         // but only if there is a opened connection
         if(!conn) return;
-
         // close the connection
         PQfinish(conn);
 
@@ -93,7 +91,7 @@ public:
             std::cerr << PQresultErrorMessage(res) << std::endl;
             PQclear(res);
             PQfinish(conn);
-            throw std::runtime_error("command failed");
+            throw std::runtime_error("Command failed");
         }
 
         PQclear(res);
