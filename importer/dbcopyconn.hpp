@@ -60,13 +60,25 @@ public:
         res = PQexec(conn, "BEGIN;");
 
         // check, that the query succeeded
-        if(PQresultStatus(res) != PGRES_COMMAND_OK)
+        if(PQresultStatus(res) == PGRES_FATAL_ERROR)
         {
             // show the error message, close the connection and throw out
             std::cerr << PQerrorMessage(conn) << std::endl;
             PQclear(res);
             PQfinish(conn);
-            throw std::runtime_error("starting transaction failed");
+            throw std::runtime_error("Starting transaction failed");
+        }
+        else if(PQresultStatus(res) == PGRES_BAD_RESPONSE)
+        {
+            // show the error message, close the connection and throw out
+            std::cerr << PQerrorMessage(conn) << std::endl;
+            PQclear(res);
+            PQfinish(conn);
+            throw std::runtime_error("Bad response from server");
+        }
+        else if(PQresultStatus(res) == PGRES_NONFATAL_ERROR)
+        {
+            std::cerr << PQerrorMessage(conn) << std::endl;
         }
 
         // clear the postgres result
@@ -76,20 +88,30 @@ public:
         //   this tells postgres that it can throw away the new data in
         //   case of an error which in turn disables the WriteAheadLog
         //   for this transaction. See 14.2.2 in the postgres-docs:
-        //   http://www.postgresql.org/docs/9.1/static/populate.html
+        //   http://www.postgresql.org/docs/9.5/static/populate.html
         cmd << "TRUNCATE TABLE " << prefix << table << ";";
 
         // try to truncate the table
         res = PQexec(conn, cmd.str().c_str());
 
         // check, that the query succeeded
-        if(PQresultStatus(res) != PGRES_COMMAND_OK)
+        if(PQresultStatus(res) == PGRES_FATAL_ERROR)
         {
-            // show the error message, close the connection and throw out
             std::cerr << PQerrorMessage(conn) << std::endl;
             PQclear(res);
             PQfinish(conn);
-            throw std::runtime_error("truncating table failed");
+            throw std::runtime_error("Truncating table failed");
+        }
+        else if(PQresultStatus(res) == PGRES_BAD_RESPONSE)
+        {
+            std::cerr << PQerrorMessage(conn) << std::endl;
+            PQclear(res);
+            PQfinish(conn);
+            throw std::runtime_error("Bad response from server");
+        }
+        else if(PQresultStatus(res) == PGRES_NONFATAL_ERROR)
+        {
+            std::cerr << PQerrorMessage(conn) << std::endl;
         }
 
         // clear the command buffer and the result
@@ -102,7 +124,7 @@ public:
         // try to start the copy mode
         res = PQexec(conn, cmd.str().c_str());
 
-        // check, that the query succeeded
+        // check that the query succeeded
         if(PQresultStatus(res) != PGRES_COPY_IN)
         {
             // show the error message, close the connection and throw out
@@ -111,6 +133,18 @@ public:
             PQfinish(conn);
             throw std::runtime_error("COPY FROM STDIN command failed");
         }
+        else if(PQresultStatus(res) == PGRES_BAD_RESPONSE)
+        {
+            std::cerr << PQerrorMessage(conn) << std::endl;
+            PQclear(res);
+            PQfinish(conn);
+            throw std::runtime_error("Bad response from server");
+        }
+        else if(PQresultStatus(res) == PGRES_NONFATAL_ERROR)
+        {
+            std::cerr << PQerrorMessage(conn) << std::endl;
+        }
+
 
         // clear result
         PQclear(res);
@@ -172,14 +206,25 @@ public:
         res = PQexec(conn, "COMMIT;");
 
         // check, that the query succeeded
-        if(PQresultStatus(res) != PGRES_COMMAND_OK)
+        if(PQresultStatus(res) == PGRES_FATAL_ERROR)
         {
-            // show the error message, close the connection and throw out
             std::cerr << PQerrorMessage(conn) << std::endl;
             PQclear(res);
             PQfinish(conn);
-            throw std::runtime_error("comitting transaction failed");
+            throw std::runtime_error("Comitting transaction failed");
         }
+        else if(PQresultStatus(res) == PGRES_BAD_RESPONSE)
+        {
+            std::cerr << PQerrorMessage(conn) << std::endl;
+            PQclear(res);
+            PQfinish(conn);
+            throw std::runtime_error("Bad response from server");
+        }
+        else if(PQresultStatus(res) == PGRES_NONFATAL_ERROR)
+        {
+            std::cerr << PQerrorMessage(conn) << std::endl;
+        }
+
 
         PQclear(res);
 
@@ -195,7 +240,7 @@ public:
         int res = PQputCopyData(conn, data.c_str(), data.size());
 
         // check if the copying succeeded
-        if(-1 == res) {
+        if(res == -1) {
             // show the error message, close the connection and throw out
             std::cerr << PQerrorMessage(conn) << std::endl;
             PQfinish(conn);
