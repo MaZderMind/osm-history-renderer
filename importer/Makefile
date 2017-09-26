@@ -31,6 +31,10 @@ LDFLAGS += -lz -lprotobuf-lite -losmpbf -lpthread
 CXXFLAGS += -DOSMIUM_WITH_GEOS
 LDFLAGS += -lgeos
 
+# Boost extra flags for several things : logger, regex, etc
+CXXFLAGS += -DBOOST_LOG_DYN_LINK
+LDFLAGS += -lboost_system -lboost_log -lboost_thread -lboost_log_setup 
+
 .PHONY: all clean install
 
 all: osm-history-importer
