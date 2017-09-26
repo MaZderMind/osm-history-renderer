@@ -142,7 +142,7 @@ int main(int argc, char *argv[]) {
     Nodestore *store;
     if(nodestore == "sparse")
         store = new NodestoreSparse();
-    else if (nodestore == "stl")
+    else
         store = new NodestoreStl();
 
     // create an instance of the import-handler
