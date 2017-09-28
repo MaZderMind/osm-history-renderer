@@ -13,7 +13,7 @@
 #include <sstream>
 
 #include <boost/algorithm/string/replace.hpp>
-
+#include "logger.hpp"
 #include "dbconn.hpp"
 
 /**
@@ -33,6 +33,19 @@ public:
     ~DbCopyConn() {
         DbConn::close();
     }
+    static void init()
+    {
+        logging::add_file_log (
+        keywords::auto_flush = true, //to make sure log entries get written immediately, looks like doc bug in Boost
+        keywords::file_name = "./logs/osm_h_r_dbcopyconnection%N.log",                                        /*< file name pattern >*/
+        keywords::rotation_size = 10 * 1024 * 1024,                                   /*< rotate files every 10 MiB... >*/
+        keywords::format = "[%TimeStamp%]: %Message%"                                 /*< log record format >*/
+        );
+        logging::core::get()->set_filter
+        (
+            logging::trivial::severity >= logging::trivial::info
+        );
+    }
 
     static std::string escape_string(const std::string &string) {
         std::string copy = string;
@@ -40,7 +53,6 @@ public:
         boost::replace_all(copy, "\t", "\\t");
         return copy;
     }
-
     /**
      * Connect the controller to a database specified by the dsn, start
      * a (fast) transaction and open the COPY pipe to the table specified
@@ -50,6 +62,11 @@ public:
         // connect to the database
         DbConn::open(dsn);
 
+		init();
+        logging::add_common_attributes();
+        using namespace logging::trivial;
+        src::severity_logger< severity_level > lg;
+
         // sql commands are assembled into this stringstream
         std::stringstream cmd;
 
@@ -58,27 +75,29 @@ public:
 
         // try to start a transaction
         res = PQexec(conn, "BEGIN;");
-
+        PQsetNoticeReceiver(conn, noticerecv, NULL);
         // check, that the query succeeded
         if(PQresultStatus(res) == PGRES_FATAL_ERROR)
         {
             // show the error message, close the connection and throw out
             std::cerr << PQerrorMessage(conn) << std::endl;
+			BOOST_LOG_SEV(lg, error) << PQerrorMessage(conn);
             PQclear(res);
             PQfinish(conn);
-            throw std::runtime_error("Starting transaction failed");
+			exit(1);
         }
         else if(PQresultStatus(res) == PGRES_BAD_RESPONSE)
         {
-            // show the error message, close the connection and throw out
             std::cerr << PQerrorMessage(conn) << std::endl;
+			BOOST_LOG_SEV(lg, error) << PQerrorMessage(conn);
             PQclear(res);
             PQfinish(conn);
-            throw std::runtime_error("Bad response from server");
+			exit(1);
         }
         else if(PQresultStatus(res) == PGRES_NONFATAL_ERROR)
         {
             std::cerr << PQerrorMessage(conn) << std::endl;
+			BOOST_LOG_SEV(lg, warning) << PQerrorMessage(conn);
         }
 
         // clear the postgres result
@@ -98,20 +117,23 @@ public:
         if(PQresultStatus(res) == PGRES_FATAL_ERROR)
         {
             std::cerr << PQerrorMessage(conn) << std::endl;
+			BOOST_LOG_SEV(lg, error) << PQerrorMessage(conn);
             PQclear(res);
             PQfinish(conn);
-            throw std::runtime_error("Truncating table failed");
+			exit(1);
         }
         else if(PQresultStatus(res) == PGRES_BAD_RESPONSE)
         {
             std::cerr << PQerrorMessage(conn) << std::endl;
+			BOOST_LOG_SEV(lg, error) << PQerrorMessage(conn);
             PQclear(res);
             PQfinish(conn);
-            throw std::runtime_error("Bad response from server");
+			exit(1);
         }
         else if(PQresultStatus(res) == PGRES_NONFATAL_ERROR)
         {
             std::cerr << PQerrorMessage(conn) << std::endl;
+			BOOST_LOG_SEV(lg, warning) << PQerrorMessage(conn);
         }
 
         // clear the command buffer and the result
@@ -127,22 +149,24 @@ public:
         // check that the query succeeded
         if(PQresultStatus(res) != PGRES_COPY_IN)
         {
-            // show the error message, close the connection and throw out
             std::cerr << PQresultErrorMessage(res) << std::endl;
+			BOOST_LOG_SEV(lg, error) << PQresultErrorMessage(res);
             PQclear(res);
             PQfinish(conn);
-            throw std::runtime_error("COPY FROM STDIN command failed");
+			exit(1);
         }
         else if(PQresultStatus(res) == PGRES_BAD_RESPONSE)
         {
             std::cerr << PQerrorMessage(conn) << std::endl;
+			BOOST_LOG_SEV(lg, error) << PQerrorMessage(conn);
             PQclear(res);
             PQfinish(conn);
-            throw std::runtime_error("Bad response from server");
+			exit(1);
         }
         else if(PQresultStatus(res) == PGRES_NONFATAL_ERROR)
         {
             std::cerr << PQerrorMessage(conn) << std::endl;
+			BOOST_LOG_SEV(lg, warning) << PQerrorMessage(conn);
         }
 
 
@@ -155,6 +179,12 @@ public:
      * connection to the database
      */
     void close() {
+
+		init();
+        logging::add_common_attributes();
+        using namespace logging::trivial;
+        src::severity_logger< severity_level > lg;
+
         // but only if there is a opened connection
         if(!conn) return;
 
@@ -166,6 +196,7 @@ public:
         {
             // show the error message, close the connection and throw out
             std::cerr << PQerrorMessage(conn) << std::endl;
+			BOOST_LOG_SEV(lg, error) << PQerrorMessage(conn);
             PQfinish(conn);
             throw std::runtime_error("COPY FROM STDIN finalization failed");
         }
@@ -175,7 +206,7 @@ public:
 
         // get the result of the COPY FROM STDIN command (ansynchronus)
         res = PQgetResult(conn);
-
+        PQsetNoticeReceiver(conn, noticerecv, NULL);
         // check if we do have a result
         while(res != NULL) {
             // get restult status and print messages accordingly
@@ -186,15 +217,18 @@ public:
 
                 case PGRES_FATAL_ERROR:
                     std::cerr << "PQresultErrorMessage=" << PQresultErrorMessage(res) << std::endl;
+					BOOST_LOG_SEV(lg, error) << PQresultErrorMessage(res);
 
                 case PGRES_NONFATAL_ERROR: 
                     std::cerr << "PQresultErrorMessage(non-fatal)=" << PQresultErrorMessage(res) << std::endl;
-
+					BOOST_LOG_SEV(lg, warning) << PQresultErrorMessage(res);
+					
                 default:
                     std::cerr << "PQresultStatus=" << status << std::endl;
+					BOOST_LOG_SEV(lg, error) << "PQresultStatus=" << status;
                     PQclear(res);
                     PQfinish(conn);
-                    throw std::runtime_error("COPY FROM STDIN finalization failed");
+					exit(1);
             }
 
             // get the next result
@@ -209,20 +243,23 @@ public:
         if(PQresultStatus(res) == PGRES_FATAL_ERROR)
         {
             std::cerr << PQerrorMessage(conn) << std::endl;
+			BOOST_LOG_SEV(lg, error) << PQerrorMessage(conn);
             PQclear(res);
             PQfinish(conn);
-            throw std::runtime_error("Comitting transaction failed");
+			exit(1);
         }
         else if(PQresultStatus(res) == PGRES_BAD_RESPONSE)
         {
             std::cerr << PQerrorMessage(conn) << std::endl;
+			BOOST_LOG_SEV(lg, error) << PQerrorMessage(conn);
             PQclear(res);
             PQfinish(conn);
-            throw std::runtime_error("Bad response from server");
+			exit(1);
         }
         else if(PQresultStatus(res) == PGRES_NONFATAL_ERROR)
         {
             std::cerr << PQerrorMessage(conn) << std::endl;
+			BOOST_LOG_SEV(lg, error) << PQerrorMessage(conn);
         }
 
 
@@ -236,15 +273,21 @@ public:
      * copy a chunk of data into the COPY pipe
      */
     void copy(const std::string& data) {
+
+        init();
+        logging::add_common_attributes();
+        using namespace logging::trivial;
+        src::severity_logger< severity_level > lg;
+
         // copy data into the pipe
         int res = PQputCopyData(conn, data.c_str(), data.size());
 
         // check if the copying succeeded
         if(res == -1) {
-            // show the error message, close the connection and throw out
             std::cerr << PQerrorMessage(conn) << std::endl;
+			BOOST_LOG_SEV(lg, error) << PQerrorMessage(conn);
             PQfinish(conn);
-            throw std::runtime_error("COPY data-transfer failed");
+			exit(1);
         }
     }
 };
