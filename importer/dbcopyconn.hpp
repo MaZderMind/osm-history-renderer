@@ -219,16 +219,20 @@ public:
                     std::cerr << "PQresultErrorMessage=" << PQresultErrorMessage(res) << std::endl;
 					BOOST_LOG_SEV(lg, error) << PQresultErrorMessage(res);
 
+                case PGRES_BAD_RESPONSE:
+                    std::cerr << "Bad response: " << PQresultErrorMessage(res) << std::endl;
+					BOOST_LOG_SEV(lg, error) << PQresultErrorMessage(res);
+
                 case PGRES_NONFATAL_ERROR: 
                     std::cerr << "PQresultErrorMessage(non-fatal)=" << PQresultErrorMessage(res) << std::endl;
 					BOOST_LOG_SEV(lg, warning) << PQresultErrorMessage(res);
 					
                 default:
-                    std::cerr << "PQresultStatus=" << status << std::endl;
-					BOOST_LOG_SEV(lg, error) << "PQresultStatus=" << status;
+                    std::cout << "PQresultStatus=" << status << std::endl;
+					BOOST_LOG_SEV(lg, info) << "PQresultStatus=" << status;
                     PQclear(res);
                     PQfinish(conn);
-					exit(1);
+					exit(0);
             }
 
             // get the next result
@@ -239,7 +243,7 @@ public:
         // try to commit the open transaction
         res = PQexec(conn, "COMMIT;");
 
-        // check, that the query succeeded
+        // check that the query succeeded
         if(PQresultStatus(res) == PGRES_FATAL_ERROR)
         {
             std::cerr << PQerrorMessage(conn) << std::endl;
@@ -261,6 +265,15 @@ public:
             std::cerr << PQerrorMessage(conn) << std::endl;
 			BOOST_LOG_SEV(lg, error) << PQerrorMessage(conn);
         }
+        else
+        {
+            std::cout << "PQresultStatus=" << PQresultStatus(res) << std::endl;
+            BOOST_LOG_SEV(lg, info) << "PQresultStatus=" << PQresultStatus(res);
+            PQclear(res);
+            PQfinish(conn);
+            exit(0);
+        }
+
 
 
         PQclear(res);

@@ -59,6 +59,10 @@ public:
                     PG_DIAG_MESSAGE_PRIMARY));
             //Write to logger as well
             BOOST_LOG_SEV(lg, warning) << PQresultErrorField(res, PG_DIAG_MESSAGE_PRIMARY); 
+            BOOST_LOG_SEV(lg, warning) << PQresultErrorField(res, PG_DIAG_MESSAGE_DETAIL); 
+            BOOST_LOG_SEV(lg, warning) << PQresultErrorField(res, PG_DIAG_SQLSTATE); 
+            BOOST_LOG_SEV(lg, warning) << PQresultErrorField(res, PG_DIAG_CONTEXT); 
+
         }
     }
     
@@ -79,7 +83,6 @@ public:
         if(PQstatus(conn) == CONNECTION_BAD)
         {
             std::cerr << PQerrorMessage(conn) << std::endl;
-            
             BOOST_LOG_SEV(lg, error) << PQerrorMessage(conn);
             PQfinish(conn);
             BOOST_LOG_SEV(lg, error) << "Connection error. Please check your database-related settings.";
@@ -89,6 +92,7 @@ public:
 
         // disable sync-commits
         //  see http://lists.openstreetmap.org/pipermail/dev/2011-December/023854.html
+        //  check to see if this is needed still
         PGresult *res = PQexec(conn, "SET synchronous_commit TO off;");
         // check that the query succeeded
         PQsetNoticeReceiver(conn, noticerecv, NULL);	
