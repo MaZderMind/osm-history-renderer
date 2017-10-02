@@ -1,13 +1,14 @@
 /**
  * osm-history-render importer - main file
  *
- * the importer reads through a pbf-file and writes its the content to a
+ * the importer reads through a pbf-file and writes the contents to a
  * postgresql database. While doing this, bits of the data is copied to
  * memory as a cache. This data is later used to build geometries for
  * ways and relations.
  */
 
 #include <getopt.h>
+#include <stdlib.h>
 
 #define OSMIUM_MAIN
 #define OSMIUM_WITH_PBF_INPUT
@@ -40,7 +41,6 @@ int main(int argc, char *argv[]) {
         {"store-errors",        no_argument, 0, 'e'},
         {"interior",            no_argument, 0, 'i'},
         {"latlng",              no_argument, 0, 'l'},
-        {"latlon",              no_argument, 0, 'l'},
         {"nodestore",           required_argument, 0, 'S'},
         {"dsn",                 required_argument, 0, 'D'},
         {"prefix",              required_argument, 0, 'P'},
@@ -52,7 +52,6 @@ int main(int argc, char *argv[]) {
         int c = getopt_long(argc, argv, "hdeilS:D:P:", long_options, 0);
         if (c == -1)
             break;
-
         switch (c) {
             // show the help
             case 'h':
@@ -71,12 +70,12 @@ int main(int argc, char *argv[]) {
                 printStoreErrors = true;
                 break;
 
-            // calculate the interior-point ans store it in the database
+            // calculate the interior-point and store it in the database
             case 'i':
                 calculateInterior = true;
                 break;
 
-            // keep lat/lng ant don't transform it to mercator
+            // keep lat/lng and don't transform it to mercator
             case 'l':
                 keepLatLng = true;
                 break;
@@ -95,6 +94,11 @@ int main(int argc, char *argv[]) {
             case 'P':
                 prefix = optarg;
                 break;
+
+            //default option    
+            default:
+                std::cerr << "getopt_long returned character " << c << ". Please see the help menu for valid options." << std::endl;
+                exit(EXIT_FAILURE);
         }
     }
 
@@ -112,16 +116,16 @@ int main(int argc, char *argv[]) {
             << "       enables errors from the node-store. Possibly many in softcutted files" << std::endl
             << "       because of incomplete reference in the input" << std::endl
             << "  -i|--interior" << std::endl
-            << "       calculate the interior-point ans store it in the database" << std::endl
+            << "       calculate the interior-point and store it in the database" << std::endl
             << "  -l|--latlng" << std::endl
-            << "       keep lat/lng ant don't transform to mercator" << std::endl
-            << "  -s|--nodestore" << std::endl
+            << "       keep lat/lng and don't transform to mercator" << std::endl
+            << "  -S|--nodestore" << std::endl
             << "       set the nodestore type [defaults to '" << nodestore << "']" << std::endl
             << "       possible values: " << std::endl
             << "          stl    (needs more memory but is more robust and a little faster)" << std::endl
-            << "          sparse (needs much, much less memory but is still experimental)" << std::endl
+            << "          sparse (doesn't need as much memory but is still experimental)" << std::endl
             << "  -D|--dsn" << std::endl
-            << "       set the database dsn, check the postgres documentation for syntax" << std::endl
+            << "       set the database DSN, check the Postgres documentation for syntax" << std::endl
             << "  -P|--prefix" << std::endl
             << "       set the table-prefix [defaults to '"  << prefix << "']" << std::endl;
 

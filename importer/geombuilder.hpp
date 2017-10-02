@@ -56,7 +56,7 @@ public:
             c->push_back(geos::geom::Coordinate(lon, lat, DoubleNotANumber));
         }
 
-        // if less then 2 nodes could be found in the store, no valid way
+        // if less than 2 nodes could be found in the store, no valid way
         // can be assembled and we need to skip it
         if(c->size() < 2) {
             if(m_showerrors) {

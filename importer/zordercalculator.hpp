@@ -1,6 +1,6 @@
 /**
  * When roads of different priority overlap, they need to be painted in
- * the right order. This sould be controlled by the rendering style,
+ * the right order. This should be controlled by the rendering style,
  * but unfortunately the openstreetmap.org style and its variations
  * require a z-order being calculated by the importer. Because I'm no
  * reformer and I'd like to support "the" OpenStreetMap style, this class
@@ -14,7 +14,7 @@
  * Data to generate z-order column and lowzoom-table
  * This includes railways and administrative boundaries, too.
  *
- * borrowd from osm2pgsql:
+ * borrowed from osm2pgsql:
  *   http://trac.openstreetmap.org/browser/applications/utils/export/osm2pgsql/output-pgsql.c#L98
  */
 static struct {
@@ -66,7 +66,8 @@ public:
         // flag, signaling if this way should be additionally placed in
         // the lowzoom-line-table (osm2pgsql calls it "roads")
         // NOTE: this is curently not used
-        int lowzoom = false;
+        //int lowzoom = false;
+        //commenting out all occurences until further notice/use
 
         // shorthands to the values of different keys, contributing to
         // the z-order calculation
@@ -94,7 +95,7 @@ public:
 
                     // and copy over its offset & lowzoom value
                     z_order   += layers[i].offset;
-                    lowzoom   = layers[i].lowzoom;
+                    //lowzoom   = layers[i].lowzoom;
                     break;
                 }
             }
@@ -104,13 +105,13 @@ public:
         if(railway) {
             // raise its z-order by 5 and set the lowzoom flag
             z_order += 5;
-            lowzoom = true;
+            //lowzoom = true;
         }
 
         // if it has a boundary=administrative tag
         if(boundary && 0 == strcmp(boundary, "administrative")) {
             // set the lowzoom flag
-            lowzoom = true;
+            //lowzoom = true;
         }
 
         // if it has a bridge tag and it evaluates to true

@@ -1,9 +1,9 @@
 /**
- * In OpenStreetMaps a closed way (a way with the sae start- and end-node)
- * can be either a polygon or linestring. If it's the one or the other
+ * In OpenStreetMap a closed way (a way with the same start- and end-node)
+ * can be either a polygon or linestring. If it's the one or the other it
  * needs to be decided by looking at the tags. This class provides a list
  * of tags that indicate a way looks like a polygon. This decision is only
- * made based on the tags, the geometry of way (is it closed) needs to
+ * made based on the tags, the geometry of way (if is it closed) needs to
  * be checked by the caller separately.
  */
 
@@ -13,7 +13,7 @@
 /**
  * list of tags that let a closed way look like a polygon
  */
-const char *polygons[] =
+const char *polygons[] = //TODO see if we can use a string vector
 {
     "aeroway",
     "amenity",
@@ -43,7 +43,7 @@ const char *polygons[] =
  * Checks Tags against a list to decide if they look like the way
  * could potentially be a polygon.
  */
-class PolygonIdentifyer {
+class PolygonIdentifyer { //FIXME It's PolygonIdentifier, fix this everywhere, including the filename.
 public:
 
     /**

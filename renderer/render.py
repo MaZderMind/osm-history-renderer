@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 #
 # render data from postgresql to an image or a pdf
 #
@@ -28,7 +28,7 @@ def main():
                       help="file type to render [default: %default]")
     
     parser.add_option("-x", "--size", action="store", type="string", dest="size", default="800x600", 
-                      help="requested sizeof the resulting image in pixels, format is <width>x<height> [default: %default]")
+                      help="requested size of the resulting image in pixels, format is <width>x<height> [default: %default]")
     
     parser.add_option("-b", "--bbox", action="store", type="string", dest="bbox", default="-180,-85,180,85", 
                       help="the bounding box to render in the format l,b,r,t [default: %default]")
@@ -44,7 +44,7 @@ def main():
                       help="if this option is set, the render-script will create views in the database to enable rendering with 'normal' mapnik styles, written for osm2pgsql databases [default: %default]")
     
     parser.add_option("-p", "--view-prefix", action="store", type="string", dest="viewprefix", default="hist_view", 
-                      help="if thie -v/--view option is set, this script will one view for each osm2pgsql-table (point, line, polygon, roads) with this prefix (eg. hist_view_point)")
+                      help="if the -v/--view option is set, this script will one view for each osm2pgsql-table (point, line, polygon, roads) with this prefix (eg. hist_view_point)")
     
     parser.add_option("-o", "--view-hstore", action="store_true", dest="viewhstore", default=False, 
                       help="if this option is set, the views will contain a single hstore-column called 'tags' containing all tags")
@@ -69,7 +69,7 @@ def main():
         try:
             options.size = map(int, options.size.split("x"))
         except ValueError, err:
-            print "invalid syntax in size argument"
+            print "Invalid syntax in size argument"
             print
             parser.print_help()
             sys.exit(1)
@@ -80,7 +80,7 @@ def main():
             if len(options.bbox) < 4:
                 raise ValueError
         except ValueError, err:
-            print "invalid syntax in bbox argument"
+            print "Invalid syntax in bbox argument"
             print
             parser.print_help()
             sys.exit(1)
@@ -94,7 +94,7 @@ def main():
         parser.print_help()
         sys.exit(1)
     
-    print "rendering bbox %s at date %s in style %s to file %s which is of type %s in size %ux%u\n" % (options.bbox, options.date, options.style, options.file, options.type, options.size[0], options.size[1])
+    print "Rendering bbox %s at date %s in style %s to file %s which is of type %s in size %ux%u\n" % (options.bbox, options.date, options.style, options.file, options.type, options.size[0], options.size[1])
     render(options)
 
 def render(options):
@@ -107,10 +107,10 @@ def render(options):
         create_views(options.dsn, options.dbprefix, options.viewprefix, options.viewhstore, columns, options.date)
     
     # create map
-    m = mapnik.Map(options.size[0], options.size[1])
+    mMap = mapnik.Map(options.size[0], options.size[1])
     
     # load style
-    mapnik.load_map(m, options.style)
+    mapnik.load_map(mMap, options.style)
     
     # create projection object
     prj = mapnik.Projection("+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +no_defs +over")
@@ -145,12 +145,12 @@ def render(options):
         s = cairo.PSSurface(options.file, options.size[0], options.size[1])
     
     else:
-        print "invalid image type"
+        print "Invalid image type"
         print
         parser.print_help()
         sys.exit(1)
     
-    mapnik.render(m, s)
+    mapnik.render(mMap, s)
     
     if isinstance(s, mapnik.Image):
         view = s.view(0, 0, options.size[0], options.size[1])

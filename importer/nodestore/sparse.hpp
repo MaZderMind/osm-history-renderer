@@ -1,8 +1,8 @@
 /**
- * The sparse nodestore is  is the newer one. It's build on top of the the Google Sparsetable
+ * The sparse nodestore is  is the newer one. It's built on top of the the Google Sparsetable
  * and a custom memory block management. It's much, much more space efficient but it seems to
- * take slightly time on startup and it also contains more custom code, so more potential for
- * bugs. Sooner or later Sparse will become the defaul node-store, as it's your only option
+ * take slightly more time on startup and it also contains more custom code, so more potential for
+ * bugs. Sooner or later Sparse will become the default node-store, as it's your only option
  * to import larger extracts or even a whole planet.
  *
  * It used two main memory areas: a sparsetable and one or more malloc'ed memory blocks.
@@ -34,7 +34,7 @@
  *
  *   When the current node-id already has a pointer in the sparsetable, all versions of the node
  *   are copied into the new block. The sparsetable-pointer is updated to the destination-location
- *   in the new memory block. new versions can now be appended into the new block. the space in
+ *   in the new memory block. New versions can now be appended into the new block. The space in
  *   the old block is not reused.
  */
 
@@ -94,10 +94,10 @@ private:
     struct PackedNodeTimeinfo {
         /**
          * osmium gives us a time_t which is a signed int
-         * on 32 bit platformsm time_t is 4 bytes wide and it will overflow on year 2038
+         * on 32 bit platforms, time_t is 4 bytes wide and it will overflow on year 2038
          * on 64 bit platforms, time_t is 8 bytes wide and will not overflow during the next decades
-         * we know that osm did not exists before 1970, so there is no need to encode times prior to that point
-         * using this knowledge we can extend the reach of our unix timestamp by ~60 years by using an unsigned
+         * we know that OSM did not exist before 1970, so there is no need to encode times prior to that point
+         * Using this knowledge we can extend the reach of our Unix timestamp by ~60 years by using an unsigned
          * 8 byte int. this gives us best of both worlds: a smaller memory footprint and enough time to buy more ram
          * (as of today's 2013: 93 years. should be enough for everybody.)
          */
@@ -109,7 +109,7 @@ private:
         osm_user_id_t uid;
 
         /**
-         * osmium handles lat/lon either as double (8 bytes) or as int32_t (4 byted). So we choose the smaller one.
+         * osmium handles lat/lon either as double (8 bytes) or as int32_t (4 bytes). So we choose the smaller one.
          */
         int32_t lat;
 
@@ -162,13 +162,13 @@ public:
             if(lastNodeId != id) {
                 // a new node, just use a new memory segment
                 if(isPrintingDebugMessages()) {
-                    std::cerr << "  -> node " << id << " has not yet a memory position assigned, nothing more to do" << std::endl;
+                    std::cerr << "  -> node " << id << " does not yet have a memory position assigned, nothing more to do" << std::endl;
                 }
             }
             else {
                 // same node as before, need to copy old versions into new memory block
                 if(isPrintingDebugMessages()) {
-                    std::cerr << "  -> node " << id << " has already a memory position assigned (" << idMap[id] << ")" << std::endl;
+                    std::cerr << "  -> node " << id << " already has a memory position assigned (" << idMap[id] << ")" << std::endl;
                 }
 
                 PackedNodeTimeinfo* srcPtr = idMap[id];
@@ -176,7 +176,7 @@ public:
 
                 if(isPrintingDebugMessages()) {
                     std::cerr << "  -> copying node versions from old position (" << idMap[id] << ") to new position (" << (void*)currentMemoryBlock << ", offset " << currentMemoryBlockPosition << ")" << std::endl;
-                    std::cerr << "  -> re-assigning memory position " << dstPtr << " (offset: " << currentMemoryBlockPosition << ") to node id #" << id << std::endl;
+                    std::cerr << "  -> reassigning memory position " << dstPtr << " (offset: " << currentMemoryBlockPosition << ") to node id #" << id << std::endl;
                 }
                 idMap[id] = dstPtr;
 
@@ -194,8 +194,8 @@ public:
 
                     currentMemoryBlockPosition += sizeof(PackedNodeTimeinfo);
                     if(currentMemoryBlockPosition >= BLOCK_SIZE) {
-                        std::cerr << "  -> node #" << id << " has more versions then could fit into a block size of " << BLOCK_SIZE << ". It's very unlikely that this ever happens, but you could try to increase the BLOCK_SIZE..." << std::endl;
-                        throw new std::runtime_error("node does not fit into BLOCK_SIZE");
+                        std::cerr << "  -> node #" << id << " has more versions than could fit into a block size of " << BLOCK_SIZE << ". It's very unlikely that this ever happens, but you could try to increase the BLOCK_SIZE..." << std::endl;
+                        throw new std::runtime_error("Node does not fit into BLOCK_SIZE");
                     }
                     dstPtr = reinterpret_cast< PackedNodeTimeinfo* >(currentMemoryBlock + currentMemoryBlockPosition);
                 } while((++srcPtr)->t != 0);
@@ -253,7 +253,7 @@ public:
     // change the default from stl to sparse, we can change the return value, too
     timemap_ptr lookup(osm_object_id_t id, bool &found) {
         if(isPrintingStoreErrors()) {
-            std::cout << "lookup for timemap of node #" << id << std::endl;
+            std::cout << "Lookup for timemap of node #" << id << std::endl;
         }
 
         if(!idMap.test(id)) {
@@ -293,7 +293,7 @@ public:
 
     Nodeinfo lookup(osm_object_id_t id, time_t t, bool &found) {
         if(isPrintingStoreErrors()) {
-            std::cout << "lookup for coords of oldest node #" << id << " younger-or-equal then " << t << " (" << Timestamp::format(t) << ")" << std::endl;
+            std::cout << "Lookup for coordinates of oldest node #" << id << " newer or equal then " << t << " (" << Timestamp::format(t) << ")" << std::endl;
         }
 
         if(!idMap.test(id)) {
@@ -313,7 +313,7 @@ public:
         Nodeinfo info = nullinfo;
         time_t infoTime = 0;
 
-        // find the oldest node-version younger then t
+        // find the oldest node-version newer then t
         do {
             if(isPrintingDebugMessages()) {
                 std::cerr << "  -> probing node id #" << id << " at " << infoPtr->t << " (" << Timestamp::format(infoPtr->t) << ") at memory position " << infoPtr << " (node-offset " << ((char*)infoPtr-(char*)basePtr) << ")" << std::endl;
@@ -338,12 +338,12 @@ public:
             infoTime = basePtr->t;
 
             if(isPrintingDebugMessages()) {
-                std::cerr << "  -> way is younger " << Timestamp::format(t) << " then the youngest available version of the node, using first version from " << infoTime << " (" << Timestamp::format(infoTime) << ")" << std::endl;
+                std::cerr << "  -> way is newer " << Timestamp::format(t) << " than the newest available version of the node, using first version from " << infoTime << " (" << Timestamp::format(infoTime) << ")" << std::endl;
             }
         }
         else {
             if(isPrintingDebugMessages()) {
-                std::cerr << "  -> returning coords from " << infoTime << " (" << Timestamp::format(infoTime) << ")" << std::endl;
+                std::cerr << "  -> returning coordinates from " << infoTime << " (" << Timestamp::format(infoTime) << ")" << std::endl;
             }
         }
 
